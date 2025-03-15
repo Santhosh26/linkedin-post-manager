@@ -3,6 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
+import { useSearchParams } from 'next/navigation';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { Card, CardHeader, CardContent } from '@/components/ui/Card';
 import ProfileSection from '@/components/settings/ProfileSection';
@@ -10,12 +11,22 @@ import SecuritySection from '@/components/settings/SecuritySection';
 import AppearanceSection from '@/components/settings/AppearanceSection';
 import ContentPreferencesSection from '@/components/settings/ContentPreferencesSection';
 import ResearchPreferencesSection from '@/components/settings/ResearchPreferencesSection';
+import LinkedInSection from '@/components/settings/LinkedInSection';
 import { useUserSettings } from '@/lib/contexts/UserSettingsContext';
 
 export default function SettingsPage() {
   const { data: session } = useSession();
   const { isLoading, error } = useUserSettings();
-  const [activeTab, setActiveTab] = useState('profile');
+  const searchParams = useSearchParams();
+  const initialTab = searchParams.get('tab');
+  const [activeTab, setActiveTab] = useState(initialTab || 'profile');
+
+  useEffect(() => {
+    // Update active tab based on URL query parameter
+    if (initialTab) {
+      setActiveTab(initialTab);
+    }
+  }, [initialTab]);
 
   const tabs = [
     { id: 'profile', label: 'Profile' },
@@ -23,6 +34,7 @@ export default function SettingsPage() {
     { id: 'appearance', label: 'Appearance' },
     { id: 'content', label: 'Content Preferences' },
     { id: 'research', label: 'Research Settings' },
+    { id: 'linkedin', label: 'LinkedIn Integration' },
   ];
 
   return (
@@ -94,6 +106,9 @@ export default function SettingsPage() {
               
               {/* Research Settings Section */}
               {activeTab === 'research' && <ResearchPreferencesSection />}
+              
+              {/* LinkedIn Integration Section */}
+              {activeTab === 'linkedin' && <LinkedInSection />}
             </div>
 
             {isLoading && (

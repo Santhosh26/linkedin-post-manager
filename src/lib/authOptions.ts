@@ -2,7 +2,8 @@
 import type { NextAuthConfig } from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { compare } from "bcryptjs"; // Changed from bcrypt to bcryptjs
+import LinkedInProvider from "next-auth/providers/linkedin";
+import { compare } from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 
 export const authOptions: NextAuthConfig = {
@@ -45,18 +46,56 @@ export const authOptions: NextAuthConfig = {
         }
       },
     }),
+    LinkedInProvider({
+      clientId: process.env.LINKEDIN_CLIENT_ID as string,
+      clientSecret: process.env.LINKEDIN_CLIENT_SECRET as string,
+      authorization: {
+        params: {
+          scope: "r_emailaddress r_liteprofile w_member_social",
+        },
+      },
+      // Be explicit about the OAuth profile response
+      profile(profile) {
+        return {
+          id: profile.id,
+          name: profile.localizedFirstName + " " + profile.localizedLastName,
+          email: profile.emailAddress,
+          image: profile.profilePicture?.["displayImage~"]?.elements?.[0]?.identifiers?.[0]?.identifier || null,
+        };
+      },
+    }),
   ],
   pages: {
     signIn: "/login",
     error: "/login?error=true",
   },
   callbacks: {
-    async jwt({ token, user }: { token: any; user: any }) {
-      if (user) token.id = user.id;
+    async jwt({ token, user, account }) {
+      // Initial sign in
+      if (account && user) {
+        // Add LinkedIn token data to the JWT if available
+        if (account.provider === 'linkedin') {
+          token.linkedinAccessToken = account.access_token;
+          token.linkedinRefreshToken = account.refresh_token;
+          token.linkedinTokenExpiry = account.expires_at ? account.expires_at * 1000 : 0;
+        }
+        token.id = user.id;
+      }
+      
       return token;
     },
-    async session({ session, token }: { session: any; token: any }) {
-      if (token && session?.user) session.user.id = token.id as string;
+    async session({ session, token }) {
+      if (token) {
+        if (session.user) {
+          session.user.id = token.id as string;
+          
+          // Add LinkedIn connection status to the session
+          session.user.linkedinConnected = !!token.linkedinAccessToken;
+        }
+        
+        // Store LinkedIn tokens in session
+        session.linkedinAccessToken = token.linkedinAccessToken;
+      }
       return session;
     },
   },

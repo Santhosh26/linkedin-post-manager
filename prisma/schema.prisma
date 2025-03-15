@@ -1,3 +1,4 @@
+// prisma/schema.prisma
 generator client {
   provider = "prisma-client-js"
 }
@@ -92,20 +93,22 @@ model Research {
 }
 
 model Post {
-  id          String   @id @default(cuid())
-  content     String   @db.Text
-  variations  Json?    // Store different variations as JSON
-  hashtags    String[]
-  topicId     String?
-  userId      String
-  status      PostStatus @default(DRAFT)
-  scheduledFor DateTime?
-  publishedAt DateTime?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id              String     @id @default(cuid())
+  content         String     @db.Text
+  variations      Json?      // Store different variations as JSON
+  hashtags        String[]
+  topicId         String?
+  userId          String
+  status          PostStatus @default(DRAFT)
+  scheduledFor    DateTime?
+  publishedAt     DateTime?
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  linkedinPostId  String?    // LinkedIn post ID for tracking published posts
+  linkedinPostUrl String?    // URL to the published LinkedIn post
   
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  topic       Topic?   @relation(fields: [topicId], references: [id])
+  user            User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  topic           Topic?     @relation(fields: [topicId], references: [id])
 }
 
 enum PostStatus {
