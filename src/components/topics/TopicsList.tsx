@@ -35,7 +35,7 @@ const TopicsList = ({ topics, onDelete }: TopicsListProps) => {
         title="Your Topics" 
         action={
           <Link href="/topics/new">
-            <Button>New Topic</Button>
+            <Button variant='primary'>New Topic</Button>
           </Link>
         }
       />
@@ -98,7 +98,7 @@ const TopicsList = ({ topics, onDelete }: TopicsListProps) => {
                     <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
                       <div className="flex justify-end gap-2">
                         <Link href={`/topics/${topic.id}/research`}>
-                          <Button variant="outline" size="sm">
+                          <Button variant="secondary" size="sm">
                             <FiSearch className="h-4 w-4 mr-1" />
                             Research
                           </Button>
@@ -110,7 +110,7 @@ const TopicsList = ({ topics, onDelete }: TopicsListProps) => {
                           </Button>
                         </Link>
                         <Button 
-                          variant="outline" 
+                          variant="danger" 
                           size="sm" 
                           onClick={() => onDelete(topic.id)}
                         >

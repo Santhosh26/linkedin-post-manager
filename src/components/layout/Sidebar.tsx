@@ -22,10 +22,10 @@ interface SidebarLinkProps {
 const SidebarLink: React.FC<SidebarLinkProps> = ({ href, icon, text, isActive }) => (
   <Link
     href={href}
-    className={`flex items-center px-4 py-3 text-sm font-medium rounded-md ${
+    className={`flex items-center px-4 py-3 text-sm font-medium rounded-md transition-colors ${
       isActive
-        ? 'bg-blue-50 text-blue-700'
-        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+        ? 'bg-primary-50 text-primary-700 dark:bg-dark-bg-tertiary dark:text-primary-400'
+        : 'text-gray-600 dark:text-dark-text-secondary hover:bg-gray-50 dark:hover:bg-dark-bg-tertiary hover:text-gray-900 dark:hover:text-dark-text-primary'
     }`}
   >
     <span className="mr-3">{icon}</span>
@@ -65,7 +65,7 @@ const Sidebar = () => {
   ];
 
   return (
-    <div className="flex flex-col h-full bg-white border-r border-gray-200">
+    <div className="flex flex-col h-full bg-white dark:bg-dark-bg-secondary border-r border-gray-200 dark:border-gray-800 shadow-sm transition-colors">
       <div className="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
         <div className="px-4 space-y-1">
           {navItems.map((item) => (
