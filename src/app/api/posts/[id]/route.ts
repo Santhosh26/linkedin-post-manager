@@ -1,10 +1,10 @@
 // src/app/api/posts/[id]/route.ts
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
 import { auth } from '@/lib/auth';
 
-interface Params {
+interface RequestParams {
   params: {
     id: string;
   };
@@ -19,7 +19,7 @@ const PostUpdateSchema = z.object({
 });
 
 // GET a single post by ID
-export async function GET(req: Request, { params }: Params) {
+export async function GET(req: NextRequest, { params }: RequestParams) {
   try {
     const session = await auth();
 
@@ -72,7 +72,7 @@ export async function GET(req: Request, { params }: Params) {
 }
 
 // PUT - update a post
-export async function PUT(req: Request, { params }: Params) {
+export async function PUT(req: NextRequest, { params }: RequestParams) {
   try {
     const session = await auth();
 
@@ -161,7 +161,7 @@ export async function PUT(req: Request, { params }: Params) {
 }
 
 // DELETE a post
-export async function DELETE(req: Request, { params }: Params) {
+export async function DELETE(req: NextRequest, { params }: RequestParams) {
   try {
     const session = await auth();
 

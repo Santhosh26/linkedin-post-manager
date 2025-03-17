@@ -1,32 +1,16 @@
-// src\components\ui\ThemeToggle.tsx
-
+// src/components/ui/ThemeToggle.tsx
 'use client';
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { FiSun, FiMoon } from 'react-icons/fi';
 import { useTheme } from '@/lib/contexts/ThemeContext';
-import { useUserSettings } from '@/lib/contexts/UserSettingsContext';
 
 const ThemeToggle = () => {
   const { theme, toggleTheme } = useTheme();
-  const { settings, updateSetting, saveSettings } = useUserSettings();
-
-  // Keep settings in sync with theme toggle changes
-  useEffect(() => {
-    if (settings && settings.theme !== 'system' && settings.theme !== theme) {
-      // Update settings when theme changes via toggle
-      updateSetting('theme', theme);
-      // Save settings to persist the change
-      saveSettings();
-    }
-  }, [theme, settings, updateSetting, saveSettings]);
 
   const handleToggle = () => {
-    // Toggle the theme
+    // Simply toggle the theme - theme context will handle everything else
     toggleTheme();
-    
-    // Force reflow to ensure consistent style application
-    document.body.classList.add('theme-transitioning');
   };
 
   return (

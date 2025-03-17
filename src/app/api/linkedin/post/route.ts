@@ -1,14 +1,15 @@
 // src/app/api/linkedin/post/route.ts
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
-import { postToLinkedIn, getLinkedInPostUrl } from '@/lib/services/linkedin';
+import { postToLinkedIn, postWithImageToLinkedIn, getLinkedInPostUrl } from '@/lib/services/linkedin';
 
 // Schema for posting to LinkedIn
 const LinkedInPostSchema = z.object({
   postId: z.string().min(1, 'Post ID is required'),
   visibility: z.enum(['PUBLIC', 'CONNECTIONS']).default('PUBLIC'),
+  imageUrl: z.string().optional(),
 });
 
 /**
@@ -26,8 +27,22 @@ export async function POST(req: Request) {
       );
     }
 
-    // Check if the user has connected their LinkedIn account
-    if (!session.linkedinAccessToken) {
+    // Instead of checking session.linkedinAccessToken, check the database directly
+    // This ensures consistency with the GET endpoint
+    const linkedInAccount = await prisma.account.findFirst({
+      where: { 
+        userId: session.user.id,
+        provider: 'linkedin'
+      },
+      select: {
+        access_token: true,
+        expires_at: true
+      }
+    });
+
+    // Verify LinkedIn account exists and has a valid token
+    if (!linkedInAccount || !linkedInAccount.access_token || 
+        (linkedInAccount.expires_at && linkedInAccount.expires_at * 1000 <= Date.now())) {
       return NextResponse.json(
         { message: 'LinkedIn account not connected. Please connect your LinkedIn account first.' },
         { status: 400 }
@@ -36,7 +51,7 @@ export async function POST(req: Request) {
 
     // Parse the request body
     const body = await req.json();
-    const { postId, visibility } = LinkedInPostSchema.parse(body);
+    const { postId, visibility, imageUrl } = LinkedInPostSchema.parse(body);
 
     // Get the post from the database
     const post = await prisma.post.findUnique({
@@ -58,12 +73,25 @@ export async function POST(req: Request) {
       );
     }
 
-    // Post to LinkedIn
-    const linkedinPostId = await postToLinkedIn(
-      session.linkedinAccessToken as string,
-      post.content,
-      visibility
-    );
+    // Use the access token from the database instead of from the session
+    const accessToken = linkedInAccount.access_token;
+    
+    // Post to LinkedIn, with or without an image
+    let linkedinPostId;
+    if (imageUrl) {
+      linkedinPostId = await postWithImageToLinkedIn(
+        accessToken,
+        post.content,
+        imageUrl,
+        visibility
+      );
+    } else {
+      linkedinPostId = await postToLinkedIn(
+        accessToken,
+        post.content,
+        visibility
+      );
+    }
 
     if (!linkedinPostId) {
       return NextResponse.json(
@@ -107,29 +135,65 @@ export async function POST(req: Request) {
 /**
  * GET - Check LinkedIn connection status
  */
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
     // Get the current session
     const session = await auth();
 
+    // No caching headers - we want fresh responses every time
+    const headers = {
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': '0'
+    };
+
     if (!session?.user) {
       return NextResponse.json(
-        { message: 'You must be logged in to check LinkedIn connection status' },
-        { status: 401 }
+        { connected: false, message: 'Not authenticated' },
+        { status: 200, headers }
       );
     }
 
-    // Check if the user has connected their LinkedIn account
-    const isConnected = !!session.linkedinAccessToken;
-
-    return NextResponse.json({
-      connected: isConnected,
+    // Check if the user has a connected LinkedIn account
+    const account = await prisma.account.findFirst({
+      where: { 
+        userId: session.user.id,
+        provider: 'linkedin'
+      },
+      select: {
+        id: true,
+        access_token: true,
+        expires_at: true
+      }
     });
+
+    // Determine connection status: account must exist and have a valid token
+    // If expires_at exists, check if it's still valid
+    const isConnected = !!account && 
+      !!account.access_token && 
+      (!account.expires_at || account.expires_at * 1000 > Date.now());
+
+    console.log(`LinkedIn connection check for user ${session.user.id}: ${isConnected ? 'Connected' : 'Not connected'}`);
+
+    return NextResponse.json(
+      { connected: isConnected },
+      { headers }
+    );
   } catch (error) {
     console.error('Error checking LinkedIn connection:', error);
     return NextResponse.json(
-      { message: 'Error checking LinkedIn connection' },
-      { status: 500 }
+      { 
+        connected: false,
+        message: 'Error checking LinkedIn connection'
+      },
+      { 
+        status: 500,
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0'
+        }
+      }
     );
   }
 }

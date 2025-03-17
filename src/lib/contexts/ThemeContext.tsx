@@ -16,19 +16,34 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 export function ThemeProvider({ children }: { children: ReactNode }) {
   // Initialize theme from localStorage if available, otherwise use system preference
   const [theme, setThemeState] = useState<Theme>('light');
+  const [isInitializing, setIsInitializing] = useState(true);
 
+  // Initialize theme only once when component mounts
   useEffect(() => {
-    // On mount, read from localStorage or detect system preference
-    const savedTheme = localStorage.getItem('theme') as Theme | null;
+    // Only run this effect once on initial client-side render
+    if (typeof window === 'undefined' || !isInitializing) return;
     
-    if (savedTheme) {
-      setThemeState(savedTheme);
-    } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      setThemeState('dark');
+    try {
+      // On mount, read from localStorage or detect system preference
+      const savedTheme = localStorage.getItem('theme') as Theme | null;
+      
+      if (savedTheme === 'light' || savedTheme === 'dark') {
+        setThemeState(savedTheme);
+      } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        setThemeState('dark');
+      }
+    } catch (error) {
+      // Fallback if localStorage is unavailable
+      console.error('Failed to read theme from localStorage:', error);
+    } finally {
+      setIsInitializing(false);
     }
-  }, []);
+  }, [isInitializing]);
 
+  // Apply theme classes to document when theme changes
   useEffect(() => {
+    if (isInitializing) return;
+    
     // Apply theme classes to document
     if (theme === 'dark') {
       document.documentElement.classList.add('dark');
@@ -104,12 +119,16 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       document.documentElement.style.setProperty(key, value);
     });
     
-    // Save theme preference to localStorage
-    localStorage.setItem('theme', theme);
+    try {
+      // Save theme preference to localStorage
+      localStorage.setItem('theme', theme);
+    } catch (error) {
+      console.error('Failed to save theme to localStorage:', error);
+    }
     
     // Dispatch a custom event to notify components of theme change
     window.dispatchEvent(new CustomEvent('themechange', { detail: { theme } }));
-  }, [theme]);
+  }, [theme, isInitializing]);
 
   const toggleTheme = () => {
     setThemeState(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));

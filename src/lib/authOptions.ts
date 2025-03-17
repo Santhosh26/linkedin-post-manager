@@ -5,6 +5,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import LinkedInProvider from "next-auth/providers/linkedin";
 import { compare } from "bcryptjs";
 import { prisma } from "@/lib/prisma";
+import { refreshLinkedInToken } from "@/lib/services/linkedin";
 
 export const authOptions: NextAuthConfig = {
   adapter: PrismaAdapter(prisma),
@@ -51,15 +52,18 @@ export const authOptions: NextAuthConfig = {
       clientSecret: process.env.LINKEDIN_CLIENT_SECRET as string,
       authorization: {
         params: {
-          scope: "r_emailaddress r_liteprofile w_member_social",
+          // Only request the w_member_social scope which is what we need for posting
+          scope: "w_member_social",
         },
       },
-      // Be explicit about the OAuth profile response
+      // Improved profile function with fallbacks
       profile(profile) {
         return {
           id: profile.id,
-          name: profile.localizedFirstName + " " + profile.localizedLastName,
-          email: profile.emailAddress,
+          name: profile.localizedFirstName && profile.localizedLastName 
+            ? `${profile.localizedFirstName} ${profile.localizedLastName}`
+            : 'LinkedIn User', // Fallback name
+          email: null, // We don't have permission to get email
           image: profile.profilePicture?.["displayImage~"]?.elements?.[0]?.identifiers?.[0]?.identifier || null,
         };
       },
@@ -75,11 +79,43 @@ export const authOptions: NextAuthConfig = {
       if (account && user) {
         // Add LinkedIn token data to the JWT if available
         if (account.provider === 'linkedin') {
+          console.log('Adding LinkedIn token to JWT');
           token.linkedinAccessToken = account.access_token;
           token.linkedinRefreshToken = account.refresh_token;
-          token.linkedinTokenExpiry = account.expires_at ? account.expires_at * 1000 : 0;
+          token.linkedinTokenExpiry = account.expires_at ? account.expires_at * 1000 : Date.now() + 3600000; // Default 1 hour
         }
         token.id = user.id;
+      }
+      
+      // Check if LinkedIn token is expired and needs refreshing
+      if (token.linkedinAccessToken && token.linkedinRefreshToken && 
+          token.linkedinTokenExpiry && Date.now() >= token.linkedinTokenExpiry) {
+        try {
+          console.log('LinkedIn token expired, attempting to refresh...');
+          const newToken = await refreshLinkedInToken(token.linkedinRefreshToken as string);
+          
+          if (newToken) {
+            console.log('LinkedIn token refreshed successfully');
+            token.linkedinAccessToken = newToken.accessToken;
+            token.linkedinTokenExpiry = newToken.expiresAt;
+            // Update refresh token if provided
+            if (newToken.refreshToken) {
+              token.linkedinRefreshToken = newToken.refreshToken;
+            }
+          } else {
+            console.log('LinkedIn token refresh failed, clearing token data');
+            // Clear tokens to force re-authentication
+            delete token.linkedinAccessToken;
+            delete token.linkedinRefreshToken;
+            delete token.linkedinTokenExpiry;
+          }
+        } catch (error) {
+          console.error('Error refreshing LinkedIn token:', error);
+          // Clear tokens on error to force re-authentication
+          delete token.linkedinAccessToken;
+          delete token.linkedinRefreshToken;
+          delete token.linkedinTokenExpiry;
+        }
       }
       
       return token;
@@ -95,6 +131,8 @@ export const authOptions: NextAuthConfig = {
         
         // Store LinkedIn tokens in session
         session.linkedinAccessToken = token.linkedinAccessToken;
+        session.linkedinRefreshToken = token.linkedinRefreshToken;
+        session.linkedinTokenExpiry = token.linkedinTokenExpiry;
       }
       return session;
     },
