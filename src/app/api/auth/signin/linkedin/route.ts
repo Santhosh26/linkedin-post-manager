@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
     redirectUrl.searchParams.append('client_id', clientId);
     redirectUrl.searchParams.append('redirect_uri', `${process.env.NEXTAUTH_URL}/api/auth/callback/linkedin`);
     redirectUrl.searchParams.append('state', Buffer.from(callbackUrl).toString('base64'));
-    redirectUrl.searchParams.append('scope', 'w_member_social');
+    redirectUrl.searchParams.append('scope', 'openid email profile w_member_social');
     
     console.log(`Redirecting to LinkedIn authorization: ${redirectUrl.toString()}`);
     

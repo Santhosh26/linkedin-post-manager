@@ -1,107 +1,47 @@
 // src/lib/services/linkedin.ts
 import axios from 'axios';
 
+interface LinkedInTokenInfo {
+  accessToken: string;
+  expiresAt: number;
+  refreshToken?: string;
+}
+
 /**
  * Post a text-only update to LinkedIn
  * 
  * @param accessToken LinkedIn access token
  * @param content Post content
  * @param visibility Visibility setting (PUBLIC or CONNECTIONS)
- * @returns Post ID if successful, null otherwise
+ * @returns Post ID if successful
  */
 export async function postToLinkedIn(
   accessToken: string,
   content: string,
   visibility: 'PUBLIC' | 'CONNECTIONS' = 'PUBLIC'
-): Promise<string | null> {
+): Promise<string> {
   try {
-    console.log('Starting LinkedIn post attempt...');
+    console.log('Posting content to LinkedIn with manual approach...');
     
-    // Let's try a completely different approach using LinkedIn's share URN
-    // Based on LinkedIn documentation, we need a proper URN with numeric ID
-    // Instead of trying to get the user's ID (which we don't have permission for),
-    // let's use a more elegant solution
-    
-    // Sometimes LinkedIn API can use the access token to determine the author
-    // Let's try a different API endpoint: v2/shares
+    // Get user info first to get the sub value (person ID)
     try {
-      console.log('Trying to post using the v2/shares endpoint...');
-      
-      const sharePayload = {
-        content: {
-          contentEntities: [
-            {
-              entityLocation: `https://example.com/share/${Date.now()}`,
-              title: 'LinkedIn Post Manager Share',
-              description: content.substring(0, 100) + (content.length > 100 ? '...' : '')
-            }
-          ],
-          title: 'Post from LinkedIn Post Manager',
-          description: content
-        },
-        distribution: {
-          linkedInDistributionTarget: {
-            visibleToGuest: visibility === 'PUBLIC'
-          }
-        },
-        owner: 'urn:li:person:self',
-        subject: content.substring(0, 50) + (content.length > 50 ? '...' : ''),
-        text: {
-          text: content
-        }
-      };
-      
-      console.log('Share payload:', JSON.stringify(sharePayload, null, 2));
-      
-      const response = await axios.post(
-        'https://api.linkedin.com/v2/shares',
-        sharePayload,
-        {
-          headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'Content-Type': 'application/json',
-            'X-Restli-Protocol-Version': '2.0.0'
-          }
-        }
-      );
-      
-      console.log('Share response status:', response.status);
-      console.log('Share response data:', JSON.stringify(response.data, null, 2));
-      
-      if (response.data && response.data.id) {
-        const postId = response.data.id.split(':').pop() || '';
-        return postId;
-      }
-    } catch (shareError: any) {
-      console.log('Share endpoint error:', 
-        shareError.response?.status,
-        JSON.stringify(shareError.response?.data || {}, null, 2)
-      );
-    }
-    
-    // If the previous attempt failed, let's try a different approach
-    // We can try using the organization API if we're possibly posting as an organization
-    try {
-      console.log('Trying to fetch organization ID...');
-      
-      const organizationsResponse = await axios.get('https://api.linkedin.com/v2/organizationAcls?q=roleAssignee', {
+      const userInfoResponse = await axios.get('https://api.linkedin.com/v2/userinfo', {
         headers: {
           'Authorization': `Bearer ${accessToken}`,
           'X-Restli-Protocol-Version': '2.0.0'
         }
       });
       
-      console.log('Organizations response:', JSON.stringify(organizationsResponse.data, null, 2));
+      console.log('User info response:', JSON.stringify(userInfoResponse.data, null, 2));
       
-      // Extract organization ID from the response if available
-      const organizationId = organizationsResponse.data?.elements?.[0]?.organization;
-      
-      if (organizationId) {
-        console.log('Found organization ID:', organizationId);
+      // If we have a sub value, use it to create the authorUrn
+      if (userInfoResponse.data?.sub) {
+        const sub = userInfoResponse.data.sub;
+        console.log('Found LinkedIn ID:', sub);
         
-        // Try posting as this organization
-        const orgPostPayload = {
-          author: organizationId,
+        // Create the post payload with the authorUrn
+        const postData = {
+          author: `urn:li:person:${sub}`,
           lifecycleState: "PUBLISHED",
           specificContent: {
             "com.linkedin.ugc.ShareContent": {
@@ -116,11 +56,12 @@ export async function postToLinkedIn(
           }
         };
         
-        console.log('Organization post payload:', JSON.stringify(orgPostPayload, null, 2));
+        console.log('Post data:', JSON.stringify(postData, null, 2));
         
-        const orgPostResponse = await axios.post(
+        // Send the post request to LinkedIn
+        const response = await axios.post(
           'https://api.linkedin.com/v2/ugcPosts',
-          orgPostPayload,
+          postData,
           {
             headers: {
               'Authorization': `Bearer ${accessToken}`,
@@ -130,41 +71,113 @@ export async function postToLinkedIn(
           }
         );
         
-        console.log('Organization post response:', JSON.stringify(orgPostResponse.data, null, 2));
+        console.log('Post response:', JSON.stringify(response.data, null, 2));
         
-        if (orgPostResponse.data && orgPostResponse.data.id) {
-          const postId = orgPostResponse.data.id.split(':').pop() || '';
+        if (response.data?.id) {
+          const postId = response.data.id.split(':').pop() || '';
           return postId;
         }
       }
-    } catch (orgError: any) {
-      console.log('Organization approach error:', 
-        orgError.response?.status,
-        JSON.stringify(orgError.response?.data || {}, null, 2)
-      );
+    } catch (error) {
+      console.error('Error getting user info or posting:', error.response?.status, error.response?.data);
     }
     
-    // As an absolute fallback, generate a LinkedIn share URL that the user can open
-    const shareUrl = generateLinkedInShareUrl(content);
-    throw new Error(`Direct posting to LinkedIn failed. Please use this link to share manually: ${shareUrl}`);
+    // If we're here, we couldn't get the user ID from userinfo (probably due to missing scopes)
+    // Let's try using the "me" special value
+    try {
+      console.log('Trying with person:me as fallback');
+      
+      const postData = {
+        author: "urn:li:person:me",
+        lifecycleState: "PUBLISHED",
+        specificContent: {
+          "com.linkedin.ugc.ShareContent": {
+            shareCommentary: {
+              text: content
+            },
+            shareMediaCategory: "NONE"
+          }
+        },
+        visibility: {
+          "com.linkedin.ugc.MemberNetworkVisibility": visibility
+        }
+      };
+      
+      const response = await axios.post(
+        'https://api.linkedin.com/v2/ugcPosts',
+        postData,
+        {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+            'X-Restli-Protocol-Version': '2.0.0'
+          }
+        }
+      );
+      
+      if (response.data?.id) {
+        const postId = response.data.id.split(':').pop() || '';
+        return postId;
+      }
+    } catch (error) {
+      console.error('Error posting with person:me:', error.response?.status, error.response?.data);
+    }
+    
+    // As a last resort, try without an author field
+    try {
+      console.log('Trying without author field as last resort');
+      
+      const postData = {
+        lifecycleState: "PUBLISHED",
+        specificContent: {
+          "com.linkedin.ugc.ShareContent": {
+            shareCommentary: {
+              text: content
+            },
+            shareMediaCategory: "NONE"
+          }
+        },
+        visibility: {
+          "com.linkedin.ugc.MemberNetworkVisibility": visibility
+        }
+      };
+      
+      const response = await axios.post(
+        'https://api.linkedin.com/v2/ugcPosts',
+        postData,
+        {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+            'X-Restli-Protocol-Version': '2.0.0'
+          }
+        }
+      );
+      
+      if (response.data?.id) {
+        const postId = response.data.id.split(':').pop() || '';
+        return postId;
+      }
+    } catch (error) {
+      console.error('Error posting without author:', error.response?.status, error.response?.data);
+    }
+    
+    throw new Error('All posting methods failed. You may need to reconnect your LinkedIn account with the required scopes (openid, profile, email, w_member_social).');
   } catch (error) {
     console.error('Error posting to LinkedIn:', error);
     
     if (axios.isAxiosError(error)) {
       console.error('LinkedIn API error details:', {
         status: error.response?.status,
-        statusText: error.response?.statusText,
-        data: JSON.stringify(error.response?.data || {}, null, 2)
+        data: error.response?.data
       });
       
       if (error.response?.status === 401) {
         throw new Error('LinkedIn authentication failed. Please reconnect your LinkedIn account.');
       } else if (error.response?.status === 403) {
-        const errorMessage = error.response.data?.message || '';
-        throw new Error(`LinkedIn permission error: ${errorMessage}`);
-      } else if (error.response?.status === 400 || error.response?.status === 422) {
-        const errorMessage = error.response.data?.message || '';
-        throw new Error(`LinkedIn validation error: ${errorMessage}`);
+        throw new Error('LinkedIn permission error. Your access token does not have the necessary permissions.');
+      } else if (error.response?.status === 422) {
+        throw new Error('LinkedIn validation error: ' + (error.response?.data?.message || 'Invalid request format'));
       } else if (error.response?.status === 429) {
         throw new Error('LinkedIn API rate limit exceeded. Please try again later.');
       } else if (error.response?.status === 500) {
@@ -172,16 +185,8 @@ export async function postToLinkedIn(
       }
     }
     
-    throw error;
+    throw new Error('Failed to post to LinkedIn: ' + (error instanceof Error ? error.message : 'Unknown error'));
   }
-}
-
-/**
- * Generate a LinkedIn share URL for manual sharing
- */
-function generateLinkedInShareUrl(content: string): string {
-  const encodedText = encodeURIComponent(content);
-  return `https://www.linkedin.com/sharing/share-offsite/?url=https://example.com&title=Share&summary=${encodedText}`;
 }
 
 /**
@@ -191,19 +196,17 @@ function generateLinkedInShareUrl(content: string): string {
  * @param content Post content
  * @param imageUrl URL of the image to attach
  * @param visibility Visibility setting (PUBLIC or CONNECTIONS)
- * @returns Post ID if successful, null otherwise
+ * @returns Post ID if successful
  */
 export async function postWithImageToLinkedIn(
   accessToken: string,
   content: string,
   imageUrl: string,
   visibility: 'PUBLIC' | 'CONNECTIONS' = 'PUBLIC'
-): Promise<string | null> {
+): Promise<string> {
   try {
-    // This is a simplified example - LinkedIn requires a multi-step process to upload media
-    console.log('Image sharing would be implemented here with URL:', imageUrl);
-    
     // For now, fall back to regular text sharing
+    console.log('Image sharing not implemented yet - posting text only');
     return postToLinkedIn(accessToken, content, visibility);
   } catch (error) {
     console.error('Error posting with image to LinkedIn:', error);
@@ -226,10 +229,8 @@ export function getLinkedInPostUrl(postId: string): string {
  */
 export async function verifyLinkedInToken(accessToken: string): Promise<boolean> {
   try {
-    // Instead of calling /me which we don't have permission for,
-    // let's try a simpler approach - try to get organization info
-    // which might require fewer permissions
-    const response = await axios.get('https://api.linkedin.com/v2/organizationAcls?q=roleAssignee', {
+    // Try a simple call to verify the token
+    const response = await axios.head('https://api.linkedin.com/v2/ugcPosts', {
       headers: {
         'Authorization': `Bearer ${accessToken}`,
         'X-Restli-Protocol-Version': '2.0.0'
@@ -238,7 +239,7 @@ export async function verifyLinkedInToken(accessToken: string): Promise<boolean>
     
     return response.status === 200;
   } catch (error) {
-    // If we get a 403, the token might be valid but lacks permissions
+    // If we get a 403, the token is valid but might lack some permissions
     if (axios.isAxiosError(error) && error.response?.status === 403) {
       return true;
     }
@@ -248,7 +249,6 @@ export async function verifyLinkedInToken(accessToken: string): Promise<boolean>
       return false;
     }
     
-    // For any other error, log it and return false
     console.error('Error verifying LinkedIn token:', error);
     return false;
   }
@@ -260,11 +260,7 @@ export async function verifyLinkedInToken(accessToken: string): Promise<boolean>
  * @param refreshToken LinkedIn refresh token
  * @returns New token info if successful, null otherwise
  */
-export async function refreshLinkedInToken(refreshToken: string): Promise<{
-  accessToken: string;
-  expiresAt: number;
-  refreshToken?: string;
-} | null> {
+export async function refreshLinkedInToken(refreshToken: string): Promise<LinkedInTokenInfo | null> {
   try {
     // LinkedIn token refresh requires client ID and secret
     const clientId = process.env.LINKEDIN_CLIENT_ID;

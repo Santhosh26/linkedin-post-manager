@@ -52,18 +52,19 @@ export const authOptions: NextAuthConfig = {
       clientSecret: process.env.LINKEDIN_CLIENT_SECRET as string,
       authorization: {
         params: {
-          // Only request the w_member_social scope which is what we need for posting
-          scope: "w_member_social",
+          // CRITICAL: Use exactly these scopes to match what you've selected in LinkedIn UI
+          scope: "openid email profile w_member_social",
         },
       },
-      // Improved profile function with fallbacks
+      // Leave the profile function as it is - it's fine for now
       profile(profile) {
+        console.log("LinkedIn OAuth profile data:", JSON.stringify(profile, null, 2));
         return {
           id: profile.id,
           name: profile.localizedFirstName && profile.localizedLastName 
             ? `${profile.localizedFirstName} ${profile.localizedLastName}`
-            : 'LinkedIn User', // Fallback name
-          email: null, // We don't have permission to get email
+            : 'LinkedIn User', 
+          email: null, 
           image: profile.profilePicture?.["displayImage~"]?.elements?.[0]?.identifiers?.[0]?.identifier || null,
         };
       },

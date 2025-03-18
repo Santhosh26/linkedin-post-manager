@@ -27,8 +27,7 @@ export async function POST(req: Request) {
       );
     }
 
-    // Instead of checking session.linkedinAccessToken, check the database directly
-    // This ensures consistency with the GET endpoint
+    // Check for LinkedIn account in the database
     const linkedInAccount = await prisma.account.findFirst({
       where: { 
         userId: session.user.id,
@@ -36,7 +35,8 @@ export async function POST(req: Request) {
       },
       select: {
         access_token: true,
-        expires_at: true
+        expires_at: true,
+        providerAccountId: true
       }
     });
 
@@ -73,8 +73,20 @@ export async function POST(req: Request) {
       );
     }
 
-    // Use the access token from the database instead of from the session
+    // Get the access token from the database
     const accessToken = linkedInAccount.access_token;
+    
+    // Get the LinkedIn ID from either the session or database
+    // The order of precedence is:
+    // 1. LinkedIn ID from the session (if available)
+    // 2. Provider account ID from the database (fallback)
+    const linkedinId = session.linkedinId || linkedInAccount.providerAccountId || undefined;
+    
+    if (linkedinId) {
+      console.log('Using LinkedIn ID for posting:', linkedinId);
+    } else {
+      console.log('No LinkedIn ID available, will try alternative approaches');
+    }
     
     // Post to LinkedIn, with or without an image
     let linkedinPostId;
@@ -83,13 +95,15 @@ export async function POST(req: Request) {
         accessToken,
         post.content,
         imageUrl,
-        visibility
+        visibility,
+        linkedinId
       );
     } else {
       linkedinPostId = await postToLinkedIn(
         accessToken,
         post.content,
-        visibility
+        visibility,
+        linkedinId
       );
     }
 
@@ -163,7 +177,8 @@ export async function GET(req: NextRequest) {
       select: {
         id: true,
         access_token: true,
-        expires_at: true
+        expires_at: true,
+        providerAccountId: true
       }
     });
 
@@ -173,12 +188,14 @@ export async function GET(req: NextRequest) {
       !!account.access_token && 
       (!account.expires_at || account.expires_at * 1000 > Date.now());
 
-    console.log(`LinkedIn connection check for user ${session.user.id}: ${isConnected ? 'Connected' : 'Not connected'}`);
+    const response = {
+      connected: isConnected,
+      linkedinId: account?.providerAccountId || null
+    };
 
-    return NextResponse.json(
-      { connected: isConnected },
-      { headers }
-    );
+    console.log(`LinkedIn connection check for user ${session.user.id}:`, response);
+
+    return NextResponse.json(response, { headers });
   } catch (error) {
     console.error('Error checking LinkedIn connection:', error);
     return NextResponse.json(
