@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { FiSearch } from 'react-icons/fi';
+import { FiSearch, FiInfo } from 'react-icons/fi';
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/Card';
@@ -101,7 +101,7 @@ const ResearchForm = ({ topicId, topicName, onResearchComplete }: ResearchFormPr
   if (hasCachedData) {
     return (
       <div className="flex justify-center items-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-600 dark:border-primary-400"></div>
       </div>
     );
   }
@@ -112,34 +112,52 @@ const ResearchForm = ({ topicId, topicName, onResearchComplete }: ResearchFormPr
       <form onSubmit={handleSubmit(onSubmit)}>
         <CardContent>
           {error && (
-            <div className="mb-4 bg-red-50 border-l-4 border-red-500 p-4">
+            <div className="mb-4 bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 dark:border-red-600 p-4 rounded">
               <div className="flex">
                 <div className="ml-3">
-                  <p className="text-sm text-red-700">{error}</p>
+                  <p className="text-sm text-red-700 dark:text-red-400">{error}</p>
                 </div>
               </div>
             </div>
           )}
 
           <div className="space-y-6">
+            <div className="bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500 dark:border-blue-600 p-4 mb-4 rounded">
+              <div className="flex">
+                <div className="flex-shrink-0">
+                  <FiInfo className="h-5 w-5 text-blue-500 dark:text-blue-400" />
+                </div>
+                <div className="ml-3">
+                  <p className="text-sm text-blue-700 dark:text-blue-400">
+                    Enter a specific search query related to your topic. The more specific your query, the better results you'll get.
+                  </p>
+                </div>
+              </div>
+            </div>
+
             <Input
               id="query"
               label="Search Query"
               placeholder="Enter a specific query related to your topic"
               {...register('query')}
               error={errors.query?.message}
+              helperText="Example: 'Latest trends in digital marketing' or 'How to improve team productivity'"
             />
 
             <div>
               <label
                 htmlFor="maxResults"
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="block text-sm font-medium text-gray-700 dark:text-dark-text-secondary mb-1"
               >
                 Max Results
               </label>
               <select
                 id="maxResults"
-                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-700 
+                          bg-white dark:bg-dark-bg-tertiary text-gray-900 dark:text-dark-text-primary
+                          focus:outline-none focus:ring-primary-500 dark:focus:ring-primary-600 
+                          focus:border-primary-500 dark:focus:border-primary-600 
+                          sm:text-sm rounded-md transition-colors"
                 {...register('maxResults', { valueAsNumber: true })}
               >
                 <option value={5}>5 results</option>
@@ -148,7 +166,7 @@ const ResearchForm = ({ topicId, topicName, onResearchComplete }: ResearchFormPr
                 <option value={20}>20 results</option>
               </select>
               {errors.maxResults && (
-                <p className="mt-1 text-sm text-red-600">{errors.maxResults.message}</p>
+                <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.maxResults.message}</p>
               )}
             </div>
           </div>

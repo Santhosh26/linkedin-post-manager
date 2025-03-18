@@ -1,6 +1,6 @@
 // src/app/layout.tsx
 import type { Metadata } from 'next';
-import { Roboto } from 'next/font/google'; // Using Roboto instead of Inter
+import { Roboto } from 'next/font/google';
 import './globals.css';
 import AuthProvider from '@/components/auth/AuthProvider';
 
@@ -23,8 +23,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="h-full bg-gray-50">
-      <body className={`${roboto.className} h-full`}>
+    <html lang="en" className="h-full">
+      <body className={`${roboto.className} h-full antialiased`}>
         <AuthProvider>{children}</AuthProvider>
       </body>
     </html>

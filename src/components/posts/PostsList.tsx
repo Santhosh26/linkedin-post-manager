@@ -225,7 +225,7 @@ const PostsList = ({ posts, topics, onDelete }: PostsListProps) => {
                             </Button>
                           </Link>
                           <Button 
-                            variant="outline" 
+                            variant="danger" 
                             size="sm" 
                             onClick={() => onDelete(post.id)}
                           >

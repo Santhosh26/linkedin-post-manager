@@ -1,32 +1,28 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  /* config options here */
-  serverExternalPackages: ['bcryptjs', '@prisma/client', 'prisma'],
-  webpack: (config, { isServer }) => {
-    if (!isServer) {
-      // Don't resolve 'fs' module on the client to prevent this error
-      config.resolve.fallback = {
-        fs: false,
-        path: false,
-        os: false,
-        crypto: false,
-        process: false,
-        util: false,
-        buffer: false,
-        'pino-pretty': false,
-        'mock-aws-s3': false,
-        child_process: false,
-        net: false,
-        tls: false,
-        aws4: false,
-        'fs/promises': false,
-        '@mapbox/node-pre-gyp': false,
-        'aws-sdk': false,
-        'nock': false
-      };
-    }
-    return config;
-  },
-};
+// src/types/next-auth.d.ts
+import { DefaultSession } from "next-auth";
 
-module.exports = nextConfig;
+// Extend the built-in session types
+declare module "next-auth" {
+  interface Session {
+    user: {
+      id: string;
+      name?: string | null;
+      email?: string | null;
+      image?: string | null;
+      linkedinConnected?: boolean;
+    } & DefaultSession["user"];
+    linkedinAccessToken?: string;
+    linkedinRefreshToken?: string;
+    linkedinTokenExpiry?: number;
+  }
+}
+
+// Extend the JWT type
+declare module "next-auth/jwt" {
+  interface JWT {
+    id: string;
+    linkedinAccessToken?: string;
+    linkedinRefreshToken?: string;
+    linkedinTokenExpiry?: number;
+  }
+}

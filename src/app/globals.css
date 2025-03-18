@@ -2,25 +2,141 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #1a1a1a;
+  --card-bg: #ffffff;
+  --card-border: #e5e7eb;
+  --input-bg: #ffffff;
+  --input-text: #1a1a1a;
+  --input-border: #d1d5db;
+  --input-focus-border: #0071fe;
+  --input-placeholder: #9ca3af;
+  --button-bg: #0071fe;
+  --button-hover: #005bca;
+  --button-text: #ffffff;
+  --secondary-button-bg: #f3f4f6;
+  --secondary-button-hover: #e5e7eb;
+  --secondary-button-text: #1f2937;
+  --outline-button-border: #d1d5db;
+  --outline-button-hover: #f3f4f6;
+  --outline-button-text: #1f2937;
+  --nav-bg: #ffffff;
+  --nav-border: #e5e7eb;
+  --sidebar-bg: #ffffff;
+  --sidebar-border: #e5e7eb;
+  --sidebar-hover: #f3f4f6;
+  --sidebar-active: #e6f1ff;
+  --sidebar-active-text: #0071fe;
+  --table-header-bg: #f9fafb;
+  --table-border: #e5e7eb;
+  --table-row-hover: #f9fafb;
+  --badge-bg: #f3f4f6;
+  --badge-text: #1f2937;
+  --badge-danger-bg: #fee2e2;
+  --badge-danger-text: #b91c1c;
+  --badge-warning-bg: #fef3c7;
+  --badge-warning-text: #92400e;
+  --badge-success-bg: #d1fae5;
+  --badge-success-text: #047857;
+  --badge-info-bg: #e0f2fe;
+  --badge-info-text: #0369a1;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.dark {
+  --background: #121212;
+  --foreground: #f0f0f0;
+  --card-bg: #1e1e1e;
+  --card-border: #2a2a2a;
+  --input-bg: #2a2a2a;
+  --input-text: #f0f0f0;
+  --input-border: #3f3f3f;
+  --input-focus-border: #0071fe;
+  --input-placeholder: #6b7280;
+  --button-bg: #0071fe;
+  --button-hover: #005bca;
+  --button-text: #ffffff;
+  --secondary-button-bg: #fdfdfd;
+  --secondary-button-hover: #3f3f3f;
+  --secondary-button-text: #f0f0f0;
+  --outline-button-border: #3f3f3f;
+  --outline-button-hover: #2a2a2a;
+  --outline-button-text: #f0f0f0;
+  --nav-bg: #121212;
+  --nav-border: #2a2a2a;
+  --sidebar-bg: #1a1a1a;
+  --sidebar-border: #2a2a2a;
+  --sidebar-hover: #2a2a2a;
+  --sidebar-active: #1e2a3a;
+  --sidebar-active-text: #3b82f6;
+  --table-header-bg: #1e1e1e;
+  --table-border: #2a2a2a;
+  --table-row-hover: #1a1a1a;
+  --badge-bg: #2a2a2a;
+  --badge-text: #f0f0f0;
+  --badge-danger-bg: #441212;
+  --badge-danger-text: #f87171;
+  --badge-warning-bg: #422006;
+  --badge-warning-text: #fbbf24;
+  --badge-success-bg: #063423;
+  --badge-success-text: #6ee7b7;
+  --badge-info-bg: #042f49;
+  --badge-info-text: #7dd3fc;
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans, Roboto, system-ui, sans-serif);
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
 }
+
+/* Improved Form Inputs */
+input, textarea, select {
+  background-color: var(--input-bg);
+  color: var(--input-text);
+  border-color: var(--input-border);
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--input-placeholder);
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: var(--input-focus-border);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 113, 254, 0.2);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 4px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background-color: #555;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #666;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background-color: #777;
+}
+
+/* Transitions for smooth theme changes */
+*, *::before, *::after {
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-duration: 0.2s;
+  transition-timing-function: ease-in-out;
+}
+

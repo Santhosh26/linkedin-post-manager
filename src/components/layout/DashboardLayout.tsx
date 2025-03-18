@@ -16,8 +16,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
   if (status === 'loading') {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      <div className="flex justify-center items-center min-h-screen bg-white dark:bg-dark-bg-primary">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-600 dark:border-primary-400"></div>
       </div>
     );
   }
@@ -28,7 +28,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-dark-bg-primary transition-colors">
       <Navbar />
       <div className="flex">
         <div className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 md:pt-16">
