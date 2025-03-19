@@ -9,7 +9,8 @@ import {
   FiList, 
   FiFileText, 
   FiCalendar,
-  FiSettings 
+  FiSettings,
+  FiClock 
 } from 'react-icons/fi';
 
 interface SidebarLinkProps {
@@ -46,6 +47,11 @@ const Sidebar = () => {
       href: '/topics',
       icon: <FiList className="h-5 w-5" />,
       text: 'Topics',
+    },
+    {
+      href: '/posts/scheduled',
+      icon: <FiClock className="h-5 w-5" />,
+      text: 'Scheduled Posts',
     },
     {
       href: '/posts',

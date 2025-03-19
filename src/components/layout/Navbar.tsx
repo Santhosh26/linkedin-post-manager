@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { signOut, useSession } from 'next-auth/react';
 import { FiMenu, FiX, FiUser, FiLogOut } from 'react-icons/fi';
 import ThemeToggle from '@/components/ui/ThemeToggle';
-
+import NotificationCenter from '@/components/ui/NotificationCenter';
 const Navbar = () => {
   const { data: session } = useSession();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -79,6 +79,8 @@ const Navbar = () => {
           <div className="hidden sm:ml-6 sm:flex sm:items-center">
             {/* Theme Toggle */}
             <ThemeToggle />
+            {/* Add Notification Center */}
+            {session && <NotificationCenter />}
             
             {session ? (
               <div className="ml-3 relative">

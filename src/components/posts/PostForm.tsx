@@ -22,6 +22,7 @@ const postSchema = z.object({
   topicId: z.string().optional(),
   status: z.enum(['DRAFT', 'SCHEDULED', 'PUBLISHED']).default('DRAFT'),
   scheduledFor: z.string().optional(),
+  visibility: z.enum(['PUBLIC', 'CONNECTIONS']).default('PUBLIC'),
 });
 
 type PostFormValues = z.infer<typeof postSchema>;
@@ -34,6 +35,7 @@ interface PostFormProps {
     topicId?: string;
     status: 'DRAFT' | 'SCHEDULED' | 'PUBLISHED';
     scheduledFor?: string;
+    visibility?: 'PUBLIC' | 'CONNECTIONS';
   };
   isEditMode?: boolean;
 }
@@ -71,6 +73,7 @@ const PostForm = ({ initialData, isEditMode = false }: PostFormProps) => {
       scheduledFor: initialData?.scheduledFor 
         ? new Date(initialData.scheduledFor).toISOString().slice(0, 16) 
         : defaultScheduledForString,
+      visibility: initialData?.visibility || 'PUBLIC',
     },
   });
 
@@ -290,28 +293,57 @@ const PostForm = ({ initialData, isEditMode = false }: PostFormProps) => {
             </div>
 
             {status === 'SCHEDULED' && (
-              <div>
-                <label
-                  htmlFor="scheduledFor"
-                  className="block text-sm font-medium text-gray-700 dark:text-dark-text-secondary mb-1"
-                >
-                  Schedule Date and Time
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <FiCalendar className="h-5 w-5 text-gray-400 dark:text-gray-500" />
+              <>
+                <div>
+                  <label
+                    htmlFor="scheduledFor"
+                    className="block text-sm font-medium text-gray-700 dark:text-dark-text-secondary mb-1"
+                  >
+                    Schedule Date and Time
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <FiCalendar className="h-5 w-5 text-gray-400 dark:text-gray-500" />
+                    </div>
+                    <input
+                      type="datetime-local"
+                      id="scheduledFor"
+                      className="pl-10 block w-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-dark-bg-tertiary 
+                                text-gray-900 dark:text-dark-text-primary rounded-md shadow-sm 
+                                focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-600 focus:border-primary-500 dark:focus:border-primary-600 
+                                sm:text-sm transition-colors"
+                      {...register('scheduledFor')}
+                    />
                   </div>
-                  <input
-                    type="datetime-local"
-                    id="scheduledFor"
-                    className="pl-10 block w-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-dark-bg-tertiary 
-                              text-gray-900 dark:text-dark-text-primary rounded-md shadow-sm 
-                              focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-600 focus:border-primary-500 dark:focus:border-primary-600 
-                              sm:text-sm transition-colors"
-                    {...register('scheduledFor')}
-                  />
                 </div>
-              </div>
+                
+                <div className="mt-4">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-dark-text-secondary mb-1">
+                    LinkedIn Visibility
+                  </label>
+                  <div className="flex space-x-4 mt-2">
+                    <label className="inline-flex items-center">
+                      <input
+                        type="radio"
+                        className="form-radio text-primary-600"
+                        value="PUBLIC"
+                        {...register('visibility')}
+                        defaultChecked
+                      />
+                      <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Public</span>
+                    </label>
+                    <label className="inline-flex items-center">
+                      <input
+                        type="radio"
+                        className="form-radio text-primary-600"
+                        value="CONNECTIONS"
+                        {...register('visibility')}
+                      />
+                      <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Connections only</span>
+                    </label>
+                  </div>
+                </div>
+              </>
             )}
           </div>
         </CardContent>
