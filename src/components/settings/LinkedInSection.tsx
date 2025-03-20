@@ -111,8 +111,8 @@ export default function LinkedInSection() {
     try {
       setError(null);
       
-      // Get accounts from the database and remove the LinkedIn provider
-      const response = await fetch('/api/linkedin/disconnect', {
+      // Updated to use consolidated endpoint
+      const response = await fetch('/api/linkedin', {
         method: 'DELETE',
       });
       

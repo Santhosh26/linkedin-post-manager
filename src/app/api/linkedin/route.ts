@@ -1,4 +1,4 @@
-// src/app/api/linkedin/post/route.ts
+// src/app/api/linkedin/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { z } from 'zod';
@@ -11,6 +11,75 @@ const LinkedInPostSchema = z.object({
   visibility: z.enum(['PUBLIC', 'CONNECTIONS']).default('PUBLIC'),
   imageUrl: z.string().optional(),
 });
+
+/**
+ * GET - Check LinkedIn connection status
+ */
+export async function GET(req: NextRequest) {
+  try {
+    // Get the current session
+    const session = await auth();
+
+    // No caching headers - we want fresh responses every time
+    const headers = {
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': '0'
+    };
+
+    if (!session?.user) {
+      return NextResponse.json(
+        { connected: false, message: 'Not authenticated' },
+        { status: 200, headers }
+      );
+    }
+
+    // Check if the user has a connected LinkedIn account
+    const account = await prisma.account.findFirst({
+      where: { 
+        userId: session.user.id,
+        provider: 'linkedin'
+      },
+      select: {
+        id: true,
+        access_token: true,
+        expires_at: true,
+        providerAccountId: true
+      }
+    });
+
+    // Determine connection status: account must exist and have a valid token
+    // If expires_at exists, check if it's still valid
+    const isConnected = !!account && 
+      !!account.access_token && 
+      (!account.expires_at || account.expires_at * 1000 > Date.now());
+
+    const response = {
+      connected: isConnected,
+      linkedinId: account?.providerAccountId || null
+    };
+
+    console.log(`LinkedIn connection check for user ${session.user.id}:`, response);
+
+    return NextResponse.json(response, { headers });
+  } catch (error) {
+    console.error('Error checking LinkedIn connection:', error);
+    return NextResponse.json(
+      { 
+        connected: false,
+        message: 'Error checking LinkedIn connection'
+      },
+      { 
+        status: 500,
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0'
+        }
+      }
+    );
+  }
+}
 
 /**
  * POST - Publish a post to LinkedIn
@@ -147,70 +216,36 @@ export async function POST(req: Request) {
 }
 
 /**
- * GET - Check LinkedIn connection status
+ * DELETE - Disconnect LinkedIn account
  */
-export async function GET(req: NextRequest) {
+export async function DELETE(req: Request) {
   try {
     // Get the current session
     const session = await auth();
 
-    // No caching headers - we want fresh responses every time
-    const headers = {
-      'Cache-Control': 'no-cache, no-store, must-revalidate',
-      'Pragma': 'no-cache',
-      'Expires': '0'
-    };
-
     if (!session?.user) {
       return NextResponse.json(
-        { connected: false, message: 'Not authenticated' },
-        { status: 200, headers }
+        { message: 'You must be logged in to disconnect your LinkedIn account' },
+        { status: 401 }
       );
     }
 
-    // Check if the user has a connected LinkedIn account
-    const account = await prisma.account.findFirst({
+    // Delete LinkedIn provider accounts for this user
+    await prisma.account.deleteMany({
       where: { 
         userId: session.user.id,
         provider: 'linkedin'
       },
-      select: {
-        id: true,
-        access_token: true,
-        expires_at: true,
-        providerAccountId: true
-      }
     });
 
-    // Determine connection status: account must exist and have a valid token
-    // If expires_at exists, check if it's still valid
-    const isConnected = !!account && 
-      !!account.access_token && 
-      (!account.expires_at || account.expires_at * 1000 > Date.now());
-
-    const response = {
-      connected: isConnected,
-      linkedinId: account?.providerAccountId || null
-    };
-
-    console.log(`LinkedIn connection check for user ${session.user.id}:`, response);
-
-    return NextResponse.json(response, { headers });
+    return NextResponse.json({
+      message: 'LinkedIn account disconnected successfully',
+    });
   } catch (error) {
-    console.error('Error checking LinkedIn connection:', error);
+    console.error('Error disconnecting LinkedIn account:', error);
     return NextResponse.json(
-      { 
-        connected: false,
-        message: 'Error checking LinkedIn connection'
-      },
-      { 
-        status: 500,
-        headers: {
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
-          'Pragma': 'no-cache',
-          'Expires': '0'
-        }
-      }
+      { message: 'Error disconnecting LinkedIn account' },
+      { status: 500 }
     );
   }
 }

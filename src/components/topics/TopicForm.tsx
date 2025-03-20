@@ -71,8 +71,9 @@ const TopicForm = ({ initialData, isEditMode = false }: TopicFormProps) => {
     setError(null);
 
     try {
+      // Updated to use consolidated topic endpoint
       const response = await fetch(
-        isEditMode ? `/api/topics/${initialData?.id}` : '/api/topics',
+        isEditMode ? `/api/topics/${initialData?.id}` : '/api/topics/all',
         {
           method: isEditMode ? 'PUT' : 'POST',
           headers: {

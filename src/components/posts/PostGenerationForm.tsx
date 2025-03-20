@@ -37,8 +37,9 @@ const PostGenerationForm = ({ topicId, topicName, researchId }: PostGenerationFo
     setError(null);
 
     try {
-      const response = await fetch('/api/posts', {
-        method: 'PUT',
+      // Updated to use consolidated endpoint with action parameter
+      const response = await fetch('/api/posts?action=generate', {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
