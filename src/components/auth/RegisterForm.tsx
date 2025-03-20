@@ -42,7 +42,8 @@ const RegisterForm = () => {
     setError(null);
 
     try {
-      const response = await fetch('/api/auth/register', {
+      // Updated to use consolidated auth endpoint with action parameter
+      const response = await fetch('/api/auth?action=register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

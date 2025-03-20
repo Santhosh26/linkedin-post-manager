@@ -1,7 +1,7 @@
 // src/components/posts/LinkedInShareButton.tsx
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { FiLinkedin, FiAlertCircle, FiEye } from 'react-icons/fi';
 import Button from '@/components/ui/Button';
@@ -26,13 +26,13 @@ export default function LinkedInShareButton({ postId, onSuccess }: LinkedInShare
       setIsSharing(true);
       setError(null);
       
-      const response = await fetch('/api/linkedin/post', {
-        method: 'POST',
+      // Updated to use consolidated endpoint with the Post-specific publish method
+      const response = await fetch(`/api/posts/${postId}`, {
+        method: 'POST', // Using POST for publish action
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          postId,
           visibility,
         }),
       });

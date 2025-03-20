@@ -44,9 +44,9 @@ export default function SecuritySection() {
     setSuccess(null);
 
     try {
-      // Make API request to change password
-      const response = await fetch('/api/user/password', {
-        method: 'PUT',
+      // Updated to use consolidated auth endpoint with action parameter
+      const response = await fetch('/api/auth?action=password', {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },

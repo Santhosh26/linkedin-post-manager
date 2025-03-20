@@ -55,7 +55,8 @@ export default function NotificationCenter() {
   
   const markAsRead = async (id: string) => {
     try {
-      await fetch(`/api/notifications/${id}/read`, { method: 'PUT' });
+      // Updated to use consolidated endpoint
+      await fetch(`/api/notifications/${id}`, { method: 'PUT' });
       setNotifications(notifications.map(n => 
         n.id === id ? { ...n, read: true } : n
       ));
@@ -67,7 +68,8 @@ export default function NotificationCenter() {
   
   const markAllAsRead = async () => {
     try {
-      await fetch(`/api/notifications/read-all`, { method: 'PUT' });
+      // Updated to use consolidated endpoint with special 'all' parameter
+      await fetch(`/api/notifications/all`, { method: 'PUT' });
       setNotifications(notifications.map(n => ({ ...n, read: true })));
       setUnreadCount(0);
     } catch (err) {

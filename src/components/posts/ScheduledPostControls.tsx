@@ -31,7 +31,8 @@ export default function ScheduledPostControls({
     setError(null);
     
     try {
-      const response = await fetch(`/api/posts/${postId}/publish`, {
+      // Updated to use consolidated endpoint with POST method
+      const response = await fetch(`/api/posts/${postId}`, {
         method: 'POST'
       });
       
