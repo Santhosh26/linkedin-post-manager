@@ -4,7 +4,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { signOut, useSession } from 'next-auth/react';
-import { FiMenu, FiX, FiUser, FiLogOut } from 'react-icons/fi';
+import { FiMenu, FiX, FiUser } from 'react-icons/fi';
 import ThemeToggle from '@/components/ui/ThemeToggle';
 import NotificationCenter from '@/components/ui/NotificationCenter';
 const Navbar = () => {
