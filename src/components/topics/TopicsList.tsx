@@ -104,7 +104,7 @@ const TopicsList = ({ topics, onDelete }: TopicsListProps) => {
                           </Button>
                         </Link>
                         <Link href={`/topics/${topic.id}`}>
-                          <Button variant="outline" size="sm">
+                          <Button variant="secondary" size="sm">
                             <FiEdit2 className="h-4 w-4 mr-1" />
                             Edit
                           </Button>

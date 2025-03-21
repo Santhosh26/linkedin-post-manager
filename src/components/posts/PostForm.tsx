@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FiX, FiPlus, FiCalendar, FiAlertCircle } from 'react-icons/fi';
-import Input from '@/components/ui/Input';
+
 import Button from '@/components/ui/Button';
 import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/Card';
 
@@ -166,11 +166,11 @@ const PostForm = ({ initialData, isEditMode = false }: PostFormProps) => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <CardContent>
           {error && (
-            <div className="mb-6 bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 dark:border-red-600 p-4 rounded">
+            <div className="mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded-md">
               <div className="flex">
-                <FiAlertCircle className="h-5 w-5 text-red-500 dark:text-red-400" />
+                <FiAlertCircle className="h-5 w-5 text-red-500" />
                 <div className="ml-3">
-                  <p className="text-sm text-red-700 dark:text-red-400">{error}</p>
+                  <p className="text-sm text-red-700">{error}</p>
                 </div>
               </div>
             </div>
@@ -180,35 +180,37 @@ const PostForm = ({ initialData, isEditMode = false }: PostFormProps) => {
             <div>
               <label
                 htmlFor="content"
-                className="block text-sm font-medium text-gray-700 dark:text-dark-text-secondary mb-1"
+                className="block text-sm font-medium text-gray-700 mb-1"
               >
                 Post Content
               </label>
               <textarea
                 id="content"
                 rows={6}
-                className={`w-full px-3 py-2 bg-white dark:bg-dark-bg-tertiary border rounded-md shadow-sm 
-                          placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-dark-text-primary
-                          focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-600 focus:border-primary-500 dark:focus:border-primary-600 
-                          ${errors.content ? 'border-red-300 dark:border-red-600' : 'border-gray-300 dark:border-gray-700'}`}
+                className={`w-full px-3 py-2 bg-white border rounded-md shadow-sm 
+                          placeholder-gray-400 text-gray-900
+                          focus:outline-none focus:ring-2 focus:ring-primary-500/25 focus:border-primary-500
+                          hover:border-gray-400 transition-all
+                          ${errors.content ? 'border-red-300' : 'border-gray-300'}`}
                 placeholder="Write your LinkedIn post content here..."
                 {...register('content')}
               />
               {errors.content && (
-                <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.content.message}</p>
+                <p className="mt-1 text-sm text-red-600">{errors.content.message}</p>
               )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-dark-text-secondary mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
                 Hashtags
               </label>
               <div className="flex space-x-2">
                 <input
                   type="text"
-                  className="flex-1 px-3 py-2 bg-white dark:bg-dark-bg-tertiary border border-gray-300 dark:border-gray-700 
-                            rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-dark-text-primary
-                            focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-600 focus:border-primary-500 dark:focus:border-primary-600"
+                  className="flex-1 px-3 py-2 bg-white border border-gray-300 
+                            rounded-md shadow-sm placeholder-gray-400 text-gray-900
+                            focus:outline-none focus:ring-2 focus:ring-primary-500/25 focus:border-primary-500
+                            hover:border-gray-400 transition-all"
                   placeholder="Add a hashtag (e.g. #marketing)"
                   value={hashtag}
                   onChange={(e) => setHashtag(e.target.value)}
@@ -228,12 +230,12 @@ const PostForm = ({ initialData, isEditMode = false }: PostFormProps) => {
                 {hashtags.map((tag, index) => (
                   <span
                     key={index}
-                    className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary-100 text-primary-800 dark:bg-primary-900/30 dark:text-primary-300"
+                    className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary-100 text-primary-800"
                   >
                     {tag}
                     <button
                       type="button"
-                      className="ml-1.5 h-4 w-4 rounded-full inline-flex items-center justify-center text-primary-400 dark:text-primary-500 hover:bg-primary-200 dark:hover:bg-primary-800 hover:text-primary-600 dark:hover:text-primary-300 focus:outline-none"
+                      className="ml-1.5 h-4 w-4 rounded-full inline-flex items-center justify-center text-primary-400 hover:bg-primary-200 hover:text-primary-600 focus:outline-none transition-colors"
                       onClick={() => removeHashtag(tag)}
                     >
                       <FiX className="h-3 w-3" />
@@ -246,16 +248,17 @@ const PostForm = ({ initialData, isEditMode = false }: PostFormProps) => {
             <div>
               <label
                 htmlFor="topicId"
-                className="block text-sm font-medium text-gray-700 dark:text-dark-text-secondary mb-1"
+                className="block text-sm font-medium text-gray-700 mb-1"
               >
                 Topic (Optional)
               </label>
               <select
                 id="topicId"
-                className="mt-1 block w-full pl-3 pr-10 py-2 bg-white dark:bg-dark-bg-tertiary 
-                          border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-dark-text-primary
-                          focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-600 focus:border-primary-500 dark:focus:border-primary-600 
-                          sm:text-sm rounded-md transition-colors"
+                className="mt-1 block w-full pl-3 pr-10 py-2 bg-white 
+                          border border-gray-300 text-gray-900
+                          focus:outline-none focus:ring-2 focus:ring-primary-500/25 focus:border-primary-500 
+                          hover:border-gray-400 transition-all
+                          sm:text-sm rounded-md"
                 {...register('topicId')}
                 disabled={isFetchingTopics}
               >
@@ -267,23 +270,24 @@ const PostForm = ({ initialData, isEditMode = false }: PostFormProps) => {
                 ))}
               </select>
               {isFetchingTopics && (
-                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Loading topics...</p>
+                <p className="mt-1 text-sm text-gray-500">Loading topics...</p>
               )}
             </div>
 
             <div>
               <label
                 htmlFor="status"
-                className="block text-sm font-medium text-gray-700 dark:text-dark-text-secondary mb-1"
+                className="block text-sm font-medium text-gray-700 mb-1"
               >
                 Status
               </label>
               <select
                 id="status"
-                className="mt-1 block w-full pl-3 pr-10 py-2 bg-white dark:bg-dark-bg-tertiary 
-                          border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-dark-text-primary
-                          focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-600 focus:border-primary-500 dark:focus:border-primary-600 
-                          sm:text-sm rounded-md transition-colors"
+                className="mt-1 block w-full pl-3 pr-10 py-2 bg-white 
+                          border border-gray-300 text-gray-900
+                          focus:outline-none focus:ring-2 focus:ring-primary-500/25 focus:border-primary-500 
+                          hover:border-gray-400 transition-all
+                          sm:text-sm rounded-md"
                 {...register('status')}
               >
                 <option value="DRAFT">Draft</option>
@@ -297,49 +301,50 @@ const PostForm = ({ initialData, isEditMode = false }: PostFormProps) => {
                 <div>
                   <label
                     htmlFor="scheduledFor"
-                    className="block text-sm font-medium text-gray-700 dark:text-dark-text-secondary mb-1"
+                    className="block text-sm font-medium text-gray-700 mb-1"
                   >
                     Schedule Date and Time
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <FiCalendar className="h-5 w-5 text-gray-400 dark:text-gray-500" />
+                      <FiCalendar className="h-5 w-5 text-gray-400" />
                     </div>
                     <input
                       type="datetime-local"
                       id="scheduledFor"
-                      className="pl-10 block w-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-dark-bg-tertiary 
-                                text-gray-900 dark:text-dark-text-primary rounded-md shadow-sm 
-                                focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-600 focus:border-primary-500 dark:focus:border-primary-600 
-                                sm:text-sm transition-colors"
+                      className="pl-10 block w-full border border-gray-300 bg-white 
+                                text-gray-900 rounded-md shadow-sm 
+                                focus:ring-2 focus:ring-primary-500/25 focus:border-primary-500
+                                hover:border-gray-400 transition-all
+                                sm:text-sm"
                       {...register('scheduledFor')}
                     />
                   </div>
                 </div>
                 
                 <div className="mt-4">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-dark-text-secondary mb-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
                     LinkedIn Visibility
                   </label>
                   <div className="flex space-x-4 mt-2">
                     <label className="inline-flex items-center">
                       <input
                         type="radio"
-                        className="form-radio text-primary-600"
+                        className="form-radio text-primary-600 focus:ring-primary-500"
                         value="PUBLIC"
                         {...register('visibility')}
                         defaultChecked
                       />
-                      <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Public</span>
+                      <span className="ml-2 text-sm text-gray-700">Public</span>
                     </label>
                     <label className="inline-flex items-center">
                       <input
                         type="radio"
-                        className="form-radio text-primary-600"
+                        className="form-radio text-primary-600 focus:ring-primary-500"
                         value="CONNECTIONS"
                         {...register('visibility')}
                       />
-                      <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Connections only</span>
+                      <span className="ml-2 text-sm text-gray-700">Connections only</span>
                     </label>
                   </div>
                 </div>
@@ -350,7 +355,7 @@ const PostForm = ({ initialData, isEditMode = false }: PostFormProps) => {
         <CardFooter className="flex justify-end space-x-3">
           <Button
             type="button"
-            variant="outline"
+            variant="secondary"
             onClick={() => router.back()}
             disabled={isLoading}
           >

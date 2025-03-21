@@ -1,17 +1,40 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
+  /* Base colors */
   --background: #ffffff;
-  --foreground: #1a1a1a;
+  --foreground: #000000;
+  
+  /* Primary color - Electric Blue */
+  --primary-50: #e6f0ff;
+  --primary-100: #cce1ff;
+  --primary-200: #99c3ff;
+  --primary-300: #66a6ff;
+  --primary-400: #338eff;
+  --primary-500: #1a6aff;
+  --primary-600: #0055e5;
+  --primary-700: #0040b8;
+  --primary-800: #00008b;
+  --primary-900: #00204d;
+  
+  /* Accent Colors */
+  --accent-gold: #e1bc36;
+  
+  /* Card and component colors */
   --card-bg: #ffffff;
   --card-border: #e5e7eb;
+  
+  /* Input colors */
   --input-bg: #ffffff;
-  --input-text: #1a1a1a;
+  --input-text: #000000;
   --input-border: #d1d5db;
-  --input-focus-border: #0071fe;
+  --input-focus-border: #1a6aff;
   --input-placeholder: #9ca3af;
-  --button-bg: #0071fe;
-  --button-hover: #005bca;
+  
+  /* Button colors */
+  --button-bg: #1a6aff; /* Electric Blue */
+  --button-hover: #0055e5;
   --button-text: #ffffff;
   --secondary-button-bg: #f3f4f6;
   --secondary-button-hover: #e5e7eb;
@@ -19,16 +42,22 @@
   --outline-button-border: #d1d5db;
   --outline-button-hover: #f3f4f6;
   --outline-button-text: #1f2937;
+  
+  /* Navigation colors */
   --nav-bg: #ffffff;
   --nav-border: #e5e7eb;
   --sidebar-bg: #ffffff;
   --sidebar-border: #e5e7eb;
   --sidebar-hover: #f3f4f6;
-  --sidebar-active: #e6f1ff;
-  --sidebar-active-text: #0071fe;
+  --sidebar-active: #e6f0ff;
+  --sidebar-active-text: #1a6aff;
+  
+  /* Table colors */
   --table-header-bg: #f9fafb;
   --table-border: #e5e7eb;
   --table-row-hover: #f9fafb;
+  
+  /* Badge colors */
   --badge-bg: #f3f4f6;
   --badge-text: #1f2937;
   --badge-danger-bg: #fee2e2;
@@ -41,69 +70,33 @@
   --badge-info-text: #0369a1;
 }
 
-.dark {
-  --background: #121212;
-  --foreground: #f0f0f0;
-  --card-bg: #1e1e1e;
-  --card-border: #2a2a2a;
-  --input-bg: #2a2a2a;
-  --input-text: #f0f0f0;
-  --input-border: #3f3f3f;
-  --input-focus-border: #0071fe;
-  --input-placeholder: #6b7280;
-  --button-bg: #0071fe;
-  --button-hover: #005bca;
-  --button-text: #ffffff;
-  --secondary-button-bg: #fdfdfd;
-  --secondary-button-hover: #3f3f3f;
-  --secondary-button-text: #f0f0f0;
-  --outline-button-border: #3f3f3f;
-  --outline-button-hover: #2a2a2a;
-  --outline-button-text: #f0f0f0;
-  --nav-bg: #121212;
-  --nav-border: #2a2a2a;
-  --sidebar-bg: #1a1a1a;
-  --sidebar-border: #2a2a2a;
-  --sidebar-hover: #2a2a2a;
-  --sidebar-active: #1e2a3a;
-  --sidebar-active-text: #3b82f6;
-  --table-header-bg: #1e1e1e;
-  --table-border: #2a2a2a;
-  --table-row-hover: #1a1a1a;
-  --badge-bg: #2a2a2a;
-  --badge-text: #f0f0f0;
-  --badge-danger-bg: #441212;
-  --badge-danger-text: #f87171;
-  --badge-warning-bg: #422006;
-  --badge-warning-text: #fbbf24;
-  --badge-success-bg: #063423;
-  --badge-success-text: #6ee7b7;
-  --badge-info-bg: #042f49;
-  --badge-info-text: #7dd3fc;
-}
-
 body {
   background-color: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans, Roboto, system-ui, sans-serif);
+  font-family: var(--font-sans, Inter, system-ui, sans-serif);
   transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
 }
 
-/* Improved Form Inputs */
+/* Improved Form Inputs with subtle hover states and focus rings */
 input, textarea, select {
   background-color: var(--input-bg);
   color: var(--input-text);
   border-color: var(--input-border);
+  transition: all 0.2s ease;
 }
 
 input::placeholder, textarea::placeholder {
   color: var(--input-placeholder);
 }
 
+input:hover, textarea:hover, select:hover {
+  border-color: #b0b5bd; /* Subtle hover state */
+}
+
 input:focus, textarea:focus, select:focus {
   border-color: var(--input-focus-border);
   outline: none;
-  box-shadow: 0 0 0 2px rgba(0, 113, 254, 0.2);
+  box-shadow: 0 0 0 3px rgba(26, 106, 255, 0.15); /* Soft focus ring */
 }
 
 /* Scrollbar styling */
@@ -117,26 +110,50 @@ input:focus, textarea:focus, select:focus {
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #888;
+  background-color: #d1d5db;
   border-radius: 4px;
 }
 
-.dark ::-webkit-scrollbar-thumb {
-  background-color: #555;
-}
-
 ::-webkit-scrollbar-thumb:hover {
-  background-color: #666;
+  background-color: #9ca3af;
 }
 
-.dark ::-webkit-scrollbar-thumb:hover {
-  background-color: #777;
-}
-
-/* Transitions for smooth theme changes */
+/* Transitions for micro-interactions */
 *, *::before, *::after {
-  transition-property: background-color, border-color, color, fill, stroke;
+  transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
   transition-duration: 0.2s;
   transition-timing-function: ease-in-out;
 }
 
+/* Utility classes for the new design system */
+.shadow-bubble {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.03), 0 4px 8px rgba(0, 0, 0, 0.04);
+}
+
+.rounded-card {
+  border-radius: 1rem;
+}
+
+/* Hover effects for cards */
+.card-hover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05), 0 6px 10px rgba(0, 0, 0, 0.03);
+}
+
+/* Button hover effects */
+.button-hover {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.button-hover:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
+}
+
+.button-hover:active:not(:disabled) {
+  transform: translateY(0);
+}

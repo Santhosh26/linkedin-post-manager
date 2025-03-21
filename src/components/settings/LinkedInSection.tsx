@@ -221,7 +221,7 @@ export default function LinkedInSection() {
                   <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-primary-600 dark:border-primary-400"></div>
                 ) : isConnected ? (
                   <Button
-                    variant="outline"
+                    variant="danger"
                     size="sm"
                     onClick={handleDisconnectLinkedIn}
                   >
@@ -299,7 +299,7 @@ export default function LinkedInSection() {
         <div className="text-xs text-gray-500 dark:text-gray-400">
           <p>
             By connecting your LinkedIn account, you authorize this application to create posts on your behalf.
-            This integration uses LinkedIn's official API and follows their terms of service.
+            This integration uses LinkedIn&apos;s official API and follows their terms of service.
           </p>
           {isConnected && (
             <p className="mt-2">

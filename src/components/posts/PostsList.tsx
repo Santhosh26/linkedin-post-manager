@@ -105,7 +105,10 @@ const PostsList = ({ posts, topics, onDelete }: PostsListProps) => {
             </div>
             <input
               type="text"
-              className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 
+                       focus:outline-none focus:ring-2 focus:ring-primary-500/25 focus:border-primary-500
+                       hover:border-gray-400 transition-all
+                       sm:text-sm"
               placeholder="Search posts or hashtags..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -118,7 +121,10 @@ const PostsList = ({ posts, topics, onDelete }: PostsListProps) => {
               <FiFilter className="h-5 w-5 text-gray-400" />
             </div>
             <select
-              className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 
+                       focus:outline-none focus:ring-2 focus:ring-primary-500/25 focus:border-primary-500
+                       hover:border-gray-400 transition-all
+                       sm:text-sm"
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
             >
@@ -135,7 +141,10 @@ const PostsList = ({ posts, topics, onDelete }: PostsListProps) => {
               <FiFilter className="h-5 w-5 text-gray-400" />
             </div>
             <select
-              className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 
+                       focus:outline-none focus:ring-2 focus:ring-primary-500/25 focus:border-primary-500
+                       hover:border-gray-400 transition-all
+                       sm:text-sm"
               value={topicFilter}
               onChange={(e) => setTopicFilter(e.target.value)}
             >
@@ -150,7 +159,7 @@ const PostsList = ({ posts, topics, onDelete }: PostsListProps) => {
         </div>
 
         {filteredPosts.length > 0 ? (
-          <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
+          <div className="overflow-hidden shadow-bubble rounded-[1rem] border border-gray-200">
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-300">
                 <thead className="bg-gray-50">
@@ -174,7 +183,7 @@ const PostsList = ({ posts, topics, onDelete }: PostsListProps) => {
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-white">
                   {filteredPosts.map((post) => (
-                    <tr key={post.id}>
+                    <tr key={post.id} className="hover:bg-gray-50 transition-colors">
                       <td className="py-4 pl-4 pr-3 text-sm sm:pl-6">
                         <div className="font-medium text-gray-900 line-clamp-2 max-w-xl">
                           {post.content}
@@ -184,7 +193,7 @@ const PostsList = ({ posts, topics, onDelete }: PostsListProps) => {
                             {post.hashtags.slice(0, 3).map((tag, index) => (
                               <span 
                                 key={index} 
-                                className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800"
+                                className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-primary-100 text-primary-800"
                               >
                                 {tag}
                               </span>
@@ -219,7 +228,7 @@ const PostsList = ({ posts, topics, onDelete }: PostsListProps) => {
                       <td className="relative py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
                         <div className="flex justify-end gap-2">
                           <Link href={`/posts/${post.id}`}>
-                            <Button variant="outline" size="sm">
+                            <Button variant="secondary" size="sm">
                               <FiEdit2 className="h-4 w-4 mr-1" />
                               Edit
                             </Button>
@@ -241,7 +250,7 @@ const PostsList = ({ posts, topics, onDelete }: PostsListProps) => {
             </div>
           </div>
         ) : (
-          <div className="text-center py-8">
+          <div className="text-center py-8 bg-white rounded-[1rem] shadow-bubble border border-gray-200">
             <p className="text-gray-500 mb-4">
               {posts.length === 0
                 ? "You haven't created any posts yet."

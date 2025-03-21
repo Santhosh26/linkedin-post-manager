@@ -180,7 +180,7 @@ const PostGenerationForm = ({ topicId, topicName, researchId }: PostGenerationFo
       </CardContent>
       <CardFooter className="flex justify-between">
         <Button
-          variant="outline"
+          variant="secondary"
           onClick={() => window.history.back()}
           disabled={isLoading}
         >

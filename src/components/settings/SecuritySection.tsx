@@ -114,7 +114,7 @@ export default function SecuritySection() {
                   <div className="flex items-center justify-between">
                     <h3 className="text-base font-medium text-gray-900 dark:text-dark-text-primary">Account Activity</h3>
                     <Button
-                      variant="outline"
+                      variant="secondary"
                       size="sm"
                     >
                       View Activity
@@ -220,7 +220,7 @@ export default function SecuritySection() {
                         </Button>
                         <Button
                           type="button"
-                          variant="outline"
+                          variant="secondary"
                           onClick={() => setIsModalOpen(false)}
                           className="mt-3 w-full sm:mt-0 sm:w-auto"
                         >

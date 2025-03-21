@@ -79,7 +79,7 @@ export default function ScheduledPostControls({
         </div>
         <div className="flex space-x-2 mt-3 sm:mt-0">
           <Link href={`/posts/${postId}`}>
-            <Button size="sm" variant="outline">
+            <Button size="sm" variant="secondary">
               <FiEdit2 className="mr-1 h-4 w-4" /> Edit
             </Button>
           </Link>

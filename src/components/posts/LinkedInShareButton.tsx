@@ -69,7 +69,7 @@ export default function LinkedInShareButton({ postId, onSuccess }: LinkedInShare
           Connect your LinkedIn account in settings to share posts directly.
         </p>
         <Button
-          variant="outline"
+          variant="secondary"
           size="sm"
           disabled={true}
         >
@@ -143,7 +143,7 @@ export default function LinkedInShareButton({ postId, onSuccess }: LinkedInShare
           </Button>
           
           <Button
-            variant="outline"
+            variant="secondary"
             onClick={toggleOptions}
             title="Sharing options"
           >

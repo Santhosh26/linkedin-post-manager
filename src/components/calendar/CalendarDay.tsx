@@ -3,7 +3,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { format, isToday, isSameMonth } from 'date-fns';
+import { format } from 'date-fns';
 import { FiSend, FiEye, FiMoreVertical } from 'react-icons/fi';
 
 interface Post {
@@ -15,12 +15,13 @@ interface Post {
 
 interface CalendarDayProps {
   day: Date;
-  monthStart: Date;
+  isCurrentMonth: boolean;
+  isToday: boolean;
   posts: Post[];
   onPublishNow: (postId: string) => Promise<void>;
 }
 
-export default function CalendarDay({ day, monthStart, posts, onPublishNow }: CalendarDayProps) {
+export default function CalendarDay({ day, isCurrentMonth, isToday, posts, onPublishNow }: CalendarDayProps) {
   const [expandedPost, setExpandedPost] = useState<string | null>(null);
   const [publishingId, setPublishingId] = useState<string | null>(null);
 
@@ -44,18 +45,18 @@ export default function CalendarDay({ day, monthStart, posts, onPublishNow }: Ca
 
   return (
     <div
-      className={`min-h-[120px] p-2 border border-gray-200 dark:border-gray-700 ${
-        !isSameMonth(day, monthStart)
-          ? 'bg-gray-100 dark:bg-gray-800 text-gray-400'
-          : isToday(day)
-          ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-700'
-          : ''
-      }`}
+      className={`min-h-[120px] p-2 ${
+        !isCurrentMonth
+          ? 'bg-gray-100 text-gray-400'
+          : isToday
+          ? 'bg-primary-50 border-primary-200'
+          : 'bg-white'
+      } transition-colors`}
     >
-      <div className="font-medium text-sm text-gray-900 dark:text-dark-text-primary">
+      <div className="font-medium text-sm text-gray-900">
         {format(day, 'd')}
-        {isToday(day) && (
-          <span className="ml-1 inline-flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 text-xs text-white">
+        {isToday && (
+          <span className="ml-1 inline-flex h-4 w-4 items-center justify-center rounded-full bg-primary-500 text-xs text-white">
             •
           </span>
         )}
@@ -71,9 +72,9 @@ export default function CalendarDay({ day, monthStart, posts, onPublishNow }: Ca
               >
                 <div className={`${
                   expandedPost === post.id 
-                    ? 'bg-blue-100 dark:bg-blue-900/30' 
-                    : 'bg-blue-50 dark:bg-blue-900/20 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/30'
-                  } text-blue-800 dark:text-blue-300 text-xs p-1 rounded transition-colors`}
+                    ? 'bg-primary-100 text-primary-800' 
+                    : 'bg-primary-50 text-primary-700 group-hover:bg-primary-100'
+                  } text-xs p-1.5 rounded-md transition-all shadow-sm hover:shadow`}
                 >
                   <div className="flex justify-between items-center">
                     <div className="truncate flex-1">
@@ -81,7 +82,7 @@ export default function CalendarDay({ day, monthStart, posts, onPublishNow }: Ca
                     </div>
                     <button
                       onClick={(e) => toggleExpandPost(post.id, e)}
-                      className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 p-1 rounded-full hover:bg-blue-200 dark:hover:bg-blue-800"
+                      className="text-primary-600 hover:text-primary-800 p-1 rounded-full hover:bg-primary-200 transition-colors"
                     >
                       <FiMoreVertical className="h-3 w-3" />
                     </button>
@@ -93,10 +94,10 @@ export default function CalendarDay({ day, monthStart, posts, onPublishNow }: Ca
                   </div>
                   
                   {expandedPost === post.id && (
-                    <div className="mt-2 flex justify-between border-t border-blue-200 dark:border-blue-700 pt-1">
+                    <div className="mt-2 flex justify-between border-t border-primary-200 pt-1">
                       <Link 
                         href={`/posts/${post.id}`}
-                        className="flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 p-1"
+                        className="flex items-center text-primary-600 hover:text-primary-800 p-1 transition-colors"
                         onClick={(e) => e.stopPropagation()}
                       >
                         <FiEye className="h-3 w-3 mr-1" />
@@ -106,7 +107,7 @@ export default function CalendarDay({ day, monthStart, posts, onPublishNow }: Ca
                       <button
                         onClick={(e) => handlePublishNow(post.id, e)}
                         disabled={publishingId === post.id}
-                        className="flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 p-1 disabled:opacity-50"
+                        className="flex items-center text-primary-600 hover:text-primary-800 p-1 disabled:opacity-50 transition-colors"
                       >
                         <FiSend className="h-3 w-3 mr-1" />
                         <span>{publishingId === post.id ? 'Publishing...' : 'Publish'}</span>

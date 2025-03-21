@@ -3,7 +3,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, addMonths, subMonths } from 'date-fns';
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, addMonths, subMonths, isSameMonth, isToday } from 'date-fns';
 import { FiChevronLeft, FiChevronRight, FiCalendar, FiAlertCircle, FiCheckCircle } from 'react-icons/fi';
 import Button from '@/components/ui/Button';
 import { Card, CardHeader, CardContent } from '@/components/ui/Card';
@@ -72,7 +72,7 @@ const Calendar = ({ posts, onRefresh }: CalendarProps) => {
     });
     
     try {
-      const response = await fetch(`/api/posts/${postId}/publish`, {
+      const response = await fetch(`/api/posts/${postId}`, {
         method: 'POST'
       });
       
@@ -140,45 +140,45 @@ const Calendar = ({ posts, onRefresh }: CalendarProps) => {
       />
       <CardContent>
         {publishingStatus.success && (
-          <div className="mb-4 bg-green-50 dark:bg-green-900/20 border-l-4 border-green-500 dark:border-green-600 p-3 rounded-md">
+          <div className="mb-4 bg-green-50 border-l-4 border-green-500 p-3 rounded-md">
             <div className="flex">
-              <FiCheckCircle className="h-5 w-5 text-green-500 dark:text-green-400 flex-shrink-0" />
+              <FiCheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
               <div className="ml-3">
-                <p className="text-sm text-green-700 dark:text-green-400">Post published successfully!</p>
+                <p className="text-sm text-green-700">Post published successfully!</p>
               </div>
             </div>
           </div>
         )}
         
         {publishingStatus.error && (
-          <div className="mb-4 bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 dark:border-red-600 p-3 rounded-md">
+          <div className="mb-4 bg-red-50 border-l-4 border-red-500 p-3 rounded-md">
             <div className="flex">
-              <FiAlertCircle className="h-5 w-5 text-red-500 dark:text-red-400 flex-shrink-0" />
+              <FiAlertCircle className="h-5 w-5 text-red-500 flex-shrink-0" />
               <div className="ml-3">
-                <p className="text-sm text-red-700 dark:text-red-400">{publishingStatus.error}</p>
+                <p className="text-sm text-red-700">{publishingStatus.error}</p>
               </div>
             </div>
           </div>
         )}
         
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-dark-text-primary">
+          <h2 className="text-lg font-semibold text-gray-900">
             {format(currentMonth, 'MMMM yyyy')}
           </h2>
           <div className="flex space-x-2">
-            <Button variant="outline" size="sm" onClick={previousMonth}>
+            <Button variant="secondary" size="sm" onClick={previousMonth}>
               <FiChevronLeft className="h-5 w-5" />
             </Button>
-            <Button variant="outline" size="sm" onClick={nextMonth}>
+            <Button variant="secondary" size="sm" onClick={nextMonth}>
               <FiChevronRight className="h-5 w-5" />
             </Button>
           </div>
         </div>
         
-        <div className="grid grid-cols-7 gap-px">
+        <div className="grid grid-cols-7 gap-px rounded-[1rem] overflow-hidden shadow-bubble border border-gray-200">
           {/* Days of week header */}
           {daysOfWeek.map(day => (
-            <div key={day} className="p-2 text-center font-medium text-gray-500 dark:text-gray-400 text-sm">
+            <div key={day} className="p-2 text-center font-medium text-gray-500 text-sm bg-gray-50">
               {day}
             </div>
           ))}
@@ -188,11 +188,16 @@ const Calendar = ({ posts, onRefresh }: CalendarProps) => {
             const formattedDate = format(day, 'yyyy-MM-dd');
             const postsForDay = postsByDate[formattedDate] || [];
             
+            // Add visual styles for today and non-current month days
+            const isCurrentMonth = isSameMonth(day, currentMonth);
+            const isTodayDate = isToday(day);
+            
             return (
               <CalendarDay
                 key={day.toString()}
                 day={day}
-                monthStart={monthStart}
+                isCurrentMonth={isCurrentMonth}
+                isToday={isTodayDate}
                 posts={postsForDay}
                 onPublishNow={handlePublishPost}
               />
@@ -200,7 +205,7 @@ const Calendar = ({ posts, onRefresh }: CalendarProps) => {
           })}
         </div>
         
-        <div className="mt-4 text-sm text-gray-600 dark:text-gray-400">
+        <div className="mt-4 text-sm text-gray-600">
           <p>Click on a post to view or edit it. Expand a post to see quick actions.</p>
         </div>
       </CardContent>
