@@ -35,7 +35,7 @@ const Button = ({
   
   // Gradient backgrounds that shift on hover
   const variantStyles = {
-    primary: 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white border border-transparent shadow hover:shadow-md active:shadow active:translate-y-0.5 focus:ring-2 focus:ring-blue-300 focus:ring-offset-2',
+    primary: 'bg-gradient-to-r from-violet-500 to-violet-600 hover:from-violet-600 hover:to-violet-700 text-white border border-transparent shadow hover:shadow-md active:shadow active:translate-y-0.5 focus:ring-2 focus:ring-violet-300 focus:ring-offset-2',
     
     secondary: 'bg-gradient-to-r from-gray-100 to-gray-200 hover:from-gray-200 hover:to-gray-300 text-gray-800 border border-gray-300 shadow hover:shadow-md active:shadow active:translate-y-0.5 focus:ring-2 focus:ring-gray-300 focus:ring-offset-2',
     
