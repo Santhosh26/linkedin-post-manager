@@ -71,7 +71,8 @@ export function useLinkedInStatus() {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 5000); // 5-second timeout
         
-        const response = await fetch('/api/linkedin/post', {
+        // Updated to use consolidated endpoint
+        const response = await fetch('/api/linkedin', {
           signal: controller.signal,
           headers: {
             'Cache-Control': 'no-cache, no-store, must-revalidate',

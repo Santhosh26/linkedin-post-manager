@@ -1,7 +1,8 @@
 // src/app/api/cron/publish-scheduled-posts.ts
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { postToLinkedIn, getLinkedInPostUrl } from '@/lib/services/linkedin';
+import { postToLinkedIn, getLinkedInPostUrl, refreshLinkedInToken } from '@/lib/services/linkedin';
+import { createNotification } from '@/lib/services/notification';
 
 // Authentication for the cron job to prevent unauthorized access
 const validateCronSecret = (req: Request) => {
@@ -51,6 +52,7 @@ export async function GET(req: Request) {
                 provider: 'linkedin',
               },
               select: {
+                id: true,
                 access_token: true,
                 expires_at: true,
                 refresh_token: true,
@@ -88,29 +90,96 @@ export async function GET(req: Request) {
             status: 'skipped',
             message: 'User does not have a LinkedIn account connected',
           });
+          
+          // Create notification for the user
+          await createNotification(
+            post.userId,
+            'SCHEDULED_POST_FAILED',
+            'Failed to publish scheduled post: LinkedIn account not connected.',
+            {
+              postId: post.id,
+              scheduledTime: post.scheduledFor?.toISOString(),
+            }
+          );
           continue;
         }
         
         const linkedInAccount = post.user.accounts[0];
         
-        // Check if token is expired
+        // Check if token is expired and try to refresh it
+        let accessToken = linkedInAccount.access_token;
         if (linkedInAccount.expires_at && linkedInAccount.expires_at * 1000 <= Date.now()) {
-          console.log(`Skipping post ${post.id}: LinkedIn token expired`);
-          results.skipped++;
-          results.details.push({
-            postId: post.id,
-            status: 'skipped',
-            message: 'LinkedIn token expired',
-          });
-          continue;
+          // Attempt to refresh the token if refresh token exists
+          if (linkedInAccount.refresh_token) {
+            console.log(`LinkedIn token expired for post ${post.id}, attempting to refresh...`);
+            const refreshedToken = await refreshLinkedInToken(linkedInAccount.refresh_token);
+            
+            if (refreshedToken) {
+              console.log(`Successfully refreshed LinkedIn token for post ${post.id}`);
+              // Update the account with refreshed token
+              await prisma.account.update({
+                where: { id: linkedInAccount.id },
+                data: {
+                  access_token: refreshedToken.accessToken,
+                  expires_at: Math.floor(refreshedToken.expiresAt / 1000),
+                  refresh_token: refreshedToken.refreshToken || linkedInAccount.refresh_token,
+                }
+              });
+              
+              // Use the new access token
+              accessToken = refreshedToken.accessToken;
+            } else {
+              // Token refresh failed - skip this post
+              console.log(`Failed to refresh LinkedIn token for post ${post.id}`);
+              results.skipped++;
+              results.details.push({
+                postId: post.id,
+                status: 'skipped',
+                message: 'LinkedIn token expired and refresh failed',
+              });
+              
+              // Create notification for the user
+              await createNotification(
+                post.userId,
+                'SCHEDULED_POST_FAILED',
+                'Failed to publish scheduled post: LinkedIn authorization expired. Please reconnect your LinkedIn account.',
+                {
+                  postId: post.id,
+                  scheduledTime: post.scheduledFor?.toISOString(),
+                }
+              );
+              continue;
+            }
+          } else {
+            // No refresh token - skip this post
+            console.log(`Skipping post ${post.id}: LinkedIn token expired and no refresh token available`);
+            results.skipped++;
+            results.details.push({
+              postId: post.id,
+              status: 'skipped',
+              message: 'LinkedIn token expired and no refresh token available',
+            });
+            
+            // Create notification for the user
+            await createNotification(
+              post.userId,
+              'SCHEDULED_POST_FAILED',
+              'Failed to publish scheduled post: LinkedIn authorization expired. Please reconnect your LinkedIn account.',
+              {
+                postId: post.id,
+                scheduledTime: post.scheduledFor?.toISOString(),
+              }
+            );
+            continue;
+          }
         }
         
-        // Publish to LinkedIn
+        // Publish to LinkedIn with the proper visibility setting
         console.log(`Publishing post ${post.id} to LinkedIn...`);
         const linkedinPostId = await postToLinkedIn(
-          linkedInAccount.access_token,
+          accessToken,
           post.content,
-          'PUBLIC' // Default to public visibility
+          (post.visibility as 'PUBLIC' | 'CONNECTIONS') || 'PUBLIC'
         );
         
         // Get the LinkedIn post URL
@@ -133,6 +202,17 @@ export async function GET(req: Request) {
           postId: post.id,
           status: 'success',
         });
+        
+        // Create success notification for the user
+        await createNotification(
+          post.userId,
+          'SCHEDULED_POST_PUBLISHED',
+          'Your scheduled post was published to LinkedIn successfully!',
+          {
+            postId: post.id,
+            linkedinPostUrl,
+          }
+        );
       } catch (error) {
         console.error(`Error publishing post ${post.id}:`, error);
         results.failed++;
@@ -142,9 +222,17 @@ export async function GET(req: Request) {
           message: error instanceof Error ? error.message : 'Unknown error',
         });
         
-        // Optionally, mark the post as failed or keep it as scheduled
-        // This depends on whether you want to retry failed posts
-        // For now, we'll leave it as scheduled so it can be retried
+        // Create failure notification for the user
+        await createNotification(
+          post.userId,
+          'SCHEDULED_POST_FAILED',
+          'Failed to publish your scheduled post to LinkedIn.',
+          {
+            postId: post.id,
+            error: error instanceof Error ? error.message : 'Unknown error',
+            scheduledTime: post.scheduledFor?.toISOString(),
+          }
+        );
       }
     }
     
@@ -167,5 +255,9 @@ export async function GET(req: Request) {
 
 // Optional: Also add a POST endpoint for manual triggering with proper authentication
 export async function POST(req: Request) {
+  // For manual triggering, we always validate the secret
+  if (!validateCronSecret(req)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   return GET(req);
 }

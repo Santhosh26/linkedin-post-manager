@@ -1,5 +1,5 @@
-// src/app/api/posts/route.tsx
-import { NextResponse } from 'next/server';
+// src/app/api/posts/route.ts
+import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
@@ -20,10 +20,11 @@ const CreatePostSchema = z.object({
   topicId: z.string().optional(),
   status: z.enum(['DRAFT', 'SCHEDULED', 'PUBLISHED']).optional(),
   scheduledFor: z.string().optional(), // ISO string date
+  visibility: z.enum(['PUBLIC', 'CONNECTIONS']).optional(),
 });
 
 // GET all posts for the current user
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
   try {
     const session = await auth();
 
@@ -37,8 +38,43 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const topicId = searchParams.get('topicId');
     const status = searchParams.get('status');
+    const id = searchParams.get('id');
 
-    // Build the query
+    // If an ID is provided, get a specific post
+    if (id) {
+      const post = await prisma.post.findUnique({
+        where: {
+          id,
+        },
+        include: {
+          topic: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      });
+
+      if (!post) {
+        return NextResponse.json(
+          { message: 'Post not found' },
+          { status: 404 }
+        );
+      }
+
+      // Make sure the post belongs to the user
+      if (post.userId !== session.user.id) {
+        return NextResponse.json(
+          { message: 'You do not have permission to access this post' },
+          { status: 403 }
+        );
+      }
+
+      return NextResponse.json(post);
+    }
+
+    // Build the query for listing posts
     const where: {
       userId: string;
       topicId?: string;
@@ -80,7 +116,7 @@ export async function GET(req: Request) {
 }
 
 // POST - create a new post
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
     const session = await auth();
 
@@ -92,7 +128,16 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { content, hashtags = [], topicId, status = 'DRAFT', scheduledFor } = CreatePostSchema.parse(body);
+    
+    // Check if we're generating posts or creating a regular post
+    const action = new URL(req.url).searchParams.get('action');
+    
+    if (action === 'generate') {
+      return handleGeneratePosts(session, body);
+    }
+
+    // Standard post creation
+    const { content, hashtags = [], topicId, status = 'DRAFT', scheduledFor, visibility = 'PUBLIC' } = CreatePostSchema.parse(body);
 
     // If topicId is provided, verify it exists and belongs to the user
     if (topicId) {
@@ -125,6 +170,7 @@ export async function POST(req: Request) {
         status,
         topicId,
         userId: session.user.id,
+        visibility,
         ...(scheduledFor && { scheduledFor: new Date(scheduledFor) }),
       },
     });
@@ -143,19 +189,9 @@ export async function POST(req: Request) {
   }
 }
 
-// Generate posts from research
-export async function PUT(req: Request) {
+// Handler for generating posts from research
+async function handleGeneratePosts(session: any, body: any) {
   try {
-    const session = await auth();
-
-    if (!session?.user) {
-      return NextResponse.json(
-        { message: 'You must be logged in to generate posts' },
-        { status: 401 }
-      );
-    }
-
-    const body = await req.json();
     const { topicId, researchId, tone = 'professional', variationCount = 2 } = GeneratePostSchema.parse(body);
 
     // Verify topic exists and belongs to user
@@ -233,9 +269,6 @@ export async function PUT(req: Request) {
     }
 
     console.error('Error generating posts:', error);
-    return NextResponse.json(
-      { message: 'Error generating posts' },
-      { status: 500 }
-    );
+    throw error; // Re-throw to be caught by the outer handler
   }
 }

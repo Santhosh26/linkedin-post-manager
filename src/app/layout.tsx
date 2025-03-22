@@ -1,12 +1,12 @@
 // src/app/layout.tsx
 import type { Metadata } from 'next';
-import { Roboto } from 'next/font/google';
+import { Inter } from 'next/font/google'; // Changed to Inter from Roboto
 import './globals.css';
 import AuthProvider from '@/components/auth/AuthProvider';
 
 // Define the font with a proper fallback
-const roboto = Roboto({
-  weight: ['400', '500', '700'],
+const inter = Inter({
+  weight: ['400', '500', '600', '700'],
   subsets: ['latin'],
   display: 'swap',
   fallback: ['system-ui', 'arial', 'sans-serif'],
@@ -24,7 +24,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="h-full">
-      <body className={`${roboto.className} h-full antialiased`}>
+      <body className={`${inter.className} h-full antialiased`}>
         <AuthProvider>{children}</AuthProvider>
       </body>
     </html>

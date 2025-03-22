@@ -53,7 +53,7 @@ export async function generateLinkedInPosts(params: GeneratePostParams): Promise
         { role: "system", content: systemMessage },
         { role: "user", content: userMessage }
       ],
-      temperature: 0.7,
+      temperature: 1,
       response_format: { type: "json_object" }
     });
     

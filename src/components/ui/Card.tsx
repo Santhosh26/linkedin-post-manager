@@ -8,7 +8,7 @@ interface CardProps {
 
 export const Card: React.FC<CardProps> = ({ children, className = '' }) => {
   return (
-    <div className={`bg-white dark:bg-dark-bg-secondary rounded-lg shadow-sm dark:shadow-md border border-gray-200 dark:border-gray-800 overflow-hidden transition-colors ${className}`}>
+    <div className={`bg-white rounded-[1rem] shadow-bubble border border-gray-200 overflow-hidden transition-all ${className}`}>
       {children}
     </div>
   );
@@ -28,11 +28,11 @@ export const CardHeader: React.FC<CardHeaderProps> = ({
   className = '',
 }) => {
   return (
-    <div className={`px-6 py-4 border-b border-gray-200 dark:border-gray-800 transition-colors ${className}`}>
+    <div className={`px-6 py-5 border-b border-gray-200 ${className}`}>
       <div className="flex justify-between items-center">
         <div>
-          {title && <h3 className="text-lg font-medium text-gray-900 dark:text-dark-text-primary">{title}</h3>}
-          {subtitle && <p className="mt-1 text-sm text-gray-500 dark:text-dark-text-tertiary">{subtitle}</p>}
+          {title && <h3 className="text-lg font-semibold text-gray-900">{title}</h3>}
+          {subtitle && <p className="mt-1 text-sm text-gray-500">{subtitle}</p>}
         </div>
         {action && <div>{action}</div>}
       </div>
@@ -46,7 +46,7 @@ interface CardContentProps {
 }
 
 export const CardContent: React.FC<CardContentProps> = ({ children, className = '' }) => {
-  return <div className={`px-6 py-4 text-gray-700 dark:text-dark-text-secondary transition-colors ${className}`}>{children}</div>;
+  return <div className={`px-6 py-5 text-gray-700 ${className}`}>{children}</div>;
 };
 
 interface CardFooterProps {
@@ -56,7 +56,7 @@ interface CardFooterProps {
 
 export const CardFooter: React.FC<CardFooterProps> = ({ children, className = '' }) => {
   return (
-    <div className={`px-6 py-4 border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-dark-bg-tertiary transition-colors ${className}`}>
+    <div className={`px-6 py-4 border-t border-gray-200 bg-gray-50 ${className}`}>
       {children}
     </div>
   );

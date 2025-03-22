@@ -1,59 +1,62 @@
 // tailwind.config.js
 module.exports = {
-    darkMode: 'class', // Enable class-based dark mode
-    content: [
-      "./src/**/*.{js,ts,jsx,tsx,mdx}",
-    ],
-    theme: {
-      extend: {
-        colors: {
-          // Light mode colors
-          primary: {
-            50: '#e6f1ff',
-            100: '#cce3ff',
-            200: '#99c7ff',
-            300: '#66aaff',
-            400: '#338eff',
-            500: '#0071fe',
-            600: '#005bca',
-            700: '#004397',
-            800: '#002c63',
-            900: '#001630',
-          },
-          // Custom neutral palette for better contrast
-          "light-text": {
-            primary: '#1a1a1a',
-            secondary: '#4a4a4a',
-            tertiary: '#717171',
-          },
-          "light-bg": {
-            primary: '#ffffff',
-            secondary: '#f5f7fa',
-            tertiary: '#e9ecef',
-          },
-          // Dark mode colors
-          "dark-text": {
-            primary: '#f0f0f0',
-            secondary: '#c0c0c0',
-            tertiary: '#909090',
-          },
-          "dark-bg": {
-            primary: '#121212',
-            secondary: '#1e1e1e',
-            tertiary: '#2a2a2a',
-          },
+  content: [
+    "./src/**/*.{js,ts,jsx,tsx,mdx}",
+  ],
+  theme: {
+    extend: {
+      colors: {
+        // Primary Electric Blue
+        primary: {
+          50: '#e6f0ff',
+          100: '#cce1ff',
+          200: '#99c3ff',
+          300: '#66a6ff',
+          400: '#338eff',
+          500: '#1a6aff', // Main Electric Blue
+          600: '#0055e5',
+          700: '#0040b8',
+          800: '#00008b', // Navy accent
+          900: '#00204d',
         },
-        boxShadow: {
-          'light': '0 2px 5px 0 rgba(0, 0, 0, 0.05)',
-          'light-md': '0 4px 8px 0 rgba(0, 0, 0, 0.1)',
-          'dark': '0 2px 5px 0 rgba(0, 0, 0, 0.3)',
-          'dark-md': '0 4px 8px 0 rgba(0, 0, 0, 0.4)',
+        // Complementary colors per design spec
+        black: '#000000',
+        white: '#FFFFFF',
+        gold: '#e1bc36',
+        
+        // Text colors for readability
+        text: {
+          primary: '#000000',
+          secondary: '#4a4a4a',
+          tertiary: '#717171',
         },
-        fontFamily: {
-          sans: ['Roboto', 'system-ui', 'sans-serif'],
-          mono: ['Roboto Mono', 'monospace'],
-        },
+        // Background colors
+        bg: {
+          primary: '#ffffff',
+          secondary: '#f5f7fa',
+          tertiary: '#e9ecef',
+        }
+      },
+      boxShadow: {
+        'bubble': '0 8px 16px rgba(0, 0, 0, 0.03), 0 4px 8px rgba(0, 0, 0, 0.04)', // Subtle bubble shadow
+        'button': '0 2px 4px rgba(0, 0, 0, 0.05)', // Soft shadow for buttons
+      },
+      borderRadius: {
+        'card': '1rem', // Refined rounded corners for cards (16px)
+      },
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'], // Changed to Inter from Roboto
+      },
+      spacing: {
+        // Consistent spacing scale
+        '4.5': '1.125rem',
+        '5.5': '1.375rem',
+      },
+      transitionProperty: {
+        'height': 'height',
+        'spacing': 'margin, padding',
       },
     },
-    plugins: [],
-  };
+  },
+  plugins: [],
+};

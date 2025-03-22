@@ -4,9 +4,7 @@ import { auth } from '@/lib/auth';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
 
-// Define the settings schema
 const SettingsSchema = z.object({
-  theme: z.enum(['light', 'dark', 'system']),
   defaultPostTone: z.enum(['professional', 'casual', 'thoughtful']),
   defaultVariationCount: z.number().int().min(1).max(5),
   defaultMaxResults: z.number().int().min(1).max(20),

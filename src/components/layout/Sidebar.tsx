@@ -9,7 +9,8 @@ import {
   FiList, 
   FiFileText, 
   FiCalendar,
-  FiSettings 
+  FiSettings,
+  FiClock 
 } from 'react-icons/fi';
 
 interface SidebarLinkProps {
@@ -24,11 +25,11 @@ const SidebarLink: React.FC<SidebarLinkProps> = ({ href, icon, text, isActive })
     href={href}
     className={`flex items-center px-4 py-3 text-sm font-medium rounded-md transition-colors ${
       isActive
-        ? 'bg-primary-50 text-primary-700 dark:bg-dark-bg-tertiary dark:text-primary-400'
-        : 'text-gray-600 dark:text-dark-text-secondary hover:bg-gray-50 dark:hover:bg-dark-bg-tertiary hover:text-gray-900 dark:hover:text-dark-text-primary'
+        ? 'bg-primary-50 text-primary-700 border-l-4 border-primary-500'
+        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 border-l-4 border-transparent'
     }`}
   >
-    <span className="mr-3">{icon}</span>
+    <span className={`mr-3 ${isActive ? 'text-primary-500' : 'text-gray-500'}`}>{icon}</span>
     {text}
   </Link>
 );
@@ -48,6 +49,11 @@ const Sidebar = () => {
       text: 'Topics',
     },
     {
+      href: '/posts/scheduled',
+      icon: <FiClock className="h-5 w-5" />,
+      text: 'Scheduled Posts',
+    },
+    {
       href: '/posts',
       icon: <FiFileText className="h-5 w-5" />,
       text: 'Posts',
@@ -65,7 +71,7 @@ const Sidebar = () => {
   ];
 
   return (
-    <div className="flex flex-col h-full bg-white dark:bg-dark-bg-secondary border-r border-gray-200 dark:border-gray-800 shadow-sm transition-colors">
+    <div className="flex flex-col h-full bg-white border-r border-gray-200 shadow-sm transition-colors">
       <div className="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
         <div className="px-4 space-y-1">
           {navItems.map((item) => (
