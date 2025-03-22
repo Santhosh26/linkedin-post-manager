@@ -1,4 +1,4 @@
-// src/app/api/cron/publish-scheduled-posts.ts
+// src/app/api/cron/publish-scheduled-posts/route.ts
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { postToLinkedIn, getLinkedInPostUrl, refreshLinkedInToken } from '@/lib/services/linkedin';
