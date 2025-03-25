@@ -7,7 +7,8 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FiX, FiPlus, FiCalendar, FiAlertCircle } from 'react-icons/fi';
-
+import ImageSelector from './ImageSelector';
+import { UnsplashImage } from '@/lib/services/unsplash';
 import Button from '@/components/ui/Button';
 import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/Card';
 
@@ -25,7 +26,9 @@ const postSchema = z.object({
   visibility: z.enum(['PUBLIC', 'CONNECTIONS']).default('PUBLIC'),
 });
 
-type PostFormValues = z.infer<typeof postSchema>;
+type PostFormValues = z.infer<typeof postSchema> & {
+  image?: UnsplashImage | null;
+};
 
 interface PostFormProps {
   initialData?: {
@@ -80,6 +83,30 @@ const PostForm = ({ initialData, isEditMode = false }: PostFormProps) => {
   const hashtags = watch('hashtags') || [];
   const status = watch('status');
 
+  const [selectedImage, setSelectedImage] = useState<any>(
+    initialData?.image 
+      ? {
+          id: initialData.image.id,
+          urls: {
+            raw: initialData.image.url,
+            full: initialData.image.url,
+            regular: initialData.image.url,
+            small: initialData.image.thumb || initialData.image.url, // Use thumb or fall back to url
+            thumb: initialData.image.thumb || initialData.image.url,
+          },
+          url: initialData.image.url, // Add this for backup
+          thumb: initialData.image.thumb, // Add this for backup
+          alt_description: initialData.image.alt || '',
+          alt: initialData.image.alt || '', // Add this for backup
+          user: {
+            name: initialData.image.credit?.name || 'Unknown',
+            username: initialData.image.credit?.username || 'unknown',
+          },
+          credit: initialData.image.credit || { name: 'Unknown', username: 'unknown' } // Add this for backup
+        }
+      : null
+  );
+
   // Fetch topics
   useEffect(() => {
     const fetchTopics = async () => {
@@ -131,6 +158,16 @@ const PostForm = ({ initialData, isEditMode = false }: PostFormProps) => {
         ...data,
         // Only include scheduledFor if status is SCHEDULED
         scheduledFor: data.status === 'SCHEDULED' ? data.scheduledFor : undefined,
+        image: selectedImage ? {
+          id: selectedImage.id,
+          url: selectedImage.urls.regular,
+          thumb: selectedImage.urls.thumb,
+          alt: selectedImage.alt_description,
+          credit: {
+            name: selectedImage.user.name,
+            username: selectedImage.user.username,
+          }
+        } : undefined,
       };
 
       const response = await fetch(
@@ -244,7 +281,15 @@ const PostForm = ({ initialData, isEditMode = false }: PostFormProps) => {
                 ))}
               </div>
             </div>
-
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Featured Image
+              </label>
+              <ImageSelector
+                onImageSelect={setSelectedImage}
+                selectedImage={selectedImage}
+              />
+            </div>
             <div>
               <label
                 htmlFor="topicId"

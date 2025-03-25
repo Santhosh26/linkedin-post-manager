@@ -82,85 +82,7 @@ export async function postToLinkedIn(
       console.error('Error getting user info or posting:', error.response?.status, error.response?.data);
     }
     
-    // If we're here, we couldn't get the user ID from userinfo (probably due to missing scopes)
-    // Let's try using the "me" special value
-    try {
-      console.log('Trying with person:me as fallback');
-      
-      const postData = {
-        author: "urn:li:person:me",
-        lifecycleState: "PUBLISHED",
-        specificContent: {
-          "com.linkedin.ugc.ShareContent": {
-            shareCommentary: {
-              text: content
-            },
-            shareMediaCategory: "NONE"
-          }
-        },
-        visibility: {
-          "com.linkedin.ugc.MemberNetworkVisibility": visibility
-        }
-      };
-      
-      const response = await axios.post(
-        'https://api.linkedin.com/v2/ugcPosts',
-        postData,
-        {
-          headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'Content-Type': 'application/json',
-            'X-Restli-Protocol-Version': '2.0.0'
-          }
-        }
-      );
-      
-      if (response.data?.id) {
-        const postId = response.data.id.split(':').pop() || '';
-        return postId;
-      }
-    } catch (error) {
-      console.error('Error posting with person:me:', error.response?.status, error.response?.data);
-    }
     
-    // As a last resort, try without an author field
-    try {
-      console.log('Trying without author field as last resort');
-      
-      const postData = {
-        lifecycleState: "PUBLISHED",
-        specificContent: {
-          "com.linkedin.ugc.ShareContent": {
-            shareCommentary: {
-              text: content
-            },
-            shareMediaCategory: "NONE"
-          }
-        },
-        visibility: {
-          "com.linkedin.ugc.MemberNetworkVisibility": visibility
-        }
-      };
-      
-      const response = await axios.post(
-        'https://api.linkedin.com/v2/ugcPosts',
-        postData,
-        {
-          headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'Content-Type': 'application/json',
-            'X-Restli-Protocol-Version': '2.0.0'
-          }
-        }
-      );
-      
-      if (response.data?.id) {
-        const postId = response.data.id.split(':').pop() || '';
-        return postId;
-      }
-    } catch (error) {
-      console.error('Error posting without author:', error.response?.status, error.response?.data);
-    }
     
     throw new Error('All posting methods failed. You may need to reconnect your LinkedIn account with the required scopes (openid, profile, email, w_member_social).');
   } catch (error) {
@@ -198,59 +120,149 @@ export async function postToLinkedIn(
  * @param visibility Visibility setting (PUBLIC or CONNECTIONS)
  * @returns Post ID if successful
  */
+/**
+ * Post content with an image to LinkedIn
+ * 
+ * @param accessToken LinkedIn access token
+ * @param content Post content
+ * @param imageUrl URL of the image to attach
+ * @param visibility Visibility setting (PUBLIC or CONNECTIONS)
+ * @returns Post ID if successful
+ */
 export async function postWithImageToLinkedIn(
   accessToken: string,
   content: string,
-  imageUrl: string,
+  image: {
+    url: string;
+    alt?: string;
+  },
   visibility: 'PUBLIC' | 'CONNECTIONS' = 'PUBLIC'
 ): Promise<string> {
   try {
-    // For now, fall back to regular text sharing
-    console.log('Image sharing not implemented yet - posting text only');
-    return postToLinkedIn(accessToken, content, visibility);
-  } catch (error) {
-    console.error('Error posting with image to LinkedIn:', error);
-    throw new Error('Failed to post image to LinkedIn: ' + (error instanceof Error ? error.message : 'Unknown error'));
-  }
-}
-
-/**
- * Get the URL to a LinkedIn post
- */
-export function getLinkedInPostUrl(postId: string): string {
-  // LinkedIn post IDs are typically in the format: "urn:li:share:1234567890"
-  // If the postId already includes the full URN, extract just the ID part
-  const activityId = postId.includes(':') ? postId.split(':').pop() || '' : postId;
-  return `https://www.linkedin.com/feed/update/urn:li:share:${activityId}`;
-}
-
-/**
- * Check if a LinkedIn access token is valid
- */
-export async function verifyLinkedInToken(accessToken: string): Promise<boolean> {
-  try {
-    // Try a simple call to verify the token
-    const response = await axios.head('https://api.linkedin.com/v2/ugcPosts', {
+    // Get user info first to get the sub value (person ID)
+    const userInfoResponse = await axios.get('https://api.linkedin.com/v2/userinfo', {
       headers: {
         'Authorization': `Bearer ${accessToken}`,
         'X-Restli-Protocol-Version': '2.0.0'
       }
     });
+    console.log('User info response:', JSON.stringify(userInfoResponse.data, null, 2));
     
-    return response.status === 200;
+    // If we have a sub value, use it to create the authorUrn
+    if (userInfoResponse.data?.sub) {
+      const sub = userInfoResponse.data.sub;
+      console.log('Found LinkedIn ID:', sub);
+
+      const registerImageResponse = await axios.post(
+        'https://api.linkedin.com/v2/assets?action=registerUpload',
+        {
+          registerUploadRequest: {
+            recipes: ["urn:li:digitalmediaRecipe:feedshare-image"],
+            owner: `urn:li:person:${sub}`,
+            serviceRelationships: [
+              {
+                relationshipType: "OWNER",
+                identifier: "urn:li:userGeneratedContent"
+              }
+            ]
+          }
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+            'X-Restli-Protocol-Version': '2.0.0'
+          }
+        }
+      );
+      const uploadUrl = registerImageResponse.data.value.uploadMechanism["com.linkedin.digitalmedia.uploading.MediaUploadHttpRequest"].uploadUrl;
+      const assetUrn = registerImageResponse.data.value.asset;
+      const imageResponse = await axios.get(image.url, { responseType: 'arraybuffer' });
+
+      try {
+        console.log(`Uploading image to LinkedIn: ${uploadUrl}`);
+        await axios.put(uploadUrl, imageResponse.data, {
+          headers: {
+            'Content-Type': 'application/octet-stream'
+          }
+        });
+        console.log('Image uploaded successfully to LinkedIn');
+      } catch (uploadError) {
+        console.error('Error uploading image to LinkedIn:', uploadError);
+        if (axios.isAxiosError(uploadError) && uploadError.response) {
+          console.error('LinkedIn upload error details:', {
+            status: uploadError.response.status,
+            statusText: uploadError.response.statusText,
+            data: uploadError.response.data
+          });
+        }
+        throw new Error('Failed to upload image to LinkedIn');
+      }
+      
+      // Create the post with the image
+      console.log('Creating LinkedIn post with image:', assetUrn);
+      const postData = {
+        // Use the raw sub value without any transformation
+        author: `urn:li:person:${sub}`,
+        lifecycleState: "PUBLISHED",
+        specificContent: {
+          "com.linkedin.ugc.ShareContent": {
+            shareCommentary: {
+              text: content
+            },
+            shareMediaCategory: "IMAGE",
+            media: [
+              {
+                status: "READY",
+                description: {
+                  text: image.alt || "Image"
+                },
+                media: assetUrn
+              }
+            ]
+          }
+        },
+        visibility: {
+          "com.linkedin.ugc.MemberNetworkVisibility": visibility
+        }
+      };
+      
+      console.log('Post data:', JSON.stringify(postData, null, 2));
+      
+      const response = await axios.post(
+        'https://api.linkedin.com/v2/ugcPosts',
+        postData,
+        {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+            'X-Restli-Protocol-Version': '2.0.0'
+          }
+        }
+      );
+      
+      if (response.data?.id) {
+        const postId = response.data.id.split(':').pop() || '';
+        return postId;
+      } else {
+        console.log("Failed to get post ID from LinkedIn response");
+        throw new Error('Failed to get post ID from LinkedIn response');
+      }
+    } else {
+      // No sub found in the response
+      throw new Error('Could not determine LinkedIn user ID from response');
+    }
   } catch (error) {
-    // If we get a 403, the token is valid but might lack some permissions
-    if (axios.isAxiosError(error) && error.response?.status === 403) {
-      return true;
+    console.error('Error posting with image to LinkedIn:', error);
+    if (axios.isAxiosError(error) && error.response) {
+      console.error('LinkedIn API error details:', {
+        status: error.response.status,
+        statusText: error.response.statusText,
+        data: error.response.data
+      });
     }
     
-    // For other errors, consider the token invalid
-    if (axios.isAxiosError(error) && error.response?.status === 401) {
-      return false;
-    }
-    
-    console.error('Error verifying LinkedIn token:', error);
-    return false;
+    throw error;
   }
 }
 
@@ -305,4 +317,11 @@ export async function refreshLinkedInToken(refreshToken: string): Promise<Linked
     }
     return null;
   }
+}
+
+export function getLinkedInPostUrl(postId: string): string {
+  // LinkedIn post IDs are typically in the format: "urn:li:share:1234567890"
+  // If the postId already includes the full URN, extract just the ID part
+  const activityId = postId.includes(':') ? postId.split(':').pop() || '' : postId;
+  return `https://www.linkedin.com/feed/update/urn:li:share:${activityId}`;
 }

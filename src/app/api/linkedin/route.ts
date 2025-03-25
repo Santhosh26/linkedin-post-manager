@@ -163,7 +163,10 @@ export async function POST(req: Request) {
       linkedinPostId = await postWithImageToLinkedIn(
         accessToken,
         post.content,
-        imageUrl,
+        {  // Fixed - passing as an object instead of a string
+          url: imageUrl,
+          alt: 'Post image'
+        },
         visibility,
         linkedinId
       );

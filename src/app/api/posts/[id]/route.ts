@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
 import { auth } from '@/lib/auth';
-import { postToLinkedIn, getLinkedInPostUrl } from '@/lib/services/linkedin';
+import { postToLinkedIn, getLinkedInPostUrl, postWithImageToLinkedIn } from '@/lib/services/linkedin';
 import { createNotification } from '@/lib/services/notification';
 
 interface RequestParams {
@@ -12,15 +12,7 @@ interface RequestParams {
   };
 }
 
-const PostUpdateSchema = z.object({
-  content: z.string().min(10, 'Post content is required').optional(),
-  hashtags: z.array(z.string()).optional(),
-  topicId: z.string().optional(),
-  status: z.enum(['DRAFT', 'SCHEDULED', 'PUBLISHED']).optional(),
-  scheduledFor: z.string().optional(), // ISO string date
-  publish: z.boolean().optional(), // New field to indicate if the post should be published
-  visibility: z.enum(['PUBLIC', 'CONNECTIONS']).optional(),
-});
+
 
 // GET a single post by ID
 export async function GET(req: NextRequest, { params }: RequestParams) {
@@ -34,11 +26,11 @@ export async function GET(req: NextRequest, { params }: RequestParams) {
       );
     }
 
-    const { id } = params;
+    const postId = params.id;
 
     const post = await prisma.post.findUnique({
       where: {
-        id,
+        id: postId,
       },
       include: {
         topic: {
@@ -65,7 +57,21 @@ export async function GET(req: NextRequest, { params }: RequestParams) {
       );
     }
 
-    return NextResponse.json(post);
+    // Add image data to the response if it exists
+    const postWithImage = {
+      ...post,
+      image: post.imageUrl 
+        ? {
+            id: post.imageId,
+            url: post.imageUrl,
+            thumb: post.imageThumb,
+            alt: post.imageAlt,
+            credit: post.imageCredit
+          }
+        : null
+    };
+
+    return NextResponse.json(postWithImage);
   } catch (error) {
     console.error('Error fetching post:', error);
     return NextResponse.json(
@@ -87,14 +93,17 @@ export async function PUT(req: NextRequest, { params }: RequestParams) {
       );
     }
 
-    const { id } = params;
+    const postId = params.id;
     const body = await req.json();
-    const { content, hashtags, topicId, status, scheduledFor, publish, visibility } = PostUpdateSchema.parse(body);
+    
+    console.log('Received update request with body:', body); // Debug log
+    
+    const { content, hashtags, topicId, status, scheduledFor, publish, visibility, image } = body;
 
     // Check if post exists and belongs to user
     const existingPost = await prisma.post.findUnique({
       where: {
-        id,
+        id: postId,
       },
     });
 
@@ -135,88 +144,53 @@ export async function PUT(req: NextRequest, { params }: RequestParams) {
       }
     }
 
-    // Publish the post to LinkedIn if requested
-    let linkedinPostId = existingPost.linkedinPostId;
-    let linkedinPostUrl = existingPost.linkedinPostUrl;
+    // LinkedIn publishing logic (existing code)
+    const linkedinPostId = existingPost.linkedinPostId;
+    const linkedinPostUrl = existingPost.linkedinPostUrl;
     
-    if (publish) {
-      // Get the user's LinkedIn account
-      const linkedInAccount = await prisma.account.findFirst({
-        where: { 
-          userId: session.user.id,
-          provider: 'linkedin'
-        },
-        select: {
-          access_token: true,
-          expires_at: true,
-        }
-      });
 
-      // Verify LinkedIn account exists and has a valid token
-      if (!linkedInAccount || !linkedInAccount.access_token || 
-          (linkedInAccount.expires_at && linkedInAccount.expires_at * 1000 <= Date.now())) {
-        return NextResponse.json(
-          { message: 'LinkedIn account not connected or token expired. Please reconnect your account.' },
-          { status: 400 }
-        );
-      }
 
-      try {
-        // Publish to LinkedIn with the proper visibility setting
-        linkedinPostId = await postToLinkedIn(
-          linkedInAccount.access_token,
-          content || existingPost.content, // Use updated content or existing content
-          (visibility || existingPost.visibility as 'PUBLIC' | 'CONNECTIONS')
-        );
-        
-        linkedinPostUrl = getLinkedInPostUrl(linkedinPostId);
-        
-        // Create a notification for successful publishing
-        await createNotification(
-          session.user.id,
-          'SCHEDULED_POST_PUBLISHED',
-          'Your post was successfully published to LinkedIn!',
-          {
-            postId: id,
-            linkedinPostUrl
-          }
-        );
-      } catch (error) {
-        // Create a notification for failed publishing
-        await createNotification(
-          session.user.id,
-          'SCHEDULED_POST_FAILED',
-          'Failed to publish your post to LinkedIn.',
-          {
-            postId: id,
-            error: error instanceof Error ? error.message : 'Unknown error'
-          }
-        );
-        
-        return NextResponse.json(
-          { message: error instanceof Error ? error.message : 'Error publishing post' },
-          { status: 500 }
-        );
-      }
-    }
+    // Create update data object with all possible fields to update
+    const updateData: any = {
+      ...(content !== undefined && { content }),
+      ...(hashtags !== undefined && { hashtags }),
+      ...(topicId !== undefined && { topicId }),
+      ...(status !== undefined && { status }),
+      ...(scheduledFor !== undefined && { scheduledFor: new Date(scheduledFor) }),
+      ...(status === 'PUBLISHED' && { publishedAt: new Date() }),
+      ...(visibility !== undefined && { visibility }),
+      
+      // Add LinkedIn post details if published
+      ...(linkedinPostId && { linkedinPostId, linkedinPostUrl }),
+      ...(publish && { status: 'PUBLISHED', publishedAt: new Date() }),
+      
+      // Image data handling
+      ...(image && { 
+        imageId: image.id,
+        imageUrl: image.url,
+        imageThumb: image.thumb,
+        imageAlt: image.alt || '',
+        imageCredit: image.credit
+      }),
+      
+      // If image is null, clear the image fields
+      ...(image === null && { 
+        imageId: null,
+        imageUrl: null,
+        imageThumb: null,
+        imageAlt: null,
+        imageCredit: null
+      }),
+    };
+    
+    console.log('Updating post with data:', updateData); // Debug log
 
     // Update post
     const updatedPost = await prisma.post.update({
       where: {
-        id,
+        id: postId,
       },
-      data: {
-        ...(content !== undefined && { content }),
-        ...(hashtags !== undefined && { hashtags }),
-        ...(topicId !== undefined && { topicId }),
-        ...(status !== undefined && { status }),
-        ...(scheduledFor !== undefined && { scheduledFor: new Date(scheduledFor) }),
-        ...(status === 'PUBLISHED' && { publishedAt: new Date() }),
-        ...(visibility !== undefined && { visibility }),
-        // Add LinkedIn post details if published
-        ...(linkedinPostId && { linkedinPostId, linkedinPostUrl }),
-        ...(publish && { status: 'PUBLISHED', publishedAt: new Date() })
-      },
+      data: updateData,
     });
 
     return NextResponse.json({
@@ -249,12 +223,12 @@ export async function DELETE(req: NextRequest, { params }: RequestParams) {
       );
     }
 
-    const { id } = params;
+    const postId = params.id;
 
     // Check if post exists and belongs to user
     const existingPost = await prisma.post.findUnique({
       where: {
-        id,
+        id: postId,
       },
     });
 
@@ -275,7 +249,7 @@ export async function DELETE(req: NextRequest, { params }: RequestParams) {
     // Delete the post
     await prisma.post.delete({
       where: {
-        id,
+        id: postId,
       },
     });
 
@@ -289,8 +263,11 @@ export async function DELETE(req: NextRequest, { params }: RequestParams) {
   }
 }
 
-// POST - new action for publishing to LinkedIn specifically (alternative to using PUT with publish=true)
-export async function POST(req: Request, { params }: RequestParams) {
+// POST - new action for publishing to LinkedIn specifically
+export async function POST(
+  req: Request, 
+  { params }: { params: { id: string } }
+) {
   try {
     const session = await auth();
     
@@ -301,11 +278,23 @@ export async function POST(req: Request, { params }: RequestParams) {
       );
     }
     
-    const postId = params.id;
+
+    
+    // Get the request body for optional visibility setting
+    let visibility: 'PUBLIC' | 'CONNECTIONS' = 'PUBLIC';
+    try {
+      const body = await req.json();
+      if (body.visibility && (body.visibility === 'PUBLIC' || body.visibility === 'CONNECTIONS')) {
+        visibility = body.visibility;
+      }
+    } catch (e) {
+      //Default to PUBLIC if body can't be parsed
+      console.log(e);
+    }
     
     // Get the post with user LinkedIn account
     const post = await prisma.post.findUnique({
-      where: { id: postId },
+      where: { id: params.id },
       include: {
         user: {
           include: {
@@ -316,6 +305,7 @@ export async function POST(req: Request, { params }: RequestParams) {
               select: {
                 access_token: true,
                 expires_at: true,
+                providerAccountId: true,
               },
             },
           },
@@ -356,30 +346,40 @@ export async function POST(req: Request, { params }: RequestParams) {
       );
     }
     
-    // Get the request body for optional visibility setting
-    let visibility: 'PUBLIC' | 'CONNECTIONS' = 'PUBLIC';
-    try {
-      const body = await req.json();
-      if (body.visibility && (body.visibility === 'PUBLIC' || body.visibility === 'CONNECTIONS')) {
-        visibility = body.visibility;
-      }
-    } catch (e) {
-      //Default to PUBLIC if body can't be parsed
-      console.log(e);
-    }
+    console.log('Publishing post to LinkedIn, image URL:', post.imageUrl);
     
-    // Publish to LinkedIn
-    const linkedinPostId = await postToLinkedIn(
-      linkedInAccount.access_token,
-      post.content,
-      (post.visibility as 'PUBLIC' | 'CONNECTIONS') || visibility
-    );
+    // Determine visibility setting
+    const visibilitySetting = (post.visibility as 'PUBLIC' | 'CONNECTIONS') || visibility;
+    
+    // Publish to LinkedIn - check if we have an image
+    let linkedinPostId;
+    if (post.imageUrl) {
+      // Post with image
+      linkedinPostId = await postWithImageToLinkedIn(
+        linkedInAccount.access_token,
+        post.content,
+        {
+          url: post.imageUrl,
+          alt: post.imageAlt || 'Post image'
+        },
+        visibilitySetting,
+        
+      );
+    } else {
+      // Post text only
+      linkedinPostId = await postToLinkedIn(
+        linkedInAccount.access_token,
+        post.content,
+        visibilitySetting,
+        
+      );
+    }
     
     const linkedinPostUrl = getLinkedInPostUrl(linkedinPostId);
     
     // Update the post status
     const updatedPost = await prisma.post.update({
-      where: { id: postId },
+      where: { id: params.id },
       data: {
         status: 'PUBLISHED',
         publishedAt: new Date(),
@@ -409,9 +409,9 @@ export async function POST(req: Request, { params }: RequestParams) {
     
     // Create a notification for failed manual publishing if we have the post data
     try {
-      const postId = params.id;
+      // Use params.id directly
       const post = await prisma.post.findUnique({
-        where: { id: postId },
+        where: { id: params.id },
         select: { userId: true }
       });
       
@@ -421,7 +421,7 @@ export async function POST(req: Request, { params }: RequestParams) {
           'SCHEDULED_POST_FAILED',
           'Failed to publish your post to LinkedIn.',
           {
-            postId,
+            postId: params.id,
             error: error instanceof Error ? error.message : 'Unknown error'
           }
         );
