@@ -78,7 +78,7 @@ export async function postToLinkedIn(
           return postId;
         }
       }
-    } catch (error) {
+    } catch (error : unknown) {
       console.error('Error getting user info or posting:', error.response?.status, error.response?.data);
     }
     

@@ -48,7 +48,7 @@ export async function generateLinkedInPosts(params: GeneratePostParams): Promise
     
     // Make the API call using the OpenAI SDK
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-4o-mini",
       messages: [
         { role: "system", content: systemMessage },
         { role: "user", content: userMessage }
