@@ -6,16 +6,13 @@ import { auth } from '@/lib/auth';
 import { postToLinkedIn, getLinkedInPostUrl, postWithImageToLinkedIn } from '@/lib/services/linkedin';
 import { createNotification } from '@/lib/services/notification';
 
-interface RequestParams {
-  params: {
-    id: string;
-  };
+// Define proper param types for Next.js App Router
+interface Params {
+  id: string;
 }
 
-
-
 // GET a single post by ID
-export async function GET(req: NextRequest, { params }: RequestParams) {
+export async function GET(req: NextRequest, { params }: { params: Params }) {
   try {
     const session = await auth();
 
@@ -82,7 +79,7 @@ export async function GET(req: NextRequest, { params }: RequestParams) {
 }
 
 // PUT - update a post
-export async function PUT(req: NextRequest, { params }: RequestParams) {
+export async function PUT(req: NextRequest, { params }: { params: Params }) {
   try {
     const session = await auth();
 
@@ -148,8 +145,6 @@ export async function PUT(req: NextRequest, { params }: RequestParams) {
     const linkedinPostId = existingPost.linkedinPostId;
     const linkedinPostUrl = existingPost.linkedinPostUrl;
     
-
-
     // Create update data object with all possible fields to update
     const updateData: any = {
       ...(content !== undefined && { content }),
@@ -212,7 +207,7 @@ export async function PUT(req: NextRequest, { params }: RequestParams) {
 }
 
 // DELETE a post
-export async function DELETE(req: NextRequest, { params }: RequestParams) {
+export async function DELETE(req: NextRequest, { params }: { params: Params }) {
   try {
     const session = await auth();
 
@@ -266,7 +261,7 @@ export async function DELETE(req: NextRequest, { params }: RequestParams) {
 // POST - new action for publishing to LinkedIn specifically
 export async function POST(
   req: Request, 
-  { params }: { params: { id: string } }
+  { params }: { params: Params }
 ) {
   try {
     const session = await auth();
@@ -277,8 +272,6 @@ export async function POST(
         { status: 401 }
       );
     }
-    
-
     
     // Get the request body for optional visibility setting
     let visibility: 'PUBLIC' | 'CONNECTIONS' = 'PUBLIC';
@@ -363,7 +356,6 @@ export async function POST(
           alt: post.imageAlt || 'Post image'
         },
         visibilitySetting,
-        
       );
     } else {
       // Post text only
@@ -371,7 +363,6 @@ export async function POST(
         linkedInAccount.access_token,
         post.content,
         visibilitySetting,
-        
       );
     }
     

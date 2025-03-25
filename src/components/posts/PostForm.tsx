@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { FiX, FiPlus, FiCalendar, FiAlertCircle } from 'react-icons/fi';
+import { FiX, FiPlus, FiCalendar, FiAlertCircle, FiCheckCircle, FiSave } from 'react-icons/fi';
 import ImageSelector from './ImageSelector';
 import { UnsplashImage } from '@/lib/services/unsplash';
 import Button from '@/components/ui/Button';
@@ -49,7 +49,10 @@ const PostForm = ({ initialData, isEditMode = false }: PostFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isFetchingTopics, setIsFetchingTopics] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const [hashtag, setHashtag] = useState('');
+  // Keep track of which action (save or update) is currently processing
+  const [currentAction, setCurrentAction] = useState<'save' | 'update' | null>(null);
 
   // Initialize scheduledFor with current date/time if status is SCHEDULED
   const defaultScheduledFor = initialData?.scheduledFor 
@@ -91,21 +94,29 @@ const PostForm = ({ initialData, isEditMode = false }: PostFormProps) => {
             raw: initialData.image.url,
             full: initialData.image.url,
             regular: initialData.image.url,
-            small: initialData.image.thumb || initialData.image.url, // Use thumb or fall back to url
+            small: initialData.image.thumb || initialData.image.url,
             thumb: initialData.image.thumb || initialData.image.url,
           },
-          url: initialData.image.url, // Add this for backup
-          thumb: initialData.image.thumb, // Add this for backup
+          url: initialData.image.url, 
+          thumb: initialData.image.thumb,
           alt_description: initialData.image.alt || '',
-          alt: initialData.image.alt || '', // Add this for backup
+          alt: initialData.image.alt || '',
           user: {
             name: initialData.image.credit?.name || 'Unknown',
             username: initialData.image.credit?.username || 'unknown',
           },
-          credit: initialData.image.credit || { name: 'Unknown', username: 'unknown' } // Add this for backup
+          credit: initialData.image.credit || { name: 'Unknown', username: 'unknown' }
         }
       : null
   );
+
+  // Clear success message after 3 seconds
+  useEffect(() => {
+    if (success) {
+      const timer = setTimeout(() => setSuccess(null), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [success]);
 
   // Fetch topics
   useEffect(() => {
@@ -149,9 +160,11 @@ const PostForm = ({ initialData, isEditMode = false }: PostFormProps) => {
     );
   };
 
-  const onSubmit = async (data: PostFormValues) => {
+  const onSubmit = async (data: PostFormValues, action: 'save' | 'update') => {
     setIsLoading(true);
     setError(null);
+    setSuccess(null);
+    setCurrentAction(action);
 
     try {
       const payload = {
@@ -187,20 +200,28 @@ const PostForm = ({ initialData, isEditMode = false }: PostFormProps) => {
         throw new Error(result.message || 'Failed to save post');
       }
 
-      // Redirect to posts list
-      router.push('/posts');
-      router.refresh();
+      // If action is 'save', show success message and don't redirect
+      if (action === 'save') {
+        setSuccess('Post saved successfully');
+        setIsLoading(false);
+        setCurrentAction(null);
+      } else {
+        // Otherwise, redirect to posts list
+        router.push('/posts');
+        router.refresh();
+      }
     } catch (err) {
       console.error('Error saving post:', err);
       setError(err instanceof Error ? err.message : 'Failed to save post');
       setIsLoading(false);
+      setCurrentAction(null);
     }
   };
 
   return (
     <Card>
       <CardHeader title={isEditMode ? 'Edit Post' : 'Create New Post'} />
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit((data) => onSubmit(data, 'update'))}>
         <CardContent>
           {error && (
             <div className="mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded-md">
@@ -208,6 +229,17 @@ const PostForm = ({ initialData, isEditMode = false }: PostFormProps) => {
                 <FiAlertCircle className="h-5 w-5 text-red-500" />
                 <div className="ml-3">
                   <p className="text-sm text-red-700">{error}</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {success && (
+            <div className="mb-6 bg-green-50 border-l-4 border-green-500 p-4 rounded-md">
+              <div className="flex">
+                <FiCheckCircle className="h-5 w-5 text-green-500" />
+                <div className="ml-3">
+                  <p className="text-sm text-green-700">{success}</p>
                 </div>
               </div>
             </div>
@@ -397,7 +429,7 @@ const PostForm = ({ initialData, isEditMode = false }: PostFormProps) => {
             )}
           </div>
         </CardContent>
-        <CardFooter className="flex justify-end space-x-3">
+        <CardFooter className="flex justify-between space-x-3">
           <Button
             type="button"
             variant="secondary"
@@ -406,9 +438,22 @@ const PostForm = ({ initialData, isEditMode = false }: PostFormProps) => {
           >
             Cancel
           </Button>
-          <Button type="submit" disabled={isLoading}>
-            {isLoading ? 'Saving...' : isEditMode ? 'Update Post' : 'Create Post'}
-          </Button>
+          <div className="flex space-x-3">
+            {isEditMode && (
+              <Button 
+                type="button" 
+                variant="success" 
+                disabled={isLoading}
+                onClick={handleSubmit((data) => onSubmit(data, 'save'))}
+              >
+                <FiSave className="mr-2 h-5 w-5" />
+                {isLoading && currentAction === 'save' ? 'Saving...' : 'Save'}
+              </Button>
+            )}
+            <Button type="submit" disabled={isLoading}>
+              {isLoading && currentAction === 'update' ? 'Saving...' : isEditMode ? 'Update & Exit' : 'Create Post'}
+            </Button>
+          </div>
         </CardFooter>
       </form>
     </Card>
