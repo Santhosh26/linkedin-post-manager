@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
+import { Prisma } from '@prisma/client';
 import { auth } from '@/lib/auth';
 import { postToLinkedIn, getLinkedInPostUrl, postWithImageToLinkedIn } from '@/lib/services/linkedin';
 import { createNotification } from '@/lib/services/notification';
@@ -145,38 +146,46 @@ export async function PUT(req: NextRequest, { params }: { params: Params }) {
     const linkedinPostId = existingPost.linkedinPostId;
     const linkedinPostUrl = existingPost.linkedinPostUrl;
     
-    // Create update data object with all possible fields to update
-    const updateData: any = {
-      ...(content !== undefined && { content }),
-      ...(hashtags !== undefined && { hashtags }),
-      ...(topicId !== undefined && { topicId }),
-      ...(status !== undefined && { status }),
-      ...(scheduledFor !== undefined && { scheduledFor: new Date(scheduledFor) }),
-      ...(status === 'PUBLISHED' && { publishedAt: new Date() }),
-      ...(visibility !== undefined && { visibility }),
-      
-      // Add LinkedIn post details if published
-      ...(linkedinPostId && { linkedinPostId, linkedinPostUrl }),
-      ...(publish && { status: 'PUBLISHED', publishedAt: new Date() }),
-      
-      // Image data handling
-      ...(image && { 
-        imageId: image.id,
-        imageUrl: image.url,
-        imageThumb: image.thumb,
-        imageAlt: image.alt || '',
-        imageCredit: image.credit
-      }),
-      
-      // If image is null, clear the image fields
-      ...(image === null && { 
-        imageId: null,
-        imageUrl: null,
-        imageThumb: null,
-        imageAlt: null,
-        imageCredit: null
-      }),
-    };
+    // Start by creating an update data object using Prisma's type
+    const updateData: Prisma.PostUpdateInput = {};
+
+    // Add properties conditionally, ensuring they match Prisma's expected types
+    if (content !== undefined) updateData.content = content;
+    if (hashtags !== undefined) updateData.hashtags = hashtags;
+  
+    if (status !== undefined) updateData.status = status;
+    if (scheduledFor !== undefined) {
+      updateData.scheduledFor = scheduledFor ? new Date(scheduledFor) : null;
+    }
+    if (status === 'PUBLISHED') updateData.publishedAt = new Date();
+    if (visibility !== undefined) updateData.visibility = visibility;
+
+    // LinkedIn details
+    if (linkedinPostId) {
+      updateData.linkedinPostId = linkedinPostId;
+      updateData.linkedinPostUrl = linkedinPostUrl;
+    }
+
+    if (publish) {
+      updateData.status = 'PUBLISHED';
+      updateData.publishedAt = new Date();
+    }
+
+    // Handle image data
+    if (image) {
+      updateData.imageId = image.id;
+      updateData.imageUrl = image.url;
+      updateData.imageThumb = image.thumb;
+      updateData.imageAlt = image.alt || '';
+      updateData.imageCredit = image.credit;
+    } else if (image === null) {
+      // Explicitly check for null to handle image removal
+      updateData.imageId = null;
+      updateData.imageUrl = null;
+      updateData.imageThumb = null;
+      updateData.imageAlt = null;
+      updateData.imageCredit = Prisma.JsonNull;
+    }
     
     console.log('Updating post with data:', updateData); // Debug log
 
@@ -330,6 +339,14 @@ export async function POST(
     }
     
     const linkedInAccount = post.user.accounts[0];
+
+    // Add null check for access_token
+    if (!linkedInAccount.access_token) {
+      return NextResponse.json(
+        { message: 'Invalid LinkedIn access token. Please reconnect your account.' },
+        { status: 400 }
+      );
+    }
     
     // Check if token is valid
     if (linkedInAccount.expires_at && linkedInAccount.expires_at * 1000 <= Date.now()) {

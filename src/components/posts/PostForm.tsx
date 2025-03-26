@@ -160,6 +160,8 @@ const PostForm = ({ initialData, isEditMode = false }: PostFormProps) => {
     );
   };
 
+// Inside the PostForm.tsx file, update the onSubmit function
+
   const onSubmit = async (data: PostFormValues, action: 'save' | 'update') => {
     setIsLoading(true);
     setError(null);
@@ -171,16 +173,20 @@ const PostForm = ({ initialData, isEditMode = false }: PostFormProps) => {
         ...data,
         // Only include scheduledFor if status is SCHEDULED
         scheduledFor: data.status === 'SCHEDULED' ? data.scheduledFor : undefined,
-        image: selectedImage ? {
-          id: selectedImage.id,
-          url: selectedImage.urls.regular,
-          thumb: selectedImage.urls.thumb,
-          alt: selectedImage.alt_description,
-          credit: {
-            name: selectedImage.user.name,
-            username: selectedImage.user.username,
-          }
-        } : undefined,
+        // IMPORTANT: Use null, not undefined when no image is selected
+        // This explicitly tells the server to remove the image
+        image: selectedImage 
+          ? {
+              id: selectedImage.id,
+              url: selectedImage.urls.regular,
+              thumb: selectedImage.urls.thumb,
+              alt: selectedImage.alt_description,
+              credit: {
+                name: selectedImage.user.name,
+                username: selectedImage.user.username,
+              }
+            } 
+          : null,  // Send null explicitly, not undefined
       };
 
       const response = await fetch(

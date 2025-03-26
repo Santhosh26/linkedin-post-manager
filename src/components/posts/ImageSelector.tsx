@@ -45,8 +45,9 @@ export default function ImageSelector({ onImageSelect, selectedImage }: ImageSel
     setShowSelector(false);
   };
   
-  // Clear selected image
+  // Clear selected image - ensure we explicitly pass null
   const clearSelectedImage = () => {
+    console.log('Clearing selected image, setting to null');
     onImageSelect(null);
   };
   
@@ -54,33 +55,33 @@ export default function ImageSelector({ onImageSelect, selectedImage }: ImageSel
     <div className="mt-4">
       {selectedImage ? (
         <div className="relative">
-            <img 
+          <img 
             src={selectedImage.urls?.small || selectedImage.thumb || selectedImage.url} 
             alt={selectedImage.alt_description || selectedImage.alt || 'Selected image'} 
             className="w-full h-48 object-cover rounded-lg"
-            />
-            <div className="absolute bottom-2 right-2">
+          />
+          <div className="absolute bottom-2 right-2">
             <Button
-                size="sm"
-                variant="danger"
-                onClick={clearSelectedImage}
-                aria-label="Remove image"
+              size="sm"
+              variant="danger"
+              onClick={clearSelectedImage}
+              aria-label="Remove image"
             >
-                <FiX className="mr-1" /> Remove
+              <FiX className="mr-1" /> Remove
             </Button>
-            </div>
-            <p className="text-xs text-gray-500 mt-1">
+          </div>
+          <p className="text-xs text-gray-500 mt-1">
             Photo by <a 
-                href={`https://unsplash.com/@${selectedImage.user?.username || 'unsplash'}`} 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="text-blue-500"
+              href={`https://unsplash.com/@${selectedImage.user?.username || 'unsplash'}`} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="text-blue-500"
             >
-                {selectedImage.user?.name || selectedImage.credit?.name || 'Unsplash'}
+              {selectedImage.user?.name || selectedImage.credit?.name || 'Unsplash'}
             </a> on Unsplash
-            </p>
+          </p>
         </div>
-        ) : (
+      ) : (
         <div>
           {showSelector ? (
             <div className="border border-gray-200 rounded-lg p-4">
