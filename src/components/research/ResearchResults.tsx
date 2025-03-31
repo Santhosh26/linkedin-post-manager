@@ -2,9 +2,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { FiExternalLink, FiFileText, FiChevronDown, FiChevronUp } from 'react-icons/fi';
-import Button from '@/components/ui/Button';
-import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/Card';
+import { ExternalLink, FileText, ChevronDown, ChevronUp } from 'lucide-react';
+import { Button } from '@/components/ui/buttonAdapter';
+import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
 import { useResearchContext } from '@/lib/contexts/ResearchContext';
 
 interface ResearchResult {
@@ -50,10 +50,10 @@ const ResearchResults = ({
 
   return (
     <Card>
-      <CardHeader
-        title="Research Results"
-        subtitle={`Query: "${results.query}"`}
-      />
+      <CardHeader>
+        <h2 className="text-xl font-semibold">Research Results</h2>
+        <p className="text-sm text-gray-500">Query: &quot;{results.query}&quot;</p>
+      </CardHeader>
       <CardContent>
         <div className="space-y-6">
           {results.results.length > 0 ? (
@@ -73,7 +73,7 @@ const ResearchResults = ({
                       rel="noopener noreferrer"
                       className="inline-flex items-center text-primary-600 hover:text-primary-700 transition-colors"
                     >
-                      <FiExternalLink className="h-5 w-5 mr-1" />
+                      <ExternalLink className="h-5 w-5 mr-1" />
                       Source
                     </a>
                   </div>
@@ -99,12 +99,12 @@ const ResearchResults = ({
                     >
                       {expandedResults.includes(result.url) ? (
                         <>
-                          <FiChevronUp className="mr-1 h-4 w-4" />
+                          <ChevronUp className="mr-1 h-4 w-4" />
                           Show less
                         </>
                       ) : (
                         <>
-                          <FiChevronDown className="mr-1 h-4 w-4" />
+                          <ChevronDown className="mr-1 h-4 w-4" />
                           Show more
                         </>
                       )}
@@ -129,7 +129,7 @@ const ResearchResults = ({
         </Button>
         {results.results.length > 0 && (
           <Button onClick={onGeneratePosts}>
-            <FiFileText className="mr-2" />
+            <FileText className="mr-2" />
             Generate LinkedIn Posts
           </Button>
         )}

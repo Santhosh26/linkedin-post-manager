@@ -5,11 +5,12 @@ import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { FiSearch, FiInfo } from 'react-icons/fi';
-import Input from '@/components/ui/Input';
-import Button from '@/components/ui/Button';
-import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/Card';
+import { Search, Info } from 'lucide-react';
+import {Input} from '@/components/ui/input';
+import { Button } from '@/components/ui/buttonAdapter';
+import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
 import { useResearchContext } from '@/lib/contexts/ResearchContext';
+import { useToast } from "@/hooks/use-toast";
 
 const researchSchema = z.object({
   query: z.string().min(3, 'Query must be at least 3 characters'),
@@ -38,6 +39,7 @@ interface ResearchFormProps {
 }
 
 const ResearchForm = ({ topicId, topicName, onResearchComplete }: ResearchFormProps) => {
+  const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { researchData, researchId, topicId: contextTopicId } = useResearchContext();
@@ -49,7 +51,7 @@ const ResearchForm = ({ topicId, topicName, onResearchComplete }: ResearchFormPr
     register,
     handleSubmit,
     formState: { errors },
-    setValue
+    
   } = useForm<ResearchFormValues>({
     resolver: zodResolver(researchSchema),
     defaultValues: {
@@ -88,10 +90,21 @@ const ResearchForm = ({ topicId, topicName, onResearchComplete }: ResearchFormPr
         throw new Error(result.message || 'Failed to conduct research');
       }
 
+      toast({
+        title: "Research Complete",
+        description: `Research completed with ${result.results.results.length} results.`,
+      });
+
       onResearchComplete(result.id, result.results);
     } catch (err) {
       console.error('Error conducting research:', err);
-      setError(err instanceof Error ? err.message : 'Failed to conduct research');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to conduct research';
+      setError(errorMessage);
+      toast({
+        title: "Research Failed",
+        description: errorMessage,
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -125,7 +138,7 @@ const ResearchForm = ({ topicId, topicName, onResearchComplete }: ResearchFormPr
             <div className="bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500 dark:border-blue-600 p-4 mb-4 rounded">
               <div className="flex">
                 <div className="flex-shrink-0">
-                  <FiInfo className="h-5 w-5 text-blue-500 dark:text-blue-400" />
+                  <Info className="h-5 w-5 text-blue-500 dark:text-blue-400" />
                 </div>
                 <div className="ml-3">
                   <p className="text-sm text-blue-700 dark:text-blue-400">
@@ -184,7 +197,7 @@ const ResearchForm = ({ topicId, topicName, onResearchComplete }: ResearchFormPr
               </span>
             ) : (
               <span className="flex items-center">
-                <FiSearch className="mr-2" />
+                <Search className="mr-2" />
                 Start Research
               </span>
             )}

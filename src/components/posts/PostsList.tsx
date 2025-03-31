@@ -1,18 +1,39 @@
-// src/components/posts/PostsList.tsx
 'use client';
 
 import { useState } from 'react';
 import Link from 'next/link';
 import { 
-  FiEdit2, 
-  FiTrash2, 
-  FiSearch, 
-  FiFilter, 
-  FiCalendar, 
-  FiCheckCircle 
-} from 'react-icons/fi';
-import Button from '@/components/ui/Button';
-import { Card, CardHeader, CardContent } from '@/components/ui/Card';
+  Search, 
+  Filter, 
+  Calendar, 
+  CheckCircle, 
+  PenSquare,
+  MoreHorizontal, 
+  Edit, 
+  Trash2, 
+  ExternalLink 
+} from 'lucide-react';
+
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+
+import { Button } from '@/components/ui/buttonAdapter';
+import { Card, CardHeader, CardContent } from '@/components/ui/cardAdapter';
+
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuLabel, 
+  DropdownMenuSeparator, 
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu";
 
 interface Topic {
   id: string;
@@ -31,6 +52,7 @@ interface Post {
   topic?: {
     name: string;
   };
+  linkedinPostUrl?: string;
 }
 
 interface PostsListProps {
@@ -58,29 +80,15 @@ const PostsList = ({ posts, topics, onDelete }: PostsListProps) => {
     return matchesSearch && matchesStatus && matchesTopic;
   });
 
-  // Get status badge color
-  const getStatusBadgeClass = (status: string) => {
-    switch (status) {
-      case 'DRAFT':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'SCHEDULED':
-        return 'bg-indigo-100 text-indigo-800';
-      case 'PUBLISHED':
-        return 'bg-green-100 text-green-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
-
   // Get status icon
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'DRAFT':
-        return <FiEdit2 className="h-4 w-4 mr-1" />;
+        return <PenSquare className="h-4 w-4 mr-1" />;
       case 'SCHEDULED':
-        return <FiCalendar className="h-4 w-4 mr-1" />;
+        return <Calendar className="h-4 w-4 mr-1" />;
       case 'PUBLISHED':
-        return <FiCheckCircle className="h-4 w-4 mr-1" />;
+        return <CheckCircle className="h-4 w-4 mr-1" />;
       default:
         return null;
     }
@@ -101,13 +109,13 @@ const PostsList = ({ posts, topics, onDelete }: PostsListProps) => {
           {/* Search */}
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <FiSearch className="h-5 w-5 text-gray-400" />
+              <Search className="h-5 w-5 text-gray-400 dark:text-gray-500" />
             </div>
             <input
               type="text"
-              className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 
+              className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md leading-5 bg-white dark:bg-gray-800 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-gray-100
                        focus:outline-none focus:ring-2 focus:ring-primary-500/25 focus:border-primary-500
-                       hover:border-gray-400 transition-all
+                       hover:border-gray-400 dark:hover:border-gray-600 transition-all
                        sm:text-sm"
               placeholder="Search posts or hashtags..."
               value={searchTerm}
@@ -118,12 +126,12 @@ const PostsList = ({ posts, topics, onDelete }: PostsListProps) => {
           {/* Status Filter */}
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <FiFilter className="h-5 w-5 text-gray-400" />
+              <Filter className="h-5 w-5 text-gray-400 dark:text-gray-500" />
             </div>
             <select
-              className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 
+              className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md leading-5 bg-white dark:bg-gray-800 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-gray-100
                        focus:outline-none focus:ring-2 focus:ring-primary-500/25 focus:border-primary-500
-                       hover:border-gray-400 transition-all
+                       hover:border-gray-400 dark:hover:border-gray-600 transition-all
                        sm:text-sm"
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
@@ -138,12 +146,12 @@ const PostsList = ({ posts, topics, onDelete }: PostsListProps) => {
           {/* Topic Filter */}
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <FiFilter className="h-5 w-5 text-gray-400" />
+              <Filter className="h-5 w-5 text-gray-400 dark:text-gray-500" />
             </div>
             <select
-              className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 
+              className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md leading-5 bg-white dark:bg-gray-800 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-gray-100
                        focus:outline-none focus:ring-2 focus:ring-primary-500/25 focus:border-primary-500
-                       hover:border-gray-400 transition-all
+                       hover:border-gray-400 dark:hover:border-gray-600 transition-all
                        sm:text-sm"
               value={topicFilter}
               onChange={(e) => setTopicFilter(e.target.value)}
@@ -159,99 +167,113 @@ const PostsList = ({ posts, topics, onDelete }: PostsListProps) => {
         </div>
 
         {filteredPosts.length > 0 ? (
-          <div className="overflow-hidden shadow-bubble rounded-[1rem] border border-gray-200">
+          <div className="overflow-hidden shadow-sm rounded-lg border border-gray-200 dark:border-gray-700">
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-300">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
-                      Content
-                    </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                      Status
-                    </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                      Topic
-                    </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                      Date
-                    </th>
-                    <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-6">
-                      <span className="sr-only">Actions</span>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200 bg-white">
+              <Table className="border-collapse">
+                <TableHeader>
+                  <TableRow className="hover:bg-transparent border-b border-gray-100 dark:border-gray-700">
+                    <TableHead className="text-sm font-medium text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-800 py-3">Content</TableHead>
+                    <TableHead className="text-sm font-medium text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-800 py-3">Status</TableHead>
+                    <TableHead className="text-sm font-medium text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-800 py-3">Topic</TableHead>
+                    <TableHead className="text-sm font-medium text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-800 py-3">Date</TableHead>
+                    <TableHead className="text-right text-sm font-medium text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-800 py-3">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
                   {filteredPosts.map((post) => (
-                    <tr key={post.id} className="hover:bg-gray-50 transition-colors">
-                      <td className="py-4 pl-4 pr-3 text-sm sm:pl-6">
-                        <div className="font-medium text-gray-900 line-clamp-2 max-w-xl">
-                          {post.content}
+                    <TableRow key={post.id} className="hover:bg-gray-50/50 dark:hover:bg-gray-700/50 transition-colors border-b border-gray-100 dark:border-gray-700 last:border-0">
+                      <TableCell className="py-4 text-sm font-medium">
+                        <div className="max-w-xl post-content">
+                          <p className="line-clamp-2 text-gray-900 dark:text-gray-100">{post.content}</p>
+                          {post.hashtags.length > 0 && (
+                            <div className="mt-1 flex flex-wrap gap-1">
+                              {post.hashtags.slice(0, 3).map((tag, index) => (
+                                <span 
+                                  key={index} 
+                                  className="tag inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border border-blue-100 dark:border-blue-800"
+                                >
+                                  {tag}
+                                </span>
+                              ))}
+                              {post.hashtags.length > 3 && (
+                                <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-100 dark:border-gray-600">
+                                  +{post.hashtags.length - 3} more
+                                </span>
+                              )}
+                            </div>
+                          )}
                         </div>
-                        {post.hashtags.length > 0 && (
-                          <div className="mt-1 flex flex-wrap gap-1">
-                            {post.hashtags.slice(0, 3).map((tag, index) => (
-                              <span 
-                                key={index} 
-                                className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-primary-100 text-primary-800"
-                              >
-                                {tag}
-                              </span>
-                            ))}
-                            {post.hashtags.length > 3 && (
-                              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
-                                +{post.hashtags.length - 3} more
-                              </span>
-                            )}
-                          </div>
-                        )}
-                      </td>
-                      <td className="px-3 py-4 text-sm text-gray-500">
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusBadgeClass(post.status)}`}>
+                      </TableCell>
+                      <TableCell className="py-4 text-sm">
+                        <span 
+                          className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium ${
+                            post.status === 'DRAFT' 
+                              ? 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-600' 
+                              : post.status === 'SCHEDULED' 
+                              ? 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 border border-amber-100 dark:border-amber-800' 
+                              : 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300 border border-green-100 dark:border-green-800'
+                          }`}
+                        >
                           {getStatusIcon(post.status)}
                           {post.status}
                         </span>
                         {post.status === 'SCHEDULED' && post.scheduledFor && (
-                          <div className="mt-1 text-xs text-gray-500">
+                          <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                             {new Date(post.scheduledFor).toLocaleString()}
                           </div>
                         )}
-                      </td>
-                      <td className="px-3 py-4 text-sm text-gray-500">
-                        {post.topic ? post.topic.name : '-'}
-                      </td>
-                      <td className="px-3 py-4 text-sm text-gray-500">
+                      </TableCell>
+                      <TableCell className="py-4 text-sm text-gray-500 dark:text-gray-400">{post.topic ? post.topic.name : '-'}</TableCell>
+                      <TableCell className="py-4 text-sm text-gray-500 dark:text-gray-400">
                         {post.status === 'PUBLISHED' && post.publishedAt
                           ? new Date(post.publishedAt).toLocaleDateString()
                           : new Date(post.createdAt).toLocaleDateString()}
-                      </td>
-                      <td className="relative py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                        <div className="flex justify-end gap-2">
-                          <Link href={`/posts/${post.id}`}>
-                            <Button variant="secondary" size="sm">
-                              <FiEdit2 className="h-4 w-4 mr-1" />
-                              Edit
+                      </TableCell>
+                      <TableCell className="py-4 text-right">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="sm" className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
+                              <MoreHorizontal className="h-4 w-4" />
                             </Button>
-                          </Link>
-                          <Button 
-                            variant="danger" 
-                            size="sm" 
-                            onClick={() => onDelete(post.id)}
-                          >
-                            <FiTrash2 className="h-4 w-4 mr-1" />
-                            Delete
-                          </Button>
-                        </div>
-                      </td>
-                    </tr>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="dropdown-menu border border-gray-200 dark:border-gray-700 shadow-sm">
+                            <DropdownMenuLabel className="text-sm text-gray-600 dark:text-gray-300">Actions</DropdownMenuLabel>
+                            <DropdownMenuSeparator className="bg-gray-100 dark:bg-gray-700" />
+                            <DropdownMenuItem asChild className="dropdown-item">
+                              <Link href={`/posts/${post.id}`} className="flex items-center text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100">
+                                <Edit className="h-4 w-4 mr-2" /> Edit
+                              </Link>
+                            </DropdownMenuItem>
+                            {post.linkedinPostUrl && (
+                              <DropdownMenuItem asChild className="dropdown-item">
+                                <a 
+                                  href={post.linkedinPostUrl} 
+                                  target="_blank" 
+                                  rel="noopener noreferrer" 
+                                  className="flex items-center text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100"
+                                >
+                                  <ExternalLink className="h-4 w-4 mr-2" /> View on LinkedIn
+                                </a>
+                              </DropdownMenuItem>
+                            )}
+                            <DropdownMenuItem 
+                              className="text-sm text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20" 
+                              onClick={() => onDelete(post.id)}
+                            >
+                              <Trash2 className="h-4 w-4 mr-2" /> Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
                   ))}
-                </tbody>
-              </table>
+                </TableBody>
+              </Table>
             </div>
           </div>
         ) : (
-          <div className="text-center py-8 bg-white rounded-[1rem] shadow-bubble border border-gray-200">
-            <p className="text-gray-500 mb-4">
+          <div className="text-center py-8 bg-white dark:bg-gray-800 rounded-[1rem] shadow-bubble border border-gray-200 dark:border-gray-700">
+            <p className="text-gray-500 dark:text-gray-400 mb-4">
               {posts.length === 0
                 ? "You haven't created any posts yet."
                 : "No posts match your search criteria."}

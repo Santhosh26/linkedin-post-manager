@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { FiSearch, FiX, FiImage } from 'react-icons/fi';
+import { Search, X, Image } from 'lucide-react';
 import { UnsplashImage } from '@/lib/services/unsplash';
-import Button from '@/components/ui/Button';
+import { Button } from '@/components/ui/buttonAdapter';
 
 interface ImageSelectorProps {
   onImageSelect: (image: UnsplashImage | null) => void;
@@ -63,11 +63,11 @@ export default function ImageSelector({ onImageSelect, selectedImage }: ImageSel
           <div className="absolute bottom-2 right-2">
             <Button
               size="sm"
-              variant="danger"
+              variant="destructive"
               onClick={clearSelectedImage}
               aria-label="Remove image"
             >
-              <FiX className="mr-1" /> Remove
+              <X className="mr-1" /> Remove
             </Button>
           </div>
           <p className="text-xs text-gray-500 mt-1">
@@ -98,7 +98,7 @@ export default function ImageSelector({ onImageSelect, selectedImage }: ImageSel
                   onClick={searchImages}
                   className="ml-2"
                 >
-                  <FiSearch className="mr-1" /> Search
+                  <Search className="mr-1" /> Search
                 </Button>
               </div>
               
@@ -150,7 +150,7 @@ export default function ImageSelector({ onImageSelect, selectedImage }: ImageSel
               variant="secondary"
               onClick={() => setShowSelector(true)}
             >
-              <FiImage className="mr-2" /> Add Image
+              <Image className="mr-2" /> Add Image
             </Button>
           )}
         </div>

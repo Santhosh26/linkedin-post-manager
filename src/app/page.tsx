@@ -1,7 +1,7 @@
 // src/app/page.tsx
-import Button from '@/components/ui/Button';
+import { Button } from '@/components/ui/buttonAdapter';
 import Link from 'next/link';
-import { FiSearch, FiEdit, FiCalendar, FiCheckCircle } from 'react-icons/fi';
+import { Search, Edit, Calendar, CheckCircle } from 'lucide-react';
 
 export default function Home() {
   return (
@@ -70,7 +70,7 @@ export default function Home() {
             <div className="space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-10">
               <div className="relative">
                 <div className="absolute flex items-center justify-center h-12 w-12 rounded-[1rem] bg-primary-500 text-white">
-                  <FiSearch className="h-6 w-6" />
+                  <Search className="h-6 w-6" />
                 </div>
                 <p className="ml-16 text-lg leading-6 font-medium text-gray-900">AI-Assisted Research</p>
                 <div className="mt-2 ml-16 text-base text-gray-500">
@@ -81,7 +81,7 @@ export default function Home() {
 
               <div className="relative">
                 <div className="absolute flex items-center justify-center h-12 w-12 rounded-[1rem] bg-primary-500 text-white">
-                  <FiEdit className="h-6 w-6" />
+                  <Edit className="h-6 w-6" />
                 </div>
                 <p className="ml-16 text-lg leading-6 font-medium text-gray-900">Intelligent Post Generation</p>
                 <div className="mt-2 ml-16 text-base text-gray-500">
@@ -92,7 +92,7 @@ export default function Home() {
 
               <div className="relative">
                 <div className="absolute flex items-center justify-center h-12 w-12 rounded-[1rem] bg-primary-500 text-white">
-                  <FiCheckCircle className="h-6 w-6" />
+                  <CheckCircle className="h-6 w-6" />
                 </div>
                 <p className="ml-16 text-lg leading-6 font-medium text-gray-900">Content Workspace</p>
                 <div className="mt-2 ml-16 text-base text-gray-500">
@@ -103,7 +103,7 @@ export default function Home() {
 
               <div className="relative">
                 <div className="absolute flex items-center justify-center h-12 w-12 rounded-[1rem] bg-primary-500 text-white">
-                  <FiCalendar className="h-6 w-6" />
+                  <Calendar className="h-6 w-6" />
                 </div>
                 <p className="ml-16 text-lg leading-6 font-medium text-gray-900">Scheduling Capabilities</p>
                 <div className="mt-2 ml-16 text-base text-gray-500">

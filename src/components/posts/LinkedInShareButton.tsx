@@ -1,11 +1,10 @@
-// src/components/posts/LinkedInShareButton.tsx
 'use client';
 
 import { useState } from 'react';
-import { useSession } from 'next-auth/react';
-import { FiLinkedin, FiAlertCircle, FiEye } from 'react-icons/fi';
-import Button from '@/components/ui/Button';
+import { AlertCircle, Eye } from 'lucide-react';
+import { Button } from '@/components/ui/buttonAdapter';
 import { useLinkedInStatus } from '@/hooks/useLinkedInStatus';
+import { useToast } from "@/hooks/use-toast";
 
 interface LinkedInShareButtonProps {
   postId: string;
@@ -13,7 +12,7 @@ interface LinkedInShareButtonProps {
 }
 
 export default function LinkedInShareButton({ postId, onSuccess }: LinkedInShareButtonProps) {
-  const { data: session } = useSession();
+  const { toast } = useToast();
   const { isConnected } = useLinkedInStatus();
   
   const [isSharing, setIsSharing] = useState(false);
@@ -26,9 +25,8 @@ export default function LinkedInShareButton({ postId, onSuccess }: LinkedInShare
       setIsSharing(true);
       setError(null);
       
-      // Updated to use consolidated endpoint with the Post-specific publish method
       const response = await fetch(`/api/posts/${postId}`, {
-        method: 'POST', // Using POST for publish action
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -43,6 +41,11 @@ export default function LinkedInShareButton({ postId, onSuccess }: LinkedInShare
         throw new Error(data.message || 'Failed to share to LinkedIn');
       }
       
+      toast({
+        title: "Shared to LinkedIn",
+        description: "Your post has been shared to LinkedIn successfully.",
+      });
+      
       // If the share was successful and we have a URL, call the onSuccess callback
       if (data.linkedinPostUrl && onSuccess) {
         onSuccess(data.linkedinPostUrl);
@@ -52,7 +55,13 @@ export default function LinkedInShareButton({ postId, onSuccess }: LinkedInShare
       setShowOptions(false);
     } catch (err) {
       console.error('Error sharing to LinkedIn:', err);
-      setError(err instanceof Error ? err.message : 'Failed to share to LinkedIn');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to share to LinkedIn';
+      
+      toast({
+        title: "Share Failed",
+        description: errorMessage,
+        variant: "destructive",
+      });
     } finally {
       setIsSharing(false);
     }
@@ -73,7 +82,21 @@ export default function LinkedInShareButton({ postId, onSuccess }: LinkedInShare
           size="sm"
           disabled={true}
         >
-          <FiLinkedin className="mr-2 h-4 w-4" />
+          {/* Replace deprecated Linkedin icon with custom SVG */}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="mr-2 h-4 w-4"
+          >
+            <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+            <rect width="4" height="12" x="2" y="9" />
+            <circle cx="4" cy="4" r="2" />
+          </svg>
           LinkedIn not connected
         </Button>
       </div>
@@ -85,7 +108,7 @@ export default function LinkedInShareButton({ postId, onSuccess }: LinkedInShare
       {error && (
         <div className="mb-2 bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 dark:border-red-600 p-3 rounded text-sm">
           <div className="flex">
-            <FiAlertCircle className="h-5 w-5 text-red-500 dark:text-red-400 flex-shrink-0" />
+            <AlertCircle className="h-5 w-5 text-red-500 dark:text-red-400 flex-shrink-0" />
             <div className="ml-3">
               <p className="text-red-700 dark:text-red-400">{error}</p>
             </div>
@@ -124,7 +147,7 @@ export default function LinkedInShareButton({ postId, onSuccess }: LinkedInShare
         
         <div className="flex space-x-2">
           <Button
-            variant="primary"
+            variant="default"
             onClick={handleShareToLinkedIn}
             disabled={isSharing}
             className="flex-1"
@@ -136,7 +159,21 @@ export default function LinkedInShareButton({ postId, onSuccess }: LinkedInShare
               </span>
             ) : (
               <>
-                <FiLinkedin className="mr-2 h-5 w-5" />
+                {/* Replace deprecated Linkedin icon with custom SVG */}
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="mr-2 h-5 w-5"
+                >
+                  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+                  <rect width="4" height="12" x="2" y="9" />
+                  <circle cx="4" cy="4" r="2" />
+                </svg>
                 Share to LinkedIn
               </>
             )}
@@ -147,7 +184,7 @@ export default function LinkedInShareButton({ postId, onSuccess }: LinkedInShare
             onClick={toggleOptions}
             title="Sharing options"
           >
-            <FiEye className="h-5 w-5" />
+            <Eye className="h-5 w-5" />
           </Button>
         </div>
       </div>

@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { format } from 'date-fns';
-import { FiSend, FiEye, FiMoreVertical } from 'react-icons/fi';
+import { Send, Eye, MoreVertical } from 'lucide-react';
 
 interface Post {
   id: string;
@@ -84,7 +84,7 @@ export default function CalendarDay({ day, isCurrentMonth, isToday, posts, onPub
                       onClick={(e) => toggleExpandPost(post.id, e)}
                       className="text-primary-600 hover:text-primary-800 p-1 rounded-full hover:bg-primary-200 transition-colors"
                     >
-                      <FiMoreVertical className="h-3 w-3" />
+                      <MoreVertical className="h-3 w-3" />
                     </button>
                   </div>
                   
@@ -100,7 +100,7 @@ export default function CalendarDay({ day, isCurrentMonth, isToday, posts, onPub
                         className="flex items-center text-primary-600 hover:text-primary-800 p-1 transition-colors"
                         onClick={(e) => e.stopPropagation()}
                       >
-                        <FiEye className="h-3 w-3 mr-1" />
+                        <Eye className="h-3 w-3 mr-1" />
                         <span>View</span>
                       </Link>
                       
@@ -109,7 +109,7 @@ export default function CalendarDay({ day, isCurrentMonth, isToday, posts, onPub
                         disabled={publishingId === post.id}
                         className="flex items-center text-primary-600 hover:text-primary-800 p-1 disabled:opacity-50 transition-colors"
                       >
-                        <FiSend className="h-3 w-3 mr-1" />
+                        <Send className="h-3 w-3 mr-1" />
                         <span>{publishingId === post.id ? 'Publishing...' : 'Publish'}</span>
                       </button>
                     </div>

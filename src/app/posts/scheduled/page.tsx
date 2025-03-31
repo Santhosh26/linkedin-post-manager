@@ -3,10 +3,10 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { FiCalendar, FiFilter, FiBarChart2, FiMoreVertical } from 'react-icons/fi';
+import { Calendar, BarChart2} from 'lucide-react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
-import Button from '@/components/ui/Button';
-import { Card, CardHeader, CardContent } from '@/components/ui/Card';
+import { Button } from '@/components/ui/buttonAdapter';
+import { Card, CardHeader, CardContent } from '@/components/ui/cardAdapter';
 import ScheduledPostControls from '@/components/posts/ScheduledPostControls';
 import CronTrigger from '@/components/admin/CronTrigger';
 
@@ -95,7 +95,7 @@ export default function ScheduledPostsPage() {
                   size="sm"
                   onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
                 >
-                  <FiBarChart2 className="mr-2" />
+                  <BarChart2 className="mr-2" />
                   {sortOrder === 'asc' ? 'Earliest First' : 'Latest First'}
                 </Button>
               </div>
@@ -135,7 +135,7 @@ export default function ScheduledPostsPage() {
                       
                       <div className="mt-4 flex justify-between items-center text-sm text-gray-500 dark:text-dark-text-tertiary">
                         <div className="flex items-center">
-                          <FiCalendar className="mr-1" />
+                          <Calendar className="mr-1" />
                           <span>
                             {new Date(post.scheduledFor).toLocaleString()}
                           </span>
@@ -159,7 +159,7 @@ export default function ScheduledPostsPage() {
               </div>
             ) : (
               <div className="text-center py-12">
-                <FiCalendar className="mx-auto h-12 w-12 text-gray-400" />
+                <Calendar className="mx-auto h-12 w-12 text-gray-400" />
                 <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-dark-text-primary">No scheduled posts</h3>
                 <p className="mt-1 text-sm text-gray-500 dark:text-dark-text-tertiary">
                   You dont have any posts scheduled for publishing.
@@ -167,7 +167,7 @@ export default function ScheduledPostsPage() {
                 <div className="mt-6">
                   <Button 
                     onClick={() => router.push('/posts/new')} 
-                    variant="primary"
+                    variant="default"
                   >
                     Create New Post
                   </Button>

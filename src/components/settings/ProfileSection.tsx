@@ -6,10 +6,12 @@ import { useSession } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { FiUser, FiAlertCircle, FiCheckCircle } from 'react-icons/fi';
-import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/Card';
-import Button from '@/components/ui/Button';
-import Input from '@/components/ui/Input';
+import { User, AlertCircle, CheckCircle } from 'lucide-react';
+import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
+import { Button } from '@/components/ui/buttonAdapter';
+import { Input } from '@/components/ui/input';
+import { useToast } from "@/hooks/use-toast";
+import Image from 'next/image';
 
 const profileSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -19,6 +21,7 @@ const profileSchema = z.object({
 type ProfileFormValues = z.infer<typeof profileSchema>;
 
 export default function ProfileSection() {
+  const { toast } = useToast();
   const { data: session, update } = useSession();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -42,7 +45,6 @@ export default function ProfileSection() {
     setSuccess(null);
 
     try {
-      // Make API request to update user profile
       const response = await fetch('/api/user/profile', {
         method: 'PUT',
         headers: {
@@ -66,10 +68,20 @@ export default function ProfileSection() {
         },
       });
 
-      setSuccess('Profile updated successfully');
+
+      toast({
+        title: "Profile Updated",
+        description: "Your profile has been updated successfully.",
+      });
     } catch (err) {
       console.error('Error updating profile:', err);
-      setError(err instanceof Error ? err.message : 'Failed to update profile');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to update profile';
+      
+      toast({
+        title: "Update Failed",
+        description: errorMessage,
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -83,7 +95,7 @@ export default function ProfileSection() {
           {error && (
             <div className="mb-6 bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 dark:border-red-600 p-4 rounded">
               <div className="flex">
-                <FiAlertCircle className="h-5 w-5 text-red-500 dark:text-red-400" />
+                <AlertCircle className="h-5 w-5 text-red-500 dark:text-red-400" />
                 <div className="ml-3">
                   <p className="text-sm text-red-700 dark:text-red-400">{error}</p>
                 </div>
@@ -94,7 +106,7 @@ export default function ProfileSection() {
           {success && (
             <div className="mb-6 bg-green-50 dark:bg-green-900/20 border-l-4 border-green-500 dark:border-green-600 p-4 rounded">
               <div className="flex">
-                <FiCheckCircle className="h-5 w-5 text-green-500 dark:text-green-400" />
+                <CheckCircle className="h-5 w-5 text-green-500 dark:text-green-400" />
                 <div className="ml-3">
                   <p className="text-sm text-green-700 dark:text-green-400">{success}</p>
                 </div>
@@ -106,14 +118,16 @@ export default function ProfileSection() {
             <div className="flex justify-center mb-6">
               <div className="relative">
                 {session?.user?.image ? (
-                  <img
+                  <Image
                     src={session.user.image}
                     alt={session.user.name || 'User'}
-                    className="h-24 w-24 rounded-full object-cover border-2 border-gray-200 dark:border-gray-700"
+                    width={96}
+                    height={96}
+                    className="rounded-full object-cover border-2 border-gray-200 dark:border-gray-700"
                   />
                 ) : (
                   <div className="h-24 w-24 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-primary-600 dark:text-primary-400">
-                    <FiUser className="h-12 w-12" />
+                    <User className="h-12 w-12" />
                   </div>
                 )}
                 <Button
@@ -125,23 +139,38 @@ export default function ProfileSection() {
               </div>
             </div>
 
-            <Input
-              id="name"
-              label="Full Name"
-              {...register('name')}
-              error={errors.name?.message}
-              placeholder="Your full name"
-            />
+            <div>
+              <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Full Name
+              </label>
+              <Input
+                id="name"
+                {...register('name')}
+                placeholder="Your full name"
+              />
+              {errors.name && (
+                <p className="mt-1 text-sm text-red-500">{errors.name.message}</p>
+              )}
+            </div>
 
-            <Input
-              id="email"
-              type="email"
-              label="Email Address"
-              {...register('email')}
-              error={errors.email?.message}
-              placeholder="your@email.com"
-              helperText="This email is used for login and notifications"
-            />
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Email Address
+              </label>
+              <Input
+                id="email"
+                type="email"
+                {...register('email')}
+                placeholder="your@email.com"
+                aria-describedby="email-helper"
+              />
+              {errors.email && (
+                <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>
+              )}
+              <p id="email-helper" className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                This email is used for login and notifications
+              </p>
+            </div>
           </div>
         </CardContent>
         <CardFooter className="flex justify-end space-x-3">

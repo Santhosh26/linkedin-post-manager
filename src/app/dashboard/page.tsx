@@ -4,12 +4,12 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
-import { FiPlus, FiFileText, FiList, FiCalendar } from 'react-icons/fi';
-import { MdPublishedWithChanges } from "react-icons/md";
-import { BsPostcardFill } from "react-icons/bs";
+import { Plus, FileText, List, Calendar } from 'lucide-react';
+import { CheckCircle2 } from "lucide-react";
+import { Newspaper } from "lucide-react";
 import DashboardLayout from '@/components/layout/DashboardLayout';
-import { Card, CardHeader, CardContent } from '@/components/ui/Card';
-import Button from '@/components/ui/Button';
+import { Card, CardHeader, CardContent } from '@/components/ui/cardAdapter';
+import { Button } from '@/components/ui/buttonAdapter';
 
 interface Stats {
   totalPosts: number;
@@ -119,7 +119,7 @@ export default function DashboardPage() {
               <div className="p-6 bg-white rounded-[1rem] border border-gray-200 hover:shadow-bubble transition-all text-center group">
                 <div className="flex flex-col items-center">
                   <div className="h-12 w-12 bg-primary-100 rounded-full flex items-center justify-center text-primary-600 mb-4 group-hover:bg-primary-200 transition-colors">
-                    <FiPlus className="h-6 w-6" />
+                    <Plus className="h-6 w-6" />
                   </div>
                   <h3 className="text-base font-medium text-gray-900">New Topic</h3>
                   <p className="mt-2 text-sm text-gray-500">Create a new content topic</p>
@@ -131,7 +131,7 @@ export default function DashboardPage() {
               <div className="p-6 bg-white rounded-[1rem] border border-gray-200 hover:shadow-bubble transition-all text-center group">
                 <div className="flex flex-col items-center">
                   <div className="h-12 w-12 bg-primary-100 rounded-full flex items-center justify-center text-primary-600 mb-4 group-hover:bg-primary-200 transition-colors">
-                    <FiFileText className="h-6 w-6" />
+                    <FileText className="h-6 w-6" />
                   </div>
                   <h3 className="text-base font-medium text-gray-900">Create Post</h3>
                   <p className="mt-2 text-sm text-gray-500">Write a new LinkedIn post</p>
@@ -143,7 +143,7 @@ export default function DashboardPage() {
               <div className="p-6 bg-white rounded-[1rem] border border-gray-200 hover:shadow-bubble transition-all text-center group ">
                 <div className="flex flex-col items-center">
                   <div className="h-12 w-12 bg-primary-100 rounded-full flex items-center justify-center text-primary-600 mb-4 group-hover:bg-primary-200 transition-colors ">
-                    <FiList className="h-6 w-6" />
+                    <List className="h-6 w-6" />
                   </div>
                   <h3 className="text-base font-medium text-gray-900 ">Research Content</h3>
                   <p className="mt-2 text-sm text-gray-500">Research topics for new posts</p>
@@ -155,7 +155,7 @@ export default function DashboardPage() {
               <div className="p-6 bg-white rounded-[1rem] border border-gray-200 hover:shadow-bubble transition-all text-center group">
                 <div className="flex flex-col items-center">
                   <div className="h-12 w-12 bg-primary-100 rounded-full flex items-center justify-center text-primary-600 mb-4 group-hover:bg-primary-200 transition-colors">
-                    <FiCalendar className="h-6 w-6" />
+                    <Calendar className="h-6 w-6" />
                   </div>
                   <h3 className="text-base font-medium text-gray-900">View Calendar</h3>
                   <p className="mt-2 text-sm text-gray-500">See your content schedule</p>
@@ -173,7 +173,7 @@ export default function DashboardPage() {
               <div className="px-4 py-5 sm:p-6">
                 <div className="flex items-center">
                   <div className="flex-shrink-0 bg-orange-500 rounded-md p-3">
-                    <BsPostcardFill className="h-6 w-6 text-white" />
+                    <Newspaper className="h-6 w-6 text-white" />
                   </div>
                   <div className="ml-5 w-0 flex-1">
                     <dl>
@@ -191,7 +191,7 @@ export default function DashboardPage() {
               <div className="px-4 py-5 sm:p-6">
                 <div className="flex items-center">
                   <div className="flex-shrink-0 bg-yellow-500 rounded-md p-3">
-                    <FiFileText className="h-6 w-6 text-white" />
+                    <FileText className="h-6 w-6 text-white" />
                   </div>
                   <div className="ml-5 w-0 flex-1">
                     <dl>
@@ -209,7 +209,7 @@ export default function DashboardPage() {
               <div className="px-4 py-5 sm:p-6">
                 <div className="flex items-center">
                   <div className="flex-shrink-0 bg-indigo-500 rounded-md p-3">
-                    <FiCalendar className="h-6 w-6 text-white" />
+                    <Calendar className="h-6 w-6 text-white" />
                   </div>
                   <div className="ml-5 w-0 flex-1">
                     <dl>
@@ -227,7 +227,7 @@ export default function DashboardPage() {
               <div className="px-4 py-5 sm:p-6">
                 <div className="flex items-center">
                   <div className="flex-shrink-0 bg-green-500 rounded-md p-3">
-                    <MdPublishedWithChanges className="h-6 w-6 text-white" />
+                    <CheckCircle2 className="h-6 w-6 text-white" />
                   </div>
                   <div className="ml-5 w-0 flex-1">
                     <dl>
@@ -245,7 +245,7 @@ export default function DashboardPage() {
               <div className="px-4 py-5 sm:p-6">
                 <div className="flex items-center">
                   <div className="flex-shrink-0 bg-purple-500 rounded-md p-3">
-                    <FiList className="h-6 w-6 text-white" />
+                    <List className="h-6 w-6 text-white" />
                   </div>
                   <div className="ml-5 w-0 flex-1">
                     <dl>
@@ -268,7 +268,7 @@ export default function DashboardPage() {
               title="Recent Posts" 
               action={
                 <Link href="/posts">
-                  <Button variant="secondary" size="sm">
+                  <Button variant="default" size="sm">
                     View All
                   </Button>
                 </Link>

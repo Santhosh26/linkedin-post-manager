@@ -1,8 +1,9 @@
 // src/components/posts/ImageSuggestions.tsx
-import { useState, useEffect } from 'react';
-import { FiRefreshCw } from 'react-icons/fi';
+import { useState, useEffect, useCallback } from 'react';
+import { RefreshCw } from 'lucide-react';
 import { UnsplashImage } from '@/lib/services/unsplash';
-import Button from '@/components/ui/Button';
+import { Button } from '@/components/ui/buttonAdapter';
+import Image from 'next/image';
 
 interface ImageSuggestionsProps {
   content: string;
@@ -30,7 +31,7 @@ export default function ImageSuggestions({ content, onSelectImage }: ImageSugges
   };
   
   // Fetch suggested images based on content
-  const fetchSuggestions = async () => {
+  const fetchSuggestions = useCallback(async () => {
     if (!content.trim()) return;
     
     try {
@@ -58,14 +59,14 @@ export default function ImageSuggestions({ content, onSelectImage }: ImageSugges
     } finally {
       setLoading(false);
     }
-  };
+  }, [content]);
   
   // Fetch suggestions when content changes
   useEffect(() => {
     if (content.length > 30) {
       fetchSuggestions();
     }
-  }, [content]);
+  }, [content, fetchSuggestions]);
   
   if (suggestions.length === 0 && !loading) {
     return null;
@@ -92,11 +93,15 @@ export default function ImageSuggestions({ content, onSelectImage }: ImageSugges
                 onClick={() => onSelectImage(image)}
                 className="cursor-pointer rounded-lg overflow-hidden border border-gray-200 hover:border-blue-500 transition-all hover:shadow-md"
               >
-                <img 
-                  src={image.urls.thumb} 
-                  alt={image.alt_description || 'Suggested image'} 
-                  className="w-full h-20 object-cover"
-                />
+                <div className="relative w-full h-20">
+                  <Image 
+                    src={image.urls.thumb} 
+                    alt={image.alt_description || 'Suggested image'} 
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 33vw, 20vw"
+                  />
+                </div>
               </div>
             ))}
           </div>
@@ -107,7 +112,7 @@ export default function ImageSuggestions({ content, onSelectImage }: ImageSugges
               size="sm"
               onClick={fetchSuggestions}
             >
-              <FiRefreshCw className="mr-1 h-3 w-3" /> Refresh Suggestions
+              <RefreshCw className="mr-1 h-3 w-3" /> Refresh Suggestions
             </Button>
           </div>
         </>

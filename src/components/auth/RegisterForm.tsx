@@ -7,8 +7,9 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
-import Input from '../ui/Input';
-import Button from '../ui/Button';
+import { Input } from '../ui/input';
+import { Button } from '../ui/button';
+import { useToast } from "@/hooks/use-toast";
 
 const registerSchema = z
   .object({
@@ -25,6 +26,7 @@ const registerSchema = z
 type RegisterFormValues = z.infer<typeof registerSchema>;
 
 const RegisterForm = () => {
+  const { toast } = useToast();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -61,11 +63,23 @@ const RegisterForm = () => {
         throw new Error(result.message || 'Failed to create account');
       }
 
+      toast({
+        title: "Account Created",
+        description: "Your account has been created successfully. You can now log in.",
+      });
+      
+
       // Redirect to login page after successful registration
       router.push('/login?registered=true');
     } catch (err) {
       console.error('Registration error:', err);
-      setError(err instanceof Error ? err.message : 'An unexpected error occurred. Please try again.');
+      const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred. Please try again.';
+      
+      toast({
+        title: "Registration Failed",
+        description: errorMessage,
+        variant: "destructive",
+      });
       setIsLoading(false);
     }
   };

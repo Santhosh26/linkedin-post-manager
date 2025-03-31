@@ -6,11 +6,54 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { FiX, FiPlus, FiCalendar, FiAlertCircle, FiCheckCircle, FiSave } from 'react-icons/fi';
+import { X, Plus, Calendar, AlertCircle, CheckCircle, Save } from 'lucide-react';
 import ImageSelector from './ImageSelector';
 import { UnsplashImage } from '@/lib/services/unsplash';
-import Button from '@/components/ui/Button';
-import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/Card';
+import { Button } from '@/components/ui/buttonAdapter';
+import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
+import { useToast } from "@/hooks/use-toast";
+
+interface Topic {
+  id: string;
+  name: string;
+}
+
+// Define the image shape to match what you're using
+interface PostImage {
+  id: string;
+  url: string;
+  thumb?: string;
+  alt?: string;
+  credit?: {
+    name: string;
+    username: string;
+  };
+}
+
+
+
+interface PostFormProps {
+  initialData?: {
+    id?: string;
+    content: string;
+    hashtags: string[];
+    topicId?: string;
+    status: 'DRAFT' | 'SCHEDULED' | 'PUBLISHED';
+    scheduledFor?: string;
+    visibility?: 'PUBLIC' | 'CONNECTIONS';
+    image?: {
+      id: string;
+      url: string;
+      thumb?: string;
+      alt?: string;
+      credit?: {
+        name: string;
+        username: string;
+      };
+    };
+  };
+  isEditMode?: boolean;
+}
 
 interface Topic {
   id: string;
@@ -39,11 +82,13 @@ interface PostFormProps {
     status: 'DRAFT' | 'SCHEDULED' | 'PUBLISHED';
     scheduledFor?: string;
     visibility?: 'PUBLIC' | 'CONNECTIONS';
+    image?: PostImage;
   };
   isEditMode?: boolean;
 }
 
 const PostForm = ({ initialData, isEditMode = false }: PostFormProps) => {
+  const { toast } = useToast();
   const router = useRouter();
   const [topics, setTopics] = useState<Topic[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -86,7 +131,8 @@ const PostForm = ({ initialData, isEditMode = false }: PostFormProps) => {
   const hashtags = watch('hashtags') || [];
   const status = watch('status');
 
-  const [selectedImage, setSelectedImage] = useState<any>(
+  // Fix: Replace any with proper type
+  const [selectedImage, setSelectedImage] = useState<UnsplashImage | null>(
     initialData?.image 
       ? {
           id: initialData.image.id,
@@ -97,15 +143,11 @@ const PostForm = ({ initialData, isEditMode = false }: PostFormProps) => {
             small: initialData.image.thumb || initialData.image.url,
             thumb: initialData.image.thumb || initialData.image.url,
           },
-          url: initialData.image.url, 
-          thumb: initialData.image.thumb,
           alt_description: initialData.image.alt || '',
-          alt: initialData.image.alt || '',
           user: {
             name: initialData.image.credit?.name || 'Unknown',
             username: initialData.image.credit?.username || 'unknown',
-          },
-          credit: initialData.image.credit || { name: 'Unknown', username: 'unknown' }
+          }
         }
       : null
   );
@@ -171,10 +213,7 @@ const PostForm = ({ initialData, isEditMode = false }: PostFormProps) => {
     try {
       const payload = {
         ...data,
-        // Only include scheduledFor if status is SCHEDULED
         scheduledFor: data.status === 'SCHEDULED' ? data.scheduledFor : undefined,
-        // IMPORTANT: Use null, not undefined when no image is selected
-        // This explicitly tells the server to remove the image
         image: selectedImage 
           ? {
               id: selectedImage.id,
@@ -186,7 +225,7 @@ const PostForm = ({ initialData, isEditMode = false }: PostFormProps) => {
                 username: selectedImage.user.username,
               }
             } 
-          : null,  // Send null explicitly, not undefined
+          : null,
       };
 
       const response = await fetch(
@@ -208,17 +247,33 @@ const PostForm = ({ initialData, isEditMode = false }: PostFormProps) => {
 
       // If action is 'save', show success message and don't redirect
       if (action === 'save') {
-        setSuccess('Post saved successfully');
+        
+        toast({
+          title: "Post Saved",
+          description: "Your post has been saved successfully.",
+        });
         setIsLoading(false);
         setCurrentAction(null);
       } else {
         // Otherwise, redirect to posts list
+        toast({
+          title: isEditMode ? "Post Updated" : "Post Created",
+          description: isEditMode 
+            ? "Your post has been updated successfully." 
+            : "Your post has been created successfully.",
+        });
         router.push('/posts');
         router.refresh();
       }
     } catch (err) {
       console.error('Error saving post:', err);
-      setError(err instanceof Error ? err.message : 'Failed to save post');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to save post';
+      
+      toast({
+        title: "Error",
+        description: errorMessage,
+        variant: "destructive",
+      });
       setIsLoading(false);
       setCurrentAction(null);
     }
@@ -232,7 +287,7 @@ const PostForm = ({ initialData, isEditMode = false }: PostFormProps) => {
           {error && (
             <div className="mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded-md">
               <div className="flex">
-                <FiAlertCircle className="h-5 w-5 text-red-500" />
+                <AlertCircle className="h-5 w-5 text-red-500" />
                 <div className="ml-3">
                   <p className="text-sm text-red-700">{error}</p>
                 </div>
@@ -243,7 +298,7 @@ const PostForm = ({ initialData, isEditMode = false }: PostFormProps) => {
           {success && (
             <div className="mb-6 bg-green-50 border-l-4 border-green-500 p-4 rounded-md">
               <div className="flex">
-                <FiCheckCircle className="h-5 w-5 text-green-500" />
+                <CheckCircle className="h-5 w-5 text-green-500" />
                 <div className="ml-3">
                   <p className="text-sm text-green-700">{success}</p>
                 </div>
@@ -297,7 +352,7 @@ const PostForm = ({ initialData, isEditMode = false }: PostFormProps) => {
                   }}
                 />
                 <Button type="button" onClick={addHashtag}>
-                  <FiPlus className="h-5 w-5" />
+                  <Plus className="h-5 w-5" />
                 </Button>
               </div>
 
@@ -313,7 +368,7 @@ const PostForm = ({ initialData, isEditMode = false }: PostFormProps) => {
                       className="ml-1.5 h-4 w-4 rounded-full inline-flex items-center justify-center text-primary-400 hover:bg-primary-200 hover:text-primary-600 focus:outline-none transition-colors"
                       onClick={() => removeHashtag(tag)}
                     >
-                      <FiX className="h-3 w-3" />
+                      <X className="h-3 w-3" />
                     </button>
                   </span>
                 ))}
@@ -390,7 +445,7 @@ const PostForm = ({ initialData, isEditMode = false }: PostFormProps) => {
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <FiCalendar className="h-5 w-5 text-gray-400" />
+                      <Calendar className="h-5 w-5 text-gray-400" />
                     </div>
                     <input
                       type="datetime-local"
@@ -448,11 +503,11 @@ const PostForm = ({ initialData, isEditMode = false }: PostFormProps) => {
             {isEditMode && (
               <Button 
                 type="button" 
-                variant="success" 
+                variant="default" 
                 disabled={isLoading}
                 onClick={handleSubmit((data) => onSubmit(data, 'save'))}
               >
-                <FiSave className="mr-2 h-5 w-5" />
+                <Save className="mr-2 h-5 w-5" />
                 {isLoading && currentAction === 'save' ? 'Saving...' : 'Save'}
               </Button>
             )}

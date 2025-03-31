@@ -2,9 +2,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { FiCheckCircle } from 'react-icons/fi';
-import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/Card';
-import Button from '@/components/ui/Button';
+import { CheckCircle  } from 'lucide-react';
+import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
+import { Button } from '@/components/ui/buttonAdapter';
 import { useUserSettings } from '@/lib/contexts/UserSettingsContext';
 
 export default function AppearanceSection() {
@@ -48,7 +48,7 @@ export default function AppearanceSection() {
       setSuccess('Appearance settings saved successfully');
       setIsDirty(false);
     } catch (err) {
-      setError('Failed to save settings. Please try again.');
+      setError(`Failed to save settings: ${err instanceof Error ? err.message : 'Unknown error'}`);
     }
   };
 
@@ -61,7 +61,7 @@ export default function AppearanceSection() {
         {success && (
           <div className="mb-6 bg-green-50 border-l-4 border-green-500 p-4 rounded-md">
             <div className="flex">
-              <FiCheckCircle className="h-5 w-5 text-green-500" />
+              <CheckCircle className="h-5 w-5 text-green-500" />
               <div className="ml-3">
                 <p className="text-sm text-green-700">{success}</p>
               </div>
@@ -72,7 +72,7 @@ export default function AppearanceSection() {
         {error && (
           <div className="mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded-md">
             <div className="flex">
-              <FiCheckCircle className="h-5 w-5 text-red-500" />
+              <CheckCircle className="h-5 w-5 text-red-500" />
               <div className="ml-3">
                 <p className="text-sm text-red-700">{error}</p>
               </div>

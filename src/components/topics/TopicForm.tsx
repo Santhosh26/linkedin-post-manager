@@ -6,10 +6,11 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { FiX, FiPlus } from 'react-icons/fi';
-import Input from '@/components/ui/Input';
-import Button from '@/components/ui/Button';
-import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/Card';
+import { X, Plus } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/buttonAdapter';
+import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
+import { useToast } from "@/hooks/use-toast";
 
 const topicSchema = z.object({
   name: z.string().min(2, 'Topic name must be at least 2 characters'),
@@ -31,6 +32,7 @@ interface TopicFormProps {
 }
 
 const TopicForm = ({ initialData, isEditMode = false }: TopicFormProps) => {
+  const { toast } = useToast();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -71,7 +73,6 @@ const TopicForm = ({ initialData, isEditMode = false }: TopicFormProps) => {
     setError(null);
 
     try {
-      // Updated to use consolidated topic endpoint
       const response = await fetch(
         isEditMode ? `/api/topics/${initialData?.id}` : '/api/topics/all',
         {
@@ -89,16 +90,28 @@ const TopicForm = ({ initialData, isEditMode = false }: TopicFormProps) => {
         throw new Error(result.message || 'Failed to save topic');
       }
 
+      toast({
+        title: isEditMode ? "Topic Updated" : "Topic Created",
+        description: isEditMode 
+          ? "Your topic has been updated successfully." 
+          : "Your topic has been created successfully.",
+      });
+
       // Redirect to topics list or topic detail
       router.push(isEditMode ? `/topics/${initialData?.id}` : '/topics');
       router.refresh();
     } catch (err) {
       console.error('Error saving topic:', err);
-      setError(err instanceof Error ? err.message : 'Failed to save topic');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to save topic';
+      setError(errorMessage);
+      toast({
+        title: "Error",
+        description: errorMessage,
+        variant: "destructive",
+      });
       setIsLoading(false);
     }
   };
-
   return (
     <Card>
       <CardHeader title={isEditMode ? 'Edit Topic' : 'Create New Topic'} />
@@ -115,13 +128,20 @@ const TopicForm = ({ initialData, isEditMode = false }: TopicFormProps) => {
           )}
 
           <div className="space-y-6">
-            <Input
-              id="name"
-              label="Topic Name"
-              placeholder="E.g., Digital Marketing, Leadership, Web Development"
-              {...register('name')}
-              error={errors.name?.message}
-            />
+            {/* Method 1: Use the register props separately */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Topic Name
+              </label>
+              <Input
+                id="name"
+                placeholder="E.g., Digital Marketing, Leadership, Web Development"
+                {...register('name')}
+              />
+              {errors.name && (
+                <p className="mt-1 text-sm text-red-600">{errors.name?.message}</p>
+              )}
+            </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -142,7 +162,7 @@ const TopicForm = ({ initialData, isEditMode = false }: TopicFormProps) => {
                   }}
                 />
                 <Button type="button" onClick={addKeyword}>
-                  <FiPlus className="h-5 w-5" />
+                  <Plus className="h-5 w-5" />
                 </Button>
               </div>
               {errors.keywords && (
@@ -161,7 +181,7 @@ const TopicForm = ({ initialData, isEditMode = false }: TopicFormProps) => {
                       className="ml-1.5 h-4 w-4 rounded-full inline-flex items-center justify-center text-blue-400 hover:bg-blue-200 hover:text-blue-600 focus:outline-none"
                       onClick={() => removeKeyword(kw)}
                     >
-                      <FiX className="h-3 w-3" />
+                      <X className="h-3 w-3" />
                     </button>
                   </span>
                 ))}

@@ -6,8 +6,8 @@ import { useParams, useRouter } from 'next/navigation';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import PostForm from '@/components/posts/PostForm';
 import LinkedInShareButton from '@/components/posts/LinkedInShareButton';
-import { Card, CardContent } from '@/components/ui/Card';
-import { FiExternalLink, FiCheckCircle } from 'react-icons/fi';
+import { Card, CardContent } from '@/components/ui/card';
+import { ExternalLink, CheckCircle } from 'lucide-react';
 
 interface Post {
   id: string;
@@ -106,7 +106,7 @@ export default function EditPostPage() {
                 {sharedToLinkedIn ? (
                   <div className="bg-green-50 dark:bg-green-900/10 border border-green-200 dark:border-green-800 rounded-lg p-4">
                     <div className="flex items-start">
-                      <FiCheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
                       <div className="ml-3">
                         <p className="text-green-700 dark:text-green-400 font-medium">
                           Successfully shared to LinkedIn
@@ -119,7 +119,7 @@ export default function EditPostPage() {
                             className="flex items-center mt-2 text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
                           >
                             <span>View on LinkedIn</span>
-                            <FiExternalLink className="ml-1 h-4 w-4" />
+                            <ExternalLink className="ml-1 h-4 w-4" />
                           </a>
                         )}
                       </div>

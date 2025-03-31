@@ -1,13 +1,34 @@
 // src/components/settings/ResearchPreferencesSection.tsx
 'use client';
 
-import { useState, useEffect } from 'react';
-import { FiCheckCircle, FiAlertCircle, FiPlus, FiX, FiArrowUp, FiArrowDown, FiCheck, FiSlash } from 'react-icons/fi';
-import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/Card';
-import Button from '@/components/ui/Button';
-import Input from '@/components/ui/Input';
+import { useState, useEffect, KeyboardEvent } from 'react';
+import { CheckCircle, AlertCircle, Plus, X, ArrowUp, ArrowDown, Check, Slash } from 'lucide-react';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/buttonAdapter';
+import { Input } from '@/components/ui/input';
 import { useUserSettings } from '@/lib/contexts/UserSettingsContext';
 import { ResearchSource } from '@/lib/contexts/UserSettingsContext';
+
+// Custom CardHeader component with title and subtitle props
+interface CardHeaderProps {
+  title: string;
+  subtitle: string;
+}
+
+const CardHeader = ({ title, subtitle }: CardHeaderProps) => (
+  <div className="px-6 py-5 border-b border-gray-200 dark:border-gray-700">
+    <h2 className="text-xl font-semibold text-gray-900 dark:text-dark-text-primary">{title}</h2>
+    <p className="mt-1 text-sm text-gray-600 dark:text-dark-text-secondary">{subtitle}</p>
+  </div>
+);
+
+const CardContent = ({ children }: { children: React.ReactNode }) => (
+  <div className="px-6 py-5">{children}</div>
+);
+
+const CardFooter = ({ className, children }: { className?: string; children: React.ReactNode }) => (
+  <div className={`px-6 py-4 border-t border-gray-200 dark:border-gray-700 ${className || ''}`}>{children}</div>
+);
 
 export default function ResearchPreferencesSection() {
   const { settings, updateSetting, saveSettings, isLoading, error } = useUserSettings();
@@ -156,7 +177,7 @@ export default function ResearchPreferencesSection() {
         {error && (
           <div className="mb-6 bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 dark:border-red-600 p-4 rounded">
             <div className="flex">
-              <FiAlertCircle className="h-5 w-5 text-red-500 dark:text-red-400" />
+              <AlertCircle className="h-5 w-5 text-red-500 dark:text-red-400" />
               <div className="ml-3">
                 <p className="text-sm text-red-700 dark:text-red-400">{error}</p>
               </div>
@@ -167,7 +188,7 @@ export default function ResearchPreferencesSection() {
         {success && (
           <div className="mb-6 bg-green-50 dark:bg-green-900/20 border-l-4 border-green-500 dark:border-green-600 p-4 rounded">
             <div className="flex">
-              <FiCheckCircle className="h-5 w-5 text-green-500 dark:text-green-400" />
+              <CheckCircle className="h-5 w-5 text-green-500 dark:text-green-400" />
               <div className="ml-3">
                 <p className="text-sm text-green-700 dark:text-green-400">{success}</p>
               </div>
@@ -208,11 +229,10 @@ export default function ResearchPreferencesSection() {
                 <Input
                   id="includedDomain"
                   placeholder="Enter domain to prioritize (e.g., linkedin.com)"
-                  fullWidth={false}
                   className="flex-1"
                   value={newDomain}
                   onChange={(e) => setNewDomain(e.target.value)}
-                  onKeyPress={(e) => {
+                  onKeyPress={(e: KeyboardEvent<HTMLInputElement>) => {
                     if (e.key === 'Enter') {
                       e.preventDefault();
                       handleAddIncludedSource();
@@ -223,7 +243,7 @@ export default function ResearchPreferencesSection() {
                   onClick={handleAddIncludedSource}
                   disabled={!newDomain.trim()}
                 >
-                  <FiPlus className="h-5 w-5" />
+                  <Plus className="h-5 w-5" />
                   Add
                 </Button>
               </div>
@@ -262,7 +282,7 @@ export default function ResearchPreferencesSection() {
                               }`}
                               aria-label="Move up priority"
                             >
-                              <FiArrowUp className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+                              <ArrowUp className="h-4 w-4 text-gray-600 dark:text-gray-400" />
                             </button>
                             <button
                               onClick={() => handleMovePriority(source.domain, 'down')}
@@ -274,7 +294,7 @@ export default function ResearchPreferencesSection() {
                               }`}
                               aria-label="Move down priority"
                             >
-                              <FiArrowDown className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+                              <ArrowDown className="h-4 w-4 text-gray-600 dark:text-gray-400" />
                             </button>
                             <button
                               onClick={() => handleToggleSourceEnabled(source.domain)}
@@ -282,9 +302,9 @@ export default function ResearchPreferencesSection() {
                               aria-label={source.enabled ? 'Disable source' : 'Enable source'}
                             >
                               {source.enabled ? (
-                                <FiCheck className="h-4 w-4 text-green-600 dark:text-green-500" />
+                                <Check className="h-4 w-4 text-green-600 dark:text-green-500" />
                               ) : (
-                                <FiSlash className="h-4 w-4 text-red-600 dark:text-red-500" />
+                                <Slash className="h-4 w-4 text-red-600 dark:text-red-500" />
                               )}
                             </button>
                             <button
@@ -292,7 +312,7 @@ export default function ResearchPreferencesSection() {
                               className="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-red-600 dark:hover:text-red-500"
                               aria-label="Remove source"
                             >
-                              <FiX className="h-4 w-4" />
+                              <X className="h-4 w-4" />
                             </button>
                           </div>
                         </div>
@@ -310,11 +330,10 @@ export default function ResearchPreferencesSection() {
                 <Input
                   id="excludedDomain"
                   placeholder="Enter domain to exclude (e.g., pinterest.com)"
-                  fullWidth={false}
                   className="flex-1"
                   value={newExcludedDomain}
                   onChange={(e) => setNewExcludedDomain(e.target.value)}
-                  onKeyPress={(e) => {
+                  onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
                     if (e.key === 'Enter') {
                       e.preventDefault();
                       handleAddExcludedDomain();
@@ -325,7 +344,7 @@ export default function ResearchPreferencesSection() {
                   onClick={handleAddExcludedDomain}
                   disabled={!newExcludedDomain.trim()}
                 >
-                  <FiPlus className="h-5 w-5" />
+                  <Plus className="h-5 w-5" />
                   Add
                 </Button>
               </div>
@@ -347,7 +366,7 @@ export default function ResearchPreferencesSection() {
                           className="ml-1.5 h-4 w-4 rounded-full inline-flex items-center justify-center text-red-400 dark:text-red-500 hover:bg-red-200 dark:hover:bg-red-800 hover:text-red-600 dark:hover:text-red-300 focus:outline-none"
                           onClick={() => handleRemoveExcludedDomain(domain)}
                         >
-                          <FiX className="h-3 w-3" />
+                          <X className="h-3 w-3" />
                         </button>
                       </span>
                     ))}

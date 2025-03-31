@@ -3,9 +3,10 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { FiCheck, FiAlertCircle } from 'react-icons/fi';
-import Button from '@/components/ui/Button';
-import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/Card';
+import { Check, AlertCircle } from 'lucide-react';
+import { Button } from '@/components/ui/buttonAdapter';
+import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
+import { useToast } from "@/hooks/use-toast";
 
 interface PostGenerationFormProps {
   topicId: string;
@@ -25,6 +26,7 @@ interface GeneratedPost {
 }
 
 const PostGenerationForm = ({ topicId, topicName, researchId }: PostGenerationFormProps) => {
+  const { toast } = useToast();
   const router = useRouter();
   const [tone, setTone] = useState<'professional' | 'casual' | 'thoughtful'>('professional');
   const [variationCount, setVariationCount] = useState<number>(2);
@@ -37,7 +39,6 @@ const PostGenerationForm = ({ topicId, topicName, researchId }: PostGenerationFo
     setError(null);
 
     try {
-      // Updated to use consolidated endpoint with action parameter
       const response = await fetch('/api/posts?action=generate', {
         method: 'POST',
         headers: {
@@ -57,10 +58,21 @@ const PostGenerationForm = ({ topicId, topicName, researchId }: PostGenerationFo
         throw new Error(result.message || 'Failed to generate posts');
       }
 
+      toast({
+        title: "Posts Generated",
+        description: `Successfully generated ${result.posts.length} posts.`,
+      });
+
       setGeneratedPosts(result.posts);
     } catch (err) {
       console.error('Error generating posts:', err);
-      setError(err instanceof Error ? err.message : 'Failed to generate posts');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to generate posts';
+      setError(errorMessage);
+      toast({
+        title: "Generation Failed",
+        description: errorMessage,
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -72,15 +84,15 @@ const PostGenerationForm = ({ topicId, topicName, researchId }: PostGenerationFo
 
   return (
     <Card>
-      <CardHeader 
-        title="Generate LinkedIn Posts" 
-        subtitle={`Topic: ${topicName}`}
-      />
+      <CardHeader>
+        <h2 className="text-xl font-semibold">Generate LinkedIn Posts</h2>
+        <p className="text-sm text-gray-500 dark:text-gray-400">Topic: {topicName}</p>
+      </CardHeader>
       <CardContent>
         {error && (
           <div className="mb-6 bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 dark:border-red-600 p-4 rounded">
             <div className="flex">
-              <FiAlertCircle className="h-5 w-5 text-red-500 dark:text-red-400" />
+              <AlertCircle className="h-5 w-5 text-red-500 dark:text-red-400" />
               <div className="ml-3">
                 <p className="text-sm text-red-700 dark:text-red-400">{error}</p>
               </div>
@@ -160,7 +172,7 @@ const PostGenerationForm = ({ topicId, topicName, researchId }: PostGenerationFo
         ) : (
           <div className="space-y-6">
             <div className="flex items-center p-4 mb-4 text-green-800 dark:text-green-300 border-l-4 border-green-600 dark:border-green-500 bg-green-50 dark:bg-green-900/20 rounded">
-              <FiCheck className="h-6 w-6 mr-2 text-green-600 dark:text-green-400" /> 
+              <Check className="h-6 w-6 mr-2 text-green-600 dark:text-green-400" /> 
               <span className="font-medium">Successfully generated {generatedPosts.length} posts</span>
             </div>
             

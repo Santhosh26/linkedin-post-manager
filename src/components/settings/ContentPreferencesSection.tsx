@@ -2,13 +2,15 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { FiCheckCircle, FiAlertCircle } from 'react-icons/fi';
-import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/Card';
-import Button from '@/components/ui/Button';
+import { CheckCircle, AlertCircle } from 'lucide-react';
+import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
+import { Button } from '@/components/ui/buttonAdapter';
 import { useUserSettings } from '@/lib/contexts/UserSettingsContext';
 import { PostTone } from '@/lib/contexts/UserSettingsContext';
+import { useToast } from "@/hooks/use-toast";
 
 export default function ContentPreferencesSection() {
+  const { toast } = useToast();
   const { settings, updateSetting, saveSettings, isLoading, error } = useUserSettings();
   const [success, setSuccess] = useState<string | null>(null);
   const [isDirty, setIsDirty] = useState(false);
@@ -36,21 +38,37 @@ export default function ContentPreferencesSection() {
   };
 
   const handleSave = async () => {
-    await saveSettings();
-    setSuccess('Content preferences saved successfully');
-    setIsDirty(false);
+    try {
+      await saveSettings();
+      
+      toast({
+        title: "Preferences Saved",
+        description: "Your content preferences have been saved successfully.",
+      });
+      setIsDirty(false);
+    } catch (err) {
+      const errorMessage = `Failed to save preferences: ${err instanceof Error ? err.message : 'Unknown error'}`;
+      toast({
+        title: "Save Failed",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    }
   };
 
   if (!settings) return null;
 
   return (
     <Card>
-      <CardHeader title="Content Preferences" subtitle="Default settings for content generation" />
+      <CardHeader>
+        <h2 className="text-lg font-semibold">Content Preferences</h2>
+        <p className="text-sm text-gray-500 dark:text-gray-400">Default settings for content generation</p>
+      </CardHeader>
       <CardContent>
         {error && (
           <div className="mb-6 bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 dark:border-red-600 p-4 rounded">
             <div className="flex">
-              <FiAlertCircle className="h-5 w-5 text-red-500 dark:text-red-400" />
+              <AlertCircle className="h-5 w-5 text-red-500 dark:text-red-400" />
               <div className="ml-3">
                 <p className="text-sm text-red-700 dark:text-red-400">{error}</p>
               </div>
@@ -61,7 +79,7 @@ export default function ContentPreferencesSection() {
         {success && (
           <div className="mb-6 bg-green-50 dark:bg-green-900/20 border-l-4 border-green-500 dark:border-green-600 p-4 rounded">
             <div className="flex">
-              <FiCheckCircle className="h-5 w-5 text-green-500 dark:text-green-400" />
+              <CheckCircle className="h-5 w-5 text-green-500 dark:text-green-400" />
               <div className="ml-3">
                 <p className="text-sm text-green-700 dark:text-green-400">{success}</p>
               </div>

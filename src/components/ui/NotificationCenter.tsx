@@ -3,9 +3,20 @@
 
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import { FiBell, FiCheck, FiX } from 'react-icons/fi';
 import { formatDistanceToNow } from 'date-fns';
-import Button from './Button';
+import { Bell, Check, X } from 'lucide-react';
+import { useToast } from "@/hooks/use-toast";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 
 interface Notification {
   id: string;
@@ -17,12 +28,14 @@ interface Notification {
 }
 
 export default function NotificationCenter() {
+  const { toast } = useToast();
   const { data: session } = useSession();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   
+  // Fetch notifications
   const fetchNotifications = async () => {
     if (!session?.user) return;
     
@@ -49,10 +62,6 @@ export default function NotificationCenter() {
     }
   }, [session]);
 
-  const handleClose = () => {
-    setIsOpen(false);
-  };
-  
   const markAsRead = async (id: string) => {
     try {
       // Updated to use consolidated endpoint
@@ -68,28 +77,37 @@ export default function NotificationCenter() {
   
   const markAllAsRead = async () => {
     try {
-      // Updated to use consolidated endpoint with special 'all' parameter
       await fetch(`/api/notifications/all`, { method: 'PUT' });
       setNotifications(notifications.map(n => ({ ...n, read: true })));
       setUnreadCount(0);
+      
+      toast({
+        title: "Notifications Cleared",
+        description: "All notifications marked as read.",
+      });
     } catch (err) {
       console.error('Error marking all notifications as read:', err);
+      toast({
+        title: "Action Failed",
+        description: "Failed to mark notifications as read.",
+        variant: "destructive",
+      });
     }
   };
-  
+
   const getNotificationIcon = (type: string) => {
     switch (type) {
       case 'SCHEDULED_POST_FAILED':
-        return <div className="h-8 w-8 rounded-full bg-red-100 flex items-center justify-center text-red-600">
-          <FiX className="h-4 w-4" />
+        return <div className="h-8 w-8 rounded-full bg-destructive/10 flex items-center justify-center text-destructive">
+          <X className="h-4 w-4" />
         </div>;
       case 'SCHEDULED_POST_PUBLISHED':
         return <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center text-green-600">
-          <FiCheck className="h-4 w-4" />
+          <Check className="h-4 w-4" />
         </div>;
       default:
-        return <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
-          <FiBell className="h-4 w-4" />
+        return <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+          <Bell className="h-4 w-4" />
         </div>;
     }
   };
@@ -97,89 +115,90 @@ export default function NotificationCenter() {
   if (!session) return null;
   
   return (
-    <div className="relative">
-      <button 
-        className="p-2 rounded-full text-gray-500 hover:bg-gray-100 relative"
-        onClick={() => setIsOpen(!isOpen)}
-        aria-label="Notifications"
-      >
-        <FiBell className="h-5 w-5" />
-        {unreadCount > 0 && (
-          <span className="absolute top-0 right-0 block h-5 w-5 rounded-full bg-red-500 text-white text-xs text-center leading-5">
-            {unreadCount}
-          </span>
-        )}
-      </button>
-      
-      {isOpen && (
-        <div className="absolute right-0 mt-2 w-80 bg-white rounded-[1rem] shadow-bubble z-50 border border-gray-200 overflow-hidden">
-          <div className="p-4 border-b border-gray-200 flex justify-between items-center">
-            <h3 className="text-lg font-medium text-gray-900">Notifications</h3>
-            {unreadCount > 0 && (
-              <button 
-                onClick={markAllAsRead}
-                className="text-sm text-primary-600 hover:text-primary-700"
-              >
-                Mark all as read
-              </button>
-            )}
-          </div>
-          
+    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="icon" className="relative">
+          <Bell className="h-5 w-5" />
+          {unreadCount > 0 && (
+            <Badge variant="destructive" className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs">
+              {unreadCount}
+            </Badge>
+          )}
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-80">
+        <DropdownMenuLabel className="flex justify-between items-center">
+          <span>Notifications</span>
+          {unreadCount > 0 && (
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={markAllAsRead}
+              className="text-xs h-7"
+            >
+              Mark all as read
+            </Button>
+          )}
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        
+        <div className="max-h-96 overflow-y-auto">
           {isLoading ? (
-            <div className="p-4 text-center text-gray-500">
+            <div className="p-4 text-center text-muted-foreground">
               Loading notifications...
             </div>
           ) : notifications.length === 0 ? (
-            <div className="p-4 text-center text-gray-500">
+            <div className="p-4 text-center text-muted-foreground">
               No notifications
             </div>
           ) : (
-            <div className="max-h-96 overflow-y-auto">
+            <DropdownMenuGroup>
               {notifications.map(notification => (
-                <div 
+                <DropdownMenuItem 
                   key={notification.id}
-                  className={`p-4 border-b border-gray-200 ${
-                    notification.read ? 'bg-white' : 'bg-blue-50'
-                  }`}
+                  className={`p-4 ${notification.read ? '' : 'bg-muted/40'} cursor-default`}
                 >
-                  <div className="flex">
+                  <div className="flex w-full">
                     {getNotificationIcon(notification.type)}
                     <div className="ml-3 flex-1">
-                      <p className="text-sm text-gray-900">
+                      <p className="text-sm">
                         {notification.message}
                       </p>
                       <div className="mt-1 flex justify-between items-center">
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-muted-foreground">
                           {formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true })}
                         </p>
                         {!notification.read && (
-                          <button 
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
                             onClick={() => markAsRead(notification.id)}
-                            className="text-xs text-primary-600 hover:text-primary-800"
+                            className="text-xs h-6 text-primary"
                           >
                             Mark as read
-                          </button>
+                          </Button>
                         )}
                       </div>
                     </div>
                   </div>
-                </div>
+                </DropdownMenuItem>
               ))}
-            </div>
+            </DropdownMenuGroup>
           )}
-          
-          <div className="p-2 border-t border-gray-200">
-            <Button 
-              variant="secondary" 
-              size="sm" 
-              className="w-full"
-              onClick={handleClose}
-            >
-              Close
-            </Button>
-          </div>
         </div>
-      )}
-    </div>
+        
+        <DropdownMenuSeparator />
+        <div className="p-2">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="w-full"
+            onClick={() => setIsOpen(false)}
+          >
+            Close
+          </Button>
+        </div>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

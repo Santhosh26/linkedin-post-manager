@@ -5,13 +5,13 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { 
-  FiHome, 
-  FiList, 
-  FiFileText, 
-  FiCalendar,
-  FiSettings,
-  FiClock 
-} from 'react-icons/fi';
+  Home, 
+  List, 
+  FileText, 
+  Calendar,
+  Settings,
+  Clock 
+} from 'lucide-react';
 
 interface SidebarLinkProps {
   href: string;
@@ -40,32 +40,32 @@ const Sidebar = () => {
   const navItems = [
     {
       href: '/dashboard',
-      icon: <FiHome className="h-5 w-5" />,
+      icon: <Home className="h-5 w-5" />,
       text: 'Dashboard',
     },
     {
       href: '/topics',
-      icon: <FiList className="h-5 w-5" />,
+      icon: <List className="h-5 w-5" />,
       text: 'Topics',
     },
     {
       href: '/posts/scheduled',
-      icon: <FiClock className="h-5 w-5" />,
+      icon: <Clock className="h-5 w-5" />,
       text: 'Scheduled Posts',
     },
     {
       href: '/posts',
-      icon: <FiFileText className="h-5 w-5" />,
+      icon: <FileText className="h-5 w-5" />,
       text: 'Posts',
     },
     {
       href: '/calendar',
-      icon: <FiCalendar className="h-5 w-5" />,
+      icon: <Calendar className="h-5 w-5" />,
       text: 'Calendar',
     },
     {
       href: '/settings',
-      icon: <FiSettings className="h-5 w-5" />,
+      icon: <Settings className="h-5 w-5" />,
       text: 'Settings',
     },
   ];

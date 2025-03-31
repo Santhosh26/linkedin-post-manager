@@ -1,73 +1,97 @@
+/* globals.css - Fixed border-border error */
 @import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-:root {
-  /* Base colors */
-  --background: #ffffff;
-  --foreground: #000000;
+@layer base {
+  :root {
+    --background: #ffffff;
+    --foreground: #111827;
+    --card: #ffffff;
+    --card-foreground: #111827;
+    --popover: #ffffff;
+    --popover-foreground: #111827;
+    --primary: rgb(59, 130, 246);
+    --primary-foreground: #ffffff;
+    
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
+    
+    --radius: 0.5rem;
+    
+    /* Primary color - Electric Blue */
+    --primary-50: #e6f0ff;
+    --primary-100: #cce1ff;
+    --primary-200: #99c3ff;
+    --primary-300: #66a6ff;
+    --primary-400: #338eff;
+    --primary-500: #1a6aff;
+    --primary-600: #0055e5;
+    --primary-700: #0040b8;
+    --primary-800: #00008b;
+    --primary-900: #00204d;
+  }
   
-  /* Primary color - Electric Blue */
-  --primary-50: #e6f0ff;
-  --primary-100: #cce1ff;
-  --primary-200: #99c3ff;
-  --primary-300: #66a6ff;
-  --primary-400: #338eff;
-  --primary-500: #1a6aff;
-  --primary-600: #0055e5;
-  --primary-700: #0040b8;
-  --primary-800: #00008b;
-  --primary-900: #00204d;
-  
-  /* Accent Colors */
-  --accent-gold: #e1bc36;
-  
-  /* Card and component colors */
-  --card-bg: #ffffff;
-  --card-border: #e5e7eb;
-  
-  /* Input colors */
-  --input-bg: #ffffff;
-  --input-text: #000000;
-  --input-border: #d1d5db;
-  --input-focus-border: #1a6aff;
-  --input-placeholder: #9ca3af;
-  
-  /* Button colors */
-  --button-bg: #1a6aff; /* Electric Blue */
-  --button-hover: #0055e5;
-  --button-text: #ffffff;
-  --secondary-button-bg: #f3f4f6;
-  --secondary-button-hover: #e5e7eb;
-  --secondary-button-text: #1f2937;
-  --outline-button-border: #d1d5db;
-  --outline-button-hover: #f3f4f6;
-  --outline-button-text: #1f2937;
-  
-  /* Navigation colors */
-  --nav-bg: #ffffff;
-  --nav-border: #e5e7eb;
-  --sidebar-bg: #ffffff;
-  --sidebar-border: #e5e7eb;
-  --sidebar-hover: #f3f4f6;
-  --sidebar-active: #e6f0ff;
-  --sidebar-active-text: #1a6aff;
-  
-  /* Table colors */
-  --table-header-bg: #f9fafb;
-  --table-border: #e5e7eb;
-  --table-row-hover: #f9fafb;
-  
-  /* Badge colors */
-  --badge-bg: #f3f4f6;
-  --badge-text: #1f2937;
-  --badge-danger-bg: #fee2e2;
-  --badge-danger-text: #b91c1c;
-  --badge-warning-bg: #fef3c7;
-  --badge-warning-text: #92400e;
-  --badge-success-bg: #d1fae5;
-  --badge-success-text: #047857;
-  --badge-info-bg: #e0f2fe;
-  --badge-info-text: #0369a1;
+  .dark {
+    /* Using HSL for consistency */
+    --background: hsl(222, 47%, 11%);
+    --foreground: hsl(210, 40%, 98%);
+    --card: hsl(222, 47%, 14%);
+    --card-foreground: hsl(210, 40%, 98%);
+    --popover: hsl(222, 47%, 14%);
+    --popover-foreground: hsl(210, 40%, 98%);
+    
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 210 40% 98%;
+    
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 224.3 76.3% 48%;
+    
+    /* Dark mode custom variables */
+    --primary-50: hsl(220, 100%, 94%);
+    --primary-100: hsl(219, 100%, 87%);
+    --primary-200: hsl(221, 100%, 80%);
+    --primary-300: hsl(222, 100%, 75%);
+    --primary-400: hsl(224, 100%, 70%);
+    --primary-500: hsl(226, 100%, 65%); /* Brighter in dark mode */
+    --primary-600: hsl(228, 80%, 55%);
+    --primary-700: hsl(230, 70%, 45%);
+    --primary-800: hsl(232, 60%, 35%);
+    --primary-900: hsl(234, 50%, 25%);
+
+    /* Add specific dark mode colors for our app */
+    --dark-bg-primary: hsl(222, 47%, 11%);
+    --dark-bg-secondary: hsl(222, 47%, 14%);
+    --dark-bg-tertiary: hsl(222, 47%, 17%);
+    --dark-text-primary: hsl(210, 40%, 98%);
+    --dark-text-secondary: hsl(214, 32%, 91%);
+    --dark-text-tertiary: hsl(215, 20%, 75%);
+  }
 }
 
 body {
@@ -79,14 +103,13 @@ body {
 
 /* Improved Form Inputs with subtle hover states and focus rings */
 input, textarea, select {
-  background-color: var(--input-bg);
-  color: var(--input-text);
-  border-color: var(--input-border);
-  transition: all 0.2s ease;
+  background-color: white !important;
+  color: #111827 !important;
+  border-color: #d1d5db !important;
 }
 
 input::placeholder, textarea::placeholder {
-  color: var(--input-placeholder);
+  color: #9ca3af !important;
 }
 
 input:hover, textarea:hover, select:hover {
@@ -97,6 +120,34 @@ input:focus, textarea:focus, select:focus {
   border-color: var(--input-focus-border);
   outline: none;
   box-shadow: 0 0 0 3px rgba(26, 106, 255, 0.15); /* Soft focus ring */
+}
+
+/* Dark mode form elements */
+.dark input, 
+.dark textarea, 
+.dark select {
+  background-color: hsl(222, 47%, 17%) !important;
+  color: hsl(210, 40%, 98%) !important;
+  border-color: hsl(217.2, 32.6%, 25%) !important;
+}
+
+.dark input::placeholder, 
+.dark textarea::placeholder {
+  color: hsl(215, 16%, 65%) !important;
+}
+
+.dark input:hover, 
+.dark textarea:hover, 
+.dark select:hover {
+  border-color: hsl(217.2, 32.6%, 35%) !important;
+}
+
+.dark input:focus, 
+.dark textarea:focus, 
+.dark select:focus {
+  border-color: var(--input-focus-border);
+  outline: none;
+  box-shadow: 0 0 0 3px hsla(226, 100%, 65%, 0.25) !important;
 }
 
 /* Scrollbar styling */
@@ -118,6 +169,20 @@ input:focus, textarea:focus, select:focus {
   background-color: #9ca3af;
 }
 
+/* Dark mode scrollbar */
+.dark ::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background-color: hsl(217.2, 32.6%, 35%);
+  border-radius: 4px;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background-color: hsl(217.2, 32.6%, 45%);
+}
+
 /* Transitions for micro-interactions */
 *, *::before, *::after {
   transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
@@ -134,6 +199,11 @@ input:focus, textarea:focus, select:focus {
   border-radius: 1rem;
 }
 
+/* Dark mode shadows */
+.dark .shadow-bubble {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2), 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
 /* Hover effects for cards */
 .card-hover {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -142,6 +212,11 @@ input:focus, textarea:focus, select:focus {
 .card-hover:hover {
   transform: translateY(-2px);
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05), 0 6px 10px rgba(0, 0, 0, 0.03);
+}
+
+.dark .card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25), 0 6px 10px rgba(0, 0, 0, 0.2);
 }
 
 /* Button hover effects */
@@ -154,6 +229,318 @@ input:focus, textarea:focus, select:focus {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
 }
 
+.dark .button-hover:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
 .button-hover:active:not(:disabled) {
   transform: translateY(0);
+}
+
+/* General dark mode overrides */
+.dark body {
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+/* Fix text color for all textual elements in dark mode */
+.dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6, 
+.dark p, .dark span, .dark div, .dark li {
+  color: var(--dark-text-primary);
+}
+
+/* Fix muted text in dark mode */
+.dark .text-gray-500, 
+.dark .text-gray-600,
+.dark .text-gray-700 {
+  color: var(--dark-text-tertiary);
+}
+
+/* Fix card styling in dark mode */
+.dark .bg-white,
+.dark .bg-card {
+  background-color: var(--card);
+  color: var(--card-foreground);
+}
+
+/* Fix Recent Posts section */
+.dark .recent-posts-section {
+  background-color: var(--dark-bg-secondary);
+  color: var(--dark-text-primary);
+  border-color: hsl(217.2, 32.6%, 25%);
+}
+
+/* Fix post content visibility */
+.dark .post-content {
+  color: var(--dark-text-primary);
+}
+
+/* Fix badge and tag colors */
+.dark .badge,
+.dark .tag,
+.dark .published-tag,
+.dark .topic-tag {
+  background-color: var(--dark-bg-tertiary);
+  color: var(--dark-text-secondary);
+  border-color: hsl(217.2, 32.6%, 25%);
+}
+
+/* Ensure proper borders */
+.dark .border,
+.dark .border-t,
+.dark .border-b,
+.dark .border-l,
+.dark .border-r {
+  border-color: hsl(217.2, 32.6%, 25%);
+}
+
+/* Fix for metrics cards */
+.dark .metric-card {
+  background-color: var(--card);
+  color: var(--card-foreground);
+  border-color: hsl(217.2, 32.6%, 25%);
+}
+
+/* Fix shadows for dark mode */
+.dark .shadow-sm,
+.dark .shadow,
+.dark .shadow-md,
+.dark .shadow-lg,
+.dark .shadow-xl {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* Fix sidebar */
+.dark .sidebar {
+  background-color: var(--dark-bg-secondary);
+  border-color: hsl(217.2, 32.6%, 25%);
+}
+
+/* Fix specific component classes */
+.dark .post-card {
+  background-color: var(--dark-bg-secondary);
+  color: var(--dark-text-primary);
+}
+
+/* Fixing icons to be visible */
+.dark svg:not([class*='text-']) {
+  color: var(--dark-text-primary);
+}
+
+/* Fix links */
+.dark a:not([class*='text-']),
+.dark .text-blue-600,
+.dark .text-primary-600 {
+  color: hsl(226, 100%, 70%);
+}
+
+.dark a:hover:not([class*='text-']),
+.dark .text-blue-600:hover,
+.dark .text-primary-600:hover {
+  color: hsl(226, 100%, 80%);
+}
+
+/* Dashboard cards - fix quick action cards */
+.dark .dashboard-card,
+.dark .quick-action-card {
+  background-color: var(--dark-bg-secondary);
+  border-color: hsl(217.2, 32.6%, 25%);
+}
+
+.dark .dashboard-card:hover,
+.dark .quick-action-card:hover {
+  background-color: var(--dark-bg-tertiary);
+}
+
+/* Calendar styling */
+.dark .calendar-day {
+  background-color: var(--dark-bg-secondary);
+  border-color: hsl(217.2, 32.6%, 25%);
+}
+
+.dark .calendar-day-header {
+  background-color: var(--dark-bg-tertiary);
+  color: var(--dark-text-secondary);
+}
+
+.dark .calendar-today {
+  background-color: rgba(59, 130, 246, 0.1);
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+/* Fix for dropdown menus */
+.dark .dropdown-menu {
+  background-color: var(--dark-bg-secondary);
+  border-color: hsl(217.2, 32.6%, 25%);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.dark .dropdown-item {
+  color: var(--dark-text-primary);
+}
+
+.dark .dropdown-item:hover {
+  background-color: var(--dark-bg-tertiary);
+}
+
+/* Fix notification center */
+.dark .notification-item {
+  border-color: hsl(217.2, 32.6%, 25%);
+}
+
+.dark .notification-item:hover {
+  background-color: var(--dark-bg-tertiary);
+}
+
+/* Fix modals and dialogs */
+.dark .modal-content,
+.dark .dialog-content {
+  background-color: var(--dark-bg-secondary);
+  border-color: hsl(217.2, 32.6%, 25%);
+}
+
+.dark .modal-header,
+.dark .dialog-header {
+  border-color: hsl(217.2, 32.6%, 25%);
+}
+
+/* Fix buttons */
+.dark .button-secondary {
+  background-color: var(--dark-bg-tertiary);
+  color: var(--dark-text-primary);
+  border-color: hsl(217.2, 32.6%, 25%);
+}
+
+.dark .button-secondary:hover {
+  background-color: var(--dark-bg-tertiary);
+  filter: brightness(1.1);
+}
+
+.dark .button-ghost {
+  color: var(--dark-text-primary);
+}
+
+.dark .button-ghost:hover {
+  background-color: var(--dark-bg-tertiary);
+}
+
+/* Fix alerts and notifications */
+.dark .alert-success {
+  background-color: rgba(16, 185, 129, 0.2);
+  border-color: rgba(16, 185, 129, 0.3);
+  color: hsl(160, 84%, 39%);
+}
+
+.dark .alert-error {
+  background-color: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: hsl(0, 84%, 60%);
+}
+
+.dark .alert-warning {
+  background-color: rgba(245, 158, 11, 0.2);
+  border-color: rgba(245, 158, 11, 0.3);
+  color: hsl(38, 92%, 50%);
+}
+
+.dark .alert-info {
+  background-color: rgba(59, 130, 246, 0.2);
+  border-color: rgba(59, 130, 246, 0.3);
+  color: hsl(217, 91%, 60%);
+}
+
+/* Fix tooltips */
+.dark .tooltip {
+  background-color: var(--dark-bg-tertiary);
+  color: var(--dark-text-primary);
+  border-color: hsl(217.2, 32.6%, 25%);
+}
+
+/* Fix tables */
+.dark .table {
+  border-color: hsl(217.2, 32.6%, 25%);
+}
+
+.dark .table th {
+  background-color: var(--dark-bg-tertiary);
+  color: var(--dark-text-primary);
+  border-color: hsl(217.2, 32.6%, 25%);
+}
+
+.dark .table td {
+  border-color: hsl(217.2, 32.6%, 25%);
+}
+
+.dark .table tr:hover {
+  background-color: var(--dark-bg-tertiary);
+}
+
+/* Fix tabs */
+.dark .tab {
+  color: var(--dark-text-secondary);
+}
+
+.dark .tab.active {
+  color: var(--dark-text-primary);
+  border-color: var(--primary-500);
+}
+
+/* Fix charts and graphs */
+.dark .chart {
+  background-color: var(--dark-bg-secondary);
+  border-color: hsl(217.2, 32.6%, 25%);
+}
+
+.dark .chart-grid {
+  stroke: hsl(217.2, 32.6%, 25%);
+}
+
+.dark .chart-label {
+  fill: var(--dark-text-secondary);
+}
+
+/* Fix code blocks */
+.dark pre,
+.dark code {
+  background-color: var(--dark-bg-tertiary);
+  color: var(--dark-text-primary);
+  border-color: hsl(217.2, 32.6%, 25%);
+}
+
+/* Fix markdown content */
+.dark .markdown h1,
+.dark .markdown h2,
+.dark .markdown h3,
+.dark .markdown h4,
+.dark .markdown h5,
+.dark .markdown h6 {
+  color: var(--dark-text-primary);
+}
+
+.dark .markdown p,
+.dark .markdown li {
+  color: var(--dark-text-secondary);
+}
+
+.dark .markdown code {
+  background-color: var(--dark-bg-tertiary);
+  color: var(--dark-text-primary);
+}
+
+.dark .markdown blockquote {
+  border-color: hsl(217.2, 32.6%, 25%);
+  background-color: var(--dark-bg-tertiary);
+}
+
+/* Base layer adjustments - FIXED to remove border-border utility */
+@layer base {
+  * {
+    
+    border-color: var(--border);
+    outline-color: rgba(var(--ring), 0.5);
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
 }
