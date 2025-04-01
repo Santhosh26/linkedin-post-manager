@@ -318,7 +318,7 @@ const PostForm = ({ initialData, isEditMode = false }: PostFormProps) => {
                 id="content"
                 rows={6}
                 className={`w-full px-3 py-2 bg-white border rounded-md shadow-sm 
-                          placeholder-gray-400 text-gray-900
+                          placeholder-gray-400 text-foreground
                           focus:outline-none focus:ring-2 focus:ring-primary-500/25 focus:border-primary-500
                           hover:border-gray-400 transition-all
                           ${errors.content ? 'border-red-300' : 'border-gray-300'}`}
@@ -338,7 +338,7 @@ const PostForm = ({ initialData, isEditMode = false }: PostFormProps) => {
                 <input
                   type="text"
                   className="flex-1 px-3 py-2 bg-white border border-gray-300 
-                            rounded-md shadow-sm placeholder-gray-400 text-gray-900
+                            rounded-md shadow-sm placeholder-gray-400 text-foreground
                             focus:outline-none focus:ring-2 focus:ring-primary-500/25 focus:border-primary-500
                             hover:border-gray-400 transition-all"
                   placeholder="Add a hashtag (e.g. #marketing)"
@@ -393,7 +393,7 @@ const PostForm = ({ initialData, isEditMode = false }: PostFormProps) => {
               <select
                 id="topicId"
                 className="mt-1 block w-full pl-3 pr-10 py-2 bg-white 
-                          border border-gray-300 text-gray-900
+                          border border-gray-300 text-foreground
                           focus:outline-none focus:ring-2 focus:ring-primary-500/25 focus:border-primary-500 
                           hover:border-gray-400 transition-all
                           sm:text-sm rounded-md"
@@ -422,7 +422,7 @@ const PostForm = ({ initialData, isEditMode = false }: PostFormProps) => {
               <select
                 id="status"
                 className="mt-1 block w-full pl-3 pr-10 py-2 bg-white 
-                          border border-gray-300 text-gray-900
+                          border border-gray-300 text-foreground
                           focus:outline-none focus:ring-2 focus:ring-primary-500/25 focus:border-primary-500 
                           hover:border-gray-400 transition-all
                           sm:text-sm rounded-md"
@@ -451,7 +451,7 @@ const PostForm = ({ initialData, isEditMode = false }: PostFormProps) => {
                       type="datetime-local"
                       id="scheduledFor"
                       className="pl-10 block w-full border border-gray-300 bg-white 
-                                text-gray-900 rounded-md shadow-sm 
+                                text-foreground rounded-md shadow-sm 
                                 focus:ring-2 focus:ring-primary-500/25 focus:border-primary-500
                                 hover:border-gray-400 transition-all
                                 sm:text-sm"

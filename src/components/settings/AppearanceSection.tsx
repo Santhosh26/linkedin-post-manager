@@ -82,7 +82,7 @@ export default function AppearanceSection() {
 
         <div className="space-y-6">
           <div>
-            <h3 className="text-base font-medium text-gray-900 mb-4">Font Settings</h3>
+            <h3 className="text-base font-medium text-foreground mb-4">Font Settings</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -91,7 +91,7 @@ export default function AppearanceSection() {
                 <div className="mt-1">
                   <select
                     className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 
-                              bg-white text-gray-900 rounded-md shadow-sm 
+                              bg-white text-foreground rounded-md shadow-sm 
                               focus:outline-none focus:ring-2 focus:ring-primary-500/25 focus:border-primary-500 
                               sm:text-sm transition-colors"
                     value={fontSize}
@@ -114,7 +114,7 @@ export default function AppearanceSection() {
                 <div className="mt-1">
                   <select
                     className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 
-                              bg-white text-gray-900 rounded-md shadow-sm 
+                              bg-white text-foreground rounded-md shadow-sm 
                               focus:outline-none focus:ring-2 focus:ring-primary-500/25 focus:border-primary-500 
                               sm:text-sm transition-colors"
                     value={fontFamily}
@@ -133,13 +133,13 @@ export default function AppearanceSection() {
           </div>
 
           <div className="pt-6 border-t border-gray-200">
-            <h3 className="text-base font-medium text-gray-900 mb-4">Interface Density</h3>
+            <h3 className="text-base font-medium text-foreground mb-4">Interface Density</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div 
                 className="cursor-pointer p-4 rounded-lg border border-primary-500 bg-primary-50 shadow-sm transition-all"
                 onClick={() => setIsDirty(true)}
               >
-                <div className="font-medium text-center text-gray-900 mb-2">Comfortable</div>
+                <div className="font-medium text-center text-foreground mb-2">Comfortable</div>
                 <p className="text-xs text-center text-gray-500">
                   More space between elements
                 </p>
@@ -149,7 +149,7 @@ export default function AppearanceSection() {
                 className="cursor-pointer p-4 rounded-lg border border-gray-200 hover:border-primary-300 transition-all"
                 onClick={() => setIsDirty(true)}
               >
-                <div className="font-medium text-center text-gray-900 mb-2">Standard</div>
+                <div className="font-medium text-center text-foreground mb-2">Standard</div>
                 <p className="text-xs text-center text-gray-500">
                   Default spacing between elements
                 </p>
@@ -159,7 +159,7 @@ export default function AppearanceSection() {
                 className="cursor-pointer p-4 rounded-lg border border-gray-200 hover:border-primary-300 transition-all"
                 onClick={() => setIsDirty(true)}
               >
-                <div className="font-medium text-center text-gray-900 mb-2">Compact</div>
+                <div className="font-medium text-center text-foreground mb-2">Compact</div>
                 <p className="text-xs text-center text-gray-500">
                   Less space between elements
                 </p>
@@ -168,7 +168,7 @@ export default function AppearanceSection() {
           </div>
 
           <div className="pt-6 border-t border-gray-200">
-            <h3 className="text-base font-medium text-gray-900 mb-4">Animation Settings</h3>
+            <h3 className="text-base font-medium text-foreground mb-4">Animation Settings</h3>
             <div className="space-y-4">
               <div>
                 <div className="flex items-center">
@@ -179,7 +179,7 @@ export default function AppearanceSection() {
                     defaultChecked
                     onChange={() => setIsDirty(true)}
                   />
-                  <label htmlFor="animations" className="ml-2 block text-sm text-gray-900">
+                  <label htmlFor="animations" className="ml-2 block text-sm text-foreground">
                     Enable animations
                   </label>
                 </div>
@@ -196,7 +196,7 @@ export default function AppearanceSection() {
                     className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
                     onChange={() => setIsDirty(true)}
                   />
-                  <label htmlFor="reduceMotion" className="ml-2 block text-sm text-gray-900">
+                  <label htmlFor="reduceMotion" className="ml-2 block text-sm text-foreground">
                     Reduce motion
                   </label>
                 </div>

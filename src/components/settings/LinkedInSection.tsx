@@ -228,7 +228,7 @@ export default function LinkedInSection() {
                   <LinkedInIcon className="h-10 w-10 text-[#0077B5]" />
                 </div>
                 <div className="ml-4">
-                  <h3 className="text-lg font-medium text-gray-900 dark:text-dark-text-primary flex items-center">
+                  <h3 className="text-lg font-medium text-foreground dark:text-dark-text-primary flex items-center">
                     LinkedIn Account
                     {isConnected && !isLoading && (
                       <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">

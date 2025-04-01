@@ -64,7 +64,7 @@ const ResearchResults = ({
               >
                 <div className="px-5 py-4 border-b border-gray-200">
                   <div className="flex justify-between">
-                    <h3 className="text-lg leading-6 font-medium text-gray-900 line-clamp-1">
+                    <h3 className="text-lg leading-6 font-medium text-foreground line-clamp-1">
                       {result.title}
                     </h3>
                     <a

@@ -17,7 +17,7 @@ interface CardHeaderProps {
 
 const CardHeader = ({ title, subtitle }: CardHeaderProps) => (
   <div className="px-6 py-5 border-b border-gray-200 dark:border-gray-700">
-    <h2 className="text-xl font-semibold text-gray-900 dark:text-dark-text-primary">{title}</h2>
+    <h2 className="text-xl font-semibold text-foreground dark:text-dark-text-primary">{title}</h2>
     <p className="mt-1 text-sm text-gray-600 dark:text-dark-text-secondary">{subtitle}</p>
   </div>
 );
@@ -198,7 +198,7 @@ export default function ResearchPreferencesSection() {
 
         <div className="space-y-8">
           <div>
-            <h3 className="text-base font-medium text-gray-900 dark:text-dark-text-primary mb-4">Default Results Count</h3>
+            <h3 className="text-base font-medium text-foreground dark:text-dark-text-primary mb-4">Default Results Count</h3>
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-dark-text-secondary mb-2">
                 Number of Research Results: <span className="font-bold text-primary-600 dark:text-primary-400">{settings.defaultMaxResults}</span>
@@ -223,7 +223,7 @@ export default function ResearchPreferencesSection() {
           </div>
 
           <div className="pt-6 border-t border-gray-200 dark:border-gray-700">
-            <h3 className="text-base font-medium text-gray-900 dark:text-dark-text-primary mb-4">Prioritized Sources</h3>
+            <h3 className="text-base font-medium text-foreground dark:text-dark-text-primary mb-4">Prioritized Sources</h3>
             <div className="space-y-4">
               <div className="flex items-center space-x-2">
                 <Input
@@ -266,7 +266,7 @@ export default function ResearchPreferencesSection() {
                           }`}
                         >
                           <div className="flex items-center space-x-2">
-                            <div className="font-medium text-gray-900 dark:text-dark-text-primary">
+                            <div className="font-medium text-foreground dark:text-dark-text-primary">
                               {source.domain}
                             </div>
                             <span className="text-xs px-2 py-0.5 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-300">
@@ -324,7 +324,7 @@ export default function ResearchPreferencesSection() {
           </div>
 
           <div className="pt-6 border-t border-gray-200 dark:border-gray-700">
-            <h3 className="text-base font-medium text-gray-900 dark:text-dark-text-primary mb-4">Excluded Domains</h3>
+            <h3 className="text-base font-medium text-foreground dark:text-dark-text-primary mb-4">Excluded Domains</h3>
             <div className="space-y-4">
               <div className="flex items-center space-x-2">
                 <Input
@@ -377,7 +377,7 @@ export default function ResearchPreferencesSection() {
           </div>
 
           <div className="pt-6 border-t border-gray-200 dark:border-gray-700">
-            <h3 className="text-base font-medium text-gray-900 dark:text-dark-text-primary mb-4">Advanced Research Options</h3>
+            <h3 className="text-base font-medium text-foreground dark:text-dark-text-primary mb-4">Advanced Research Options</h3>
             <div className="space-y-4">
               <div>
                 <div className="flex items-center">
@@ -387,7 +387,7 @@ export default function ResearchPreferencesSection() {
                     className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded dark:bg-dark-bg-tertiary dark:border-gray-700"
                     defaultChecked
                   />
-                  <label htmlFor="recentResults" className="ml-2 block text-sm text-gray-900 dark:text-dark-text-primary">
+                  <label htmlFor="recentResults" className="ml-2 block text-sm text-foreground dark:text-dark-text-primary">
                     Prioritize recent content
                   </label>
                 </div>
@@ -404,7 +404,7 @@ export default function ResearchPreferencesSection() {
                     className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded dark:bg-dark-bg-tertiary dark:border-gray-700"
                     defaultChecked
                   />
-                  <label htmlFor="includeNews" className="ml-2 block text-sm text-gray-900 dark:text-dark-text-primary">
+                  <label htmlFor="includeNews" className="ml-2 block text-sm text-foreground dark:text-dark-text-primary">
                     Include news sources
                   </label>
                 </div>
@@ -419,7 +419,7 @@ export default function ResearchPreferencesSection() {
                 </label>
                 <select
                   className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-700 
-                            bg-white dark:bg-dark-bg-tertiary text-gray-900 dark:text-dark-text-primary
+                            bg-white dark:bg-dark-bg-tertiary text-foreground dark:text-dark-text-primary
                             focus:outline-none focus:ring-primary-500 dark:focus:ring-primary-600 
                             focus:border-primary-500 dark:focus:border-primary-600 
                             sm:text-sm rounded-md transition-colors"

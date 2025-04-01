@@ -44,7 +44,7 @@ export default function CalendarPage() {
   return (
     <DashboardLayout>
       <div>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-dark-text-primary mb-6">Calendar</h1>
+        <h1 className="text-2xl font-bold text-foreground dark:text-dark-text-primary mb-6">Calendar</h1>
 
         {error && (
           <div className="mb-6 bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 dark:border-red-600 p-4 rounded">

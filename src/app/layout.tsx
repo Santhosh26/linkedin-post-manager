@@ -25,13 +25,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="h-full light">
-    <body className={`${inter.className} h-full antialiased bg-white text-gray-900`}>
+    <html lang="en">
+    <body className={`${inter.className} h-full antialiased`}>
     <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
+          storageKey="linkedin-post-manager-theme" // Optional: customize storage key
+          defaultTheme="system" // This is accepted
         >
       <AuthProvider>{children}</AuthProvider>
       <Toaster />

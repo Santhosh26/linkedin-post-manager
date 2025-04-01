@@ -53,7 +53,7 @@ export default function CalendarDay({ day, isCurrentMonth, isToday, posts, onPub
           : 'bg-white'
       } transition-colors`}
     >
-      <div className="font-medium text-sm text-gray-900">
+      <div className="font-medium text-sm text-foreground">
         {format(day, 'd')}
         {isToday && (
           <span className="ml-1 inline-flex h-4 w-4 items-center justify-center rounded-full bg-primary-500 text-xs text-white">

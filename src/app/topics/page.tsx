@@ -65,7 +65,7 @@ export default function TopicsPage() {
   return (
     <DashboardLayout>
       <div>
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">Topics</h1>
+        <h1 className="text-2xl font-bold text-foreground mb-6">Topics</h1>
 
         {error && (
           <div className="mb-6 bg-red-50 border-l-4 border-red-500 p-4">

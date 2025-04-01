@@ -123,7 +123,7 @@ export default function SecuritySection() {
                 </div>
                 <div className="ml-3 flex-1">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-base font-medium text-gray-900 dark:text-dark-text-primary">Password</h3>
+                    <h3 className="text-base font-medium text-foreground dark:text-dark-text-primary">Password</h3>
                     <Dialog open={isOpen} onOpenChange={setIsOpen}>
                       <DialogTrigger asChild>
                         <Button size="sm">Change Password</Button>
@@ -240,7 +240,7 @@ export default function SecuritySection() {
                 </div>
                 <div className="ml-3 flex-1">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-base font-medium text-gray-900 dark:text-dark-text-primary">Account Activity</h3>
+                    <h3 className="text-base font-medium text-foreground dark:text-dark-text-primary">Account Activity</h3>
                     <Button
                       variant="secondary"
                       size="sm"

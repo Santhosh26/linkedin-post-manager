@@ -8,7 +8,7 @@ export default function NewPostPage() {
   return (
     <DashboardLayout>
       <div>
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">Create New Post</h1>
+        <h1 className="text-2xl font-bold text-foreground mb-6">Create New Post</h1>
         <PostForm />
       </div>
     </DashboardLayout>

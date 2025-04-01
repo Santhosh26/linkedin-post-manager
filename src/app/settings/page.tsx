@@ -126,7 +126,7 @@ export default function SettingsPage() {
   return (
     <DashboardLayout>
       <div>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-dark-text-primary mb-6">Settings</h1>
+        <h1 className="text-2xl font-bold text-foreground dark:text-dark-text-primary mb-6">Settings</h1>
 
         {error && (
           <div className="mb-6 bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 dark:border-red-600 p-4 rounded">
@@ -154,7 +154,7 @@ export default function SettingsPage() {
                 value={searchQuery}
                 onChange={handleSearchChange}
                 className="pl-10 pr-10 py-2 w-full border border-gray-300 dark:border-gray-700 rounded-md shadow-sm 
-                         bg-white dark:bg-dark-bg-tertiary text-gray-900 dark:text-dark-text-primary
+                         bg-white dark:bg-dark-bg-tertiary text-foreground dark:text-dark-text-primary
                          focus:outline-none focus:ring-primary-500 dark:focus:ring-primary-600 focus:border-primary-500 dark:focus:border-primary-600"
               />
               {searchQuery && (

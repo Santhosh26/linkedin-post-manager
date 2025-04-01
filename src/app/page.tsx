@@ -2,21 +2,23 @@
 import { Button } from '@/components/ui/buttonAdapter';
 import Link from 'next/link';
 import { Search, Edit, Calendar, CheckCircle } from 'lucide-react';
+import Navbar from '@/components/layout/Navbar';
 
 export default function Home() {
   return (
-    <div className="bg-white">
+    <div className="bg-background">
+      <Navbar />
       {/* Hero section */}
       <div className="relative overflow-hidden">
         <div className="max-w-7xl mx-auto">
-          <div className="relative z-10 pb-8 bg-white sm:pb-16 md:pb-20 lg:max-w-2xl lg:w-full lg:pb-28 xl:pb-32">
+          <div className="relative z-10 pb-8 bg-background sm:pb-16 md:pb-20 lg:max-w-2xl lg:w-full lg:pb-28 xl:pb-32">
             <main className="mt-10 mx-auto max-w-7xl px-4 sm:mt-12 sm:px-6 md:mt-16 lg:mt-20 lg:px-8 xl:mt-28">
               <div className="sm:text-center lg:text-left">
-                <h1 className="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
+                <h1 className="text-4xl tracking-tight font-extrabold text-foreground sm:text-5xl md:text-6xl">
                   <span className="block xl:inline">Streamline your</span>{' '}
-                  <span className="block text-primary-500 xl:inline">LinkedIn content</span>
+                  <span className="block text-primary xl:inline">LinkedIn content</span>
                 </h1>
-                <p className="mt-3 text-base text-gray-500 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl lg:mx-0">
+                <p className="mt-3 text-base text-muted-foreground sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl lg:mx-0">
                   From research to publication, manage your entire LinkedIn content workflow
                   in one place. Save time, improve engagement, and never run out of ideas.
                 </p>
@@ -24,7 +26,7 @@ export default function Home() {
                   <div className="rounded-md shadow">
                     <Link
                       href="/register"
-                      className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-blue-600 bg-primary-500 hover:bg-primary-600 md:py-4 md:text-lg md:px-10 transition-colors"
+                      className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-primary-foreground bg-primary hover:bg-primary/90 md:py-4 md:text-lg md:px-10 transition-colors"
                     >
                       Get Started
                     </Link>
@@ -32,7 +34,7 @@ export default function Home() {
                   <div className="mt-3 sm:mt-0 sm:ml-3">
                     <Link
                       href="/login"
-                      className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-primary-700 bg-primary-100 hover:bg-primary-200 md:py-4 md:text-lg md:px-10 transition-colors"
+                      className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-primary bg-primary/10 hover:bg-primary/20 md:py-4 md:text-lg md:px-10 transition-colors"
                     >
                       Log In
                     </Link>
@@ -52,16 +54,16 @@ export default function Home() {
       </div>
 
       {/* Feature section */}
-      <div className="py-12 bg-white">
+      <div className="py-12 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="lg:text-center">
-            <h2 className="text-base text-primary-600 font-semibold tracking-wide uppercase">
+            <h2 className="text-base text-primary font-semibold tracking-wide uppercase">
               Features
             </h2>
-            <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+            <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-foreground sm:text-4xl">
               A better way to create LinkedIn content
             </p>
-            <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
+            <p className="mt-4 max-w-2xl text-xl text-muted-foreground lg:mx-auto">
               Our platform helps you create, manage, and schedule high-quality LinkedIn posts with less effort.
             </p>
           </div>
@@ -69,44 +71,44 @@ export default function Home() {
           <div className="mt-10">
             <div className="space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-10">
               <div className="relative">
-                <div className="absolute flex items-center justify-center h-12 w-12 rounded-[1rem] bg-primary-500 text-white">
+                <div className="absolute flex items-center justify-center h-12 w-12 rounded-card bg-primary text-primary-foreground">
                   <Search className="h-6 w-6" />
                 </div>
-                <p className="ml-16 text-lg leading-6 font-medium text-gray-900">AI-Assisted Research</p>
-                <div className="mt-2 ml-16 text-base text-gray-500">
+                <p className="ml-16 text-lg leading-6 font-medium text-foreground">AI-Assisted Research</p>
+                <div className="mt-2 ml-16 text-base text-muted-foreground">
                   Discover trending topics and relevant content with our AI-powered research tools.
                   Stay up-to-date with the latest developments in your industry.
                 </div>
               </div>
 
               <div className="relative">
-                <div className="absolute flex items-center justify-center h-12 w-12 rounded-[1rem] bg-primary-500 text-white">
+                <div className="absolute flex items-center justify-center h-12 w-12 rounded-card bg-primary text-primary-foreground">
                   <Edit className="h-6 w-6" />
                 </div>
-                <p className="ml-16 text-lg leading-6 font-medium text-gray-900">Intelligent Post Generation</p>
-                <div className="mt-2 ml-16 text-base text-gray-500">
+                <p className="ml-16 text-lg leading-6 font-medium text-foreground">Intelligent Post Generation</p>
+                <div className="mt-2 ml-16 text-base text-muted-foreground">
                   Transform research into engaging LinkedIn posts with our AI content generator.
                   Create multiple variations to find the perfect tone for your audience.
                 </div>
               </div>
 
               <div className="relative">
-                <div className="absolute flex items-center justify-center h-12 w-12 rounded-[1rem] bg-primary-500 text-white">
+                <div className="absolute flex items-center justify-center h-12 w-12 rounded-card bg-primary text-primary-foreground">
                   <CheckCircle className="h-6 w-6" />
                 </div>
-                <p className="ml-16 text-lg leading-6 font-medium text-gray-900">Content Workspace</p>
-                <div className="mt-2 ml-16 text-base text-gray-500">
+                <p className="ml-16 text-lg leading-6 font-medium text-foreground">Content Workspace</p>
+                <div className="mt-2 ml-16 text-base text-muted-foreground">
                   Organize your content by topics or campaigns. Save, edit, and track posts
                   all in one unified workspace.
                 </div>
               </div>
 
               <div className="relative">
-                <div className="absolute flex items-center justify-center h-12 w-12 rounded-[1rem] bg-primary-500 text-white">
+                <div className="absolute flex items-center justify-center h-12 w-12 rounded-card bg-primary text-primary-foreground">
                   <Calendar className="h-6 w-6" />
                 </div>
-                <p className="ml-16 text-lg leading-6 font-medium text-gray-900">Scheduling Capabilities</p>
-                <div className="mt-2 ml-16 text-base text-gray-500">
+                <p className="ml-16 text-lg leading-6 font-medium text-foreground">Scheduling Capabilities</p>
+                <div className="mt-2 ml-16 text-base text-muted-foreground">
                   Schedule posts for optimal times and maintain a consistent presence on LinkedIn.
                   View your content calendar to plan your strategy.
                 </div>
@@ -117,12 +119,12 @@ export default function Home() {
       </div>
 
       {/* CTA section */}
-      <div className="bg-primary-700">
+      <div className="bg-primary text-primary-foreground">
         <div className="max-w-2xl mx-auto text-center py-16 px-4 sm:py-20 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-extrabold text-white sm:text-4xl">
+          <h2 className="text-3xl font-extrabold sm:text-4xl">
             <span className="block">Ready to boost your LinkedIn presence?</span>
           </h2>
-          <p className="mt-4 text-lg leading-6 text-primary-200">
+          <p className="mt-4 text-lg leading-6 text-primary-foreground/80">
             Join thousands of professionals who are saving time and improving their LinkedIn engagement.
           </p>
           <div className="mt-8">

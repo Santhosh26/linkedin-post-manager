@@ -115,7 +115,7 @@ const PostGenerationForm = ({ topicId, topicName, researchId }: PostGenerationFo
                   }`}
                   onClick={() => setTone('professional')}
                 >
-                  <div className="font-medium text-center text-gray-900 dark:text-dark-text-primary mb-2">Professional</div>
+                  <div className="font-medium text-center text-foreground dark:text-dark-text-primary mb-2">Professional</div>
                   <p className="text-xs text-center text-gray-500 dark:text-dark-text-tertiary">
                     Formal, authoritative tone for business audience
                   </p>
@@ -128,7 +128,7 @@ const PostGenerationForm = ({ topicId, topicName, researchId }: PostGenerationFo
                   }`}
                   onClick={() => setTone('casual')}
                 >
-                  <div className="font-medium text-center text-gray-900 dark:text-dark-text-primary mb-2">Casual</div>
+                  <div className="font-medium text-center text-foreground dark:text-dark-text-primary mb-2">Casual</div>
                   <p className="text-xs text-center text-gray-500 dark:text-dark-text-tertiary">
                     Conversational, friendly tone for general audience
                   </p>
@@ -141,7 +141,7 @@ const PostGenerationForm = ({ topicId, topicName, researchId }: PostGenerationFo
                   }`}
                   onClick={() => setTone('thoughtful')}
                 >
-                  <div className="font-medium text-center text-gray-900 dark:text-dark-text-primary mb-2">Thoughtful</div>
+                  <div className="font-medium text-center text-foreground dark:text-dark-text-primary mb-2">Thoughtful</div>
                   <p className="text-xs text-center text-gray-500 dark:text-dark-text-tertiary">
                     Reflective, insightful tone for deeper engagement
                   </p>
@@ -178,7 +178,7 @@ const PostGenerationForm = ({ topicId, topicName, researchId }: PostGenerationFo
             
             <div className="overflow-hidden bg-gray-50 dark:bg-dark-bg-tertiary border border-gray-200 dark:border-gray-700 rounded-lg">
               <div className="px-4 py-5 sm:p-6">
-                <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-dark-text-primary">
+                <h3 className="text-lg leading-6 font-medium text-foreground dark:text-dark-text-primary">
                   Post Preview
                 </h3>
                 <div className="mt-3 text-sm text-gray-600 dark:text-dark-text-secondary">

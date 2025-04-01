@@ -167,7 +167,7 @@ const ResearchForm = ({ topicId, topicName, onResearchComplete }: ResearchFormPr
               <select
                 id="maxResults"
                 className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-700 
-                          bg-white dark:bg-dark-bg-tertiary text-gray-900 dark:text-dark-text-primary
+                          bg-white dark:bg-dark-bg-tertiary text-foreground dark:text-dark-text-primary
                           focus:outline-none focus:ring-primary-500 dark:focus:ring-primary-600 
                           focus:border-primary-500 dark:focus:border-primary-600 
                           sm:text-sm rounded-md transition-colors"

@@ -105,7 +105,7 @@ const TopicsList = ({ topics, onDelete }: TopicsListProps) => {
                 <TableBody>
                   {filteredTopics.map((topic) => (
                     <TableRow key={topic.id} className="hover:bg-gray-50/50 transition-colors border-b border-gray-100 last:border-0">
-                      <TableCell className="py-4 text-sm font-medium text-gray-900">
+                      <TableCell className="py-4 text-sm font-medium text-foreground">
                         {topic.name}
                       </TableCell>
                       <TableCell className="py-4 text-sm">

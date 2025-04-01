@@ -113,7 +113,7 @@ const PostsList = ({ posts, topics, onDelete }: PostsListProps) => {
             </div>
             <input
               type="text"
-              className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md leading-5 bg-white dark:bg-gray-800 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-gray-100
+              className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md leading-5 bg-white dark:bg-gray-800 placeholder-gray-500 dark:placeholder-gray-400 text-foreground dark:text-gray-100
                        focus:outline-none focus:ring-2 focus:ring-primary-500/25 focus:border-primary-500
                        hover:border-gray-400 dark:hover:border-gray-600 transition-all
                        sm:text-sm"
@@ -129,7 +129,7 @@ const PostsList = ({ posts, topics, onDelete }: PostsListProps) => {
               <Filter className="h-5 w-5 text-gray-400 dark:text-gray-500" />
             </div>
             <select
-              className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md leading-5 bg-white dark:bg-gray-800 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-gray-100
+              className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md leading-5 bg-white dark:bg-gray-800 placeholder-gray-500 dark:placeholder-gray-400 text-foreground dark:text-gray-100
                        focus:outline-none focus:ring-2 focus:ring-primary-500/25 focus:border-primary-500
                        hover:border-gray-400 dark:hover:border-gray-600 transition-all
                        sm:text-sm"
@@ -149,7 +149,7 @@ const PostsList = ({ posts, topics, onDelete }: PostsListProps) => {
               <Filter className="h-5 w-5 text-gray-400 dark:text-gray-500" />
             </div>
             <select
-              className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md leading-5 bg-white dark:bg-gray-800 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-gray-100
+              className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md leading-5 bg-white dark:bg-gray-800 placeholder-gray-500 dark:placeholder-gray-400 text-foreground dark:text-gray-100
                        focus:outline-none focus:ring-2 focus:ring-primary-500/25 focus:border-primary-500
                        hover:border-gray-400 dark:hover:border-gray-600 transition-all
                        sm:text-sm"
@@ -184,7 +184,7 @@ const PostsList = ({ posts, topics, onDelete }: PostsListProps) => {
                     <TableRow key={post.id} className="hover:bg-gray-50/50 dark:hover:bg-gray-700/50 transition-colors border-b border-gray-100 dark:border-gray-700 last:border-0">
                       <TableCell className="py-4 text-sm font-medium">
                         <div className="max-w-xl post-content">
-                          <p className="line-clamp-2 text-gray-900 dark:text-gray-100">{post.content}</p>
+                          <p className="line-clamp-2 text-foreground dark:text-gray-100">{post.content}</p>
                           {post.hashtags.length > 0 && (
                             <div className="mt-1 flex flex-wrap gap-1">
                               {post.hashtags.slice(0, 3).map((tag, index) => (

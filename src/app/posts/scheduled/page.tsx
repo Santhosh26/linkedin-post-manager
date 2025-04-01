@@ -70,7 +70,7 @@ export default function ScheduledPostsPage() {
   return (
     <DashboardLayout>
       <div>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-dark-text-primary mb-6">Scheduled Posts</h1>
+        <h1 className="text-2xl font-bold text-foreground dark:text-dark-text-primary mb-6">Scheduled Posts</h1>
 
         {/* Display the CronTrigger only in development environment */}
         {process.env.NODE_ENV === 'development' && <CronTrigger />}
@@ -160,7 +160,7 @@ export default function ScheduledPostsPage() {
             ) : (
               <div className="text-center py-12">
                 <Calendar className="mx-auto h-12 w-12 text-gray-400" />
-                <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-dark-text-primary">No scheduled posts</h3>
+                <h3 className="mt-2 text-sm font-medium text-foreground dark:text-dark-text-primary">No scheduled posts</h3>
                 <p className="mt-1 text-sm text-gray-500 dark:text-dark-text-tertiary">
                   You dont have any posts scheduled for publishing.
                 </p>

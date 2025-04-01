@@ -89,7 +89,7 @@ export default function ContentPreferencesSection() {
 
         <div className="space-y-6">
           <div>
-            <h3 className="text-base font-medium text-gray-900 dark:text-dark-text-primary mb-4">Default Content Tone</h3>
+            <h3 className="text-base font-medium text-foreground dark:text-dark-text-primary mb-4">Default Content Tone</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div
                 className={`cursor-pointer p-4 rounded-lg border transition-all ${
@@ -99,7 +99,7 @@ export default function ContentPreferencesSection() {
                 }`}
                 onClick={() => handleToneChange('professional')}
               >
-                <div className="font-medium text-center text-gray-900 dark:text-dark-text-primary mb-2">Professional</div>
+                <div className="font-medium text-center text-foreground dark:text-dark-text-primary mb-2">Professional</div>
                 <p className="text-xs text-center text-gray-500 dark:text-dark-text-tertiary">
                   Formal, authoritative tone for business audience
                 </p>
@@ -113,7 +113,7 @@ export default function ContentPreferencesSection() {
                 }`}
                 onClick={() => handleToneChange('casual')}
               >
-                <div className="font-medium text-center text-gray-900 dark:text-dark-text-primary mb-2">Casual</div>
+                <div className="font-medium text-center text-foreground dark:text-dark-text-primary mb-2">Casual</div>
                 <p className="text-xs text-center text-gray-500 dark:text-dark-text-tertiary">
                   Conversational, friendly tone for general audience
                 </p>
@@ -127,7 +127,7 @@ export default function ContentPreferencesSection() {
                 }`}
                 onClick={() => handleToneChange('thoughtful')}
               >
-                <div className="font-medium text-center text-gray-900 dark:text-dark-text-primary mb-2">Thoughtful</div>
+                <div className="font-medium text-center text-foreground dark:text-dark-text-primary mb-2">Thoughtful</div>
                 <p className="text-xs text-center text-gray-500 dark:text-dark-text-tertiary">
                   Reflective, insightful tone for deeper engagement
                 </p>
@@ -136,7 +136,7 @@ export default function ContentPreferencesSection() {
           </div>
 
           <div className="pt-6 border-t border-gray-200 dark:border-gray-700">
-            <h3 className="text-base font-medium text-gray-900 dark:text-dark-text-primary mb-4">Default Number of Variations</h3>
+            <h3 className="text-base font-medium text-foreground dark:text-dark-text-primary mb-4">Default Number of Variations</h3>
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-dark-text-secondary mb-2">
                 Number of Post Variations: <span className="font-bold text-primary-600 dark:text-primary-400">{settings.defaultVariationCount}</span>
@@ -160,7 +160,7 @@ export default function ContentPreferencesSection() {
           </div>
 
           <div className="pt-6 border-t border-gray-200 dark:border-gray-700">
-            <h3 className="text-base font-medium text-gray-900 dark:text-dark-text-primary mb-4">Content Format Options</h3>
+            <h3 className="text-base font-medium text-foreground dark:text-dark-text-primary mb-4">Content Format Options</h3>
             <div className="space-y-4">
               <div>
                 <div className="flex items-center">
@@ -170,7 +170,7 @@ export default function ContentPreferencesSection() {
                     className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded dark:bg-dark-bg-tertiary dark:border-gray-700"
                     defaultChecked
                   />
-                  <label htmlFor="hashtags" className="ml-2 block text-sm text-gray-900 dark:text-dark-text-primary">
+                  <label htmlFor="hashtags" className="ml-2 block text-sm text-foreground dark:text-dark-text-primary">
                     Auto-generate hashtags
                   </label>
                 </div>
@@ -187,7 +187,7 @@ export default function ContentPreferencesSection() {
                     className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded dark:bg-dark-bg-tertiary dark:border-gray-700"
                     defaultChecked
                   />
-                  <label htmlFor="emojis" className="ml-2 block text-sm text-gray-900 dark:text-dark-text-primary">
+                  <label htmlFor="emojis" className="ml-2 block text-sm text-foreground dark:text-dark-text-primary">
                     Include emojis
                   </label>
                 </div>
@@ -204,7 +204,7 @@ export default function ContentPreferencesSection() {
                     className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded dark:bg-dark-bg-tertiary dark:border-gray-700"
                     defaultChecked
                   />
-                  <label htmlFor="callToAction" className="ml-2 block text-sm text-gray-900 dark:text-dark-text-primary">
+                  <label htmlFor="callToAction" className="ml-2 block text-sm text-foreground dark:text-dark-text-primary">
                     Add call-to-action
                   </label>
                 </div>

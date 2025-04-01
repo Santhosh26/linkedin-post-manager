@@ -136,7 +136,7 @@ const ContentCalendar = ({ posts, onRefresh }: CalendarProps) => {
       />
       <CardContent>
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-900">
+          <h2 className="text-lg font-semibold text-foreground">
             {format(currentMonth, 'MMMM yyyy')}
           </h2>
           <div className="flex space-x-2">

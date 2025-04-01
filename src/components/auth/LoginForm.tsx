@@ -84,7 +84,7 @@ const LoginForm = () => {
   return (
     <div className="max-w-md w-full mx-auto space-y-8">
       <div>
-        <h2 className="text-center text-3xl font-extrabold text-gray-900">
+        <h2 className="text-center text-3xl font-extrabold text-foreground">
           Sign in to your account
         </h2>
         <p className="mt-2 text-center text-sm text-gray-600">
@@ -150,7 +150,7 @@ const LoginForm = () => {
                 type="checkbox"
                 className="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded"
               />
-              <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
+              <label htmlFor="remember-me" className="ml-2 block text-sm text-foreground">
                 Remember me
               </label>
             </div>

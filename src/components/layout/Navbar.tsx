@@ -23,54 +23,31 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-card text-card-foreground border-b border-gray-200 shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
+    <nav className="bg-card text-card-foreground border-b border-border shadow-sm">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex justify-between h-14">
           <div className="flex">
             <div className="flex-shrink-0 flex items-center">
-              <Link href="/" className="text-xl font-bold text-primary-500">
+              <Link href="/" className="text-xl font-bold text-primary">
                 LinkedIn Post Manager
               </Link>
             </div>
-            <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
+            <div className="hidden sm:ml-6 sm:flex sm:space-x-4">
               {session ? (
                 <>
-                  <Link
-                    href="/dashboard"
-                    className="border-transparent text-gray-500 hover:border-primary-500 hover:text-primary-600 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
-                  >
-                    Dashboard
-                  </Link>
-                  <Link
-                    href="/topics"
-                    className="border-transparent text-gray-500 hover:border-primary-500 hover:text-primary-600 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
-                  >
-                    Topics
-                  </Link>
-                  <Link
-                    href="/posts"
-                    className="border-transparent text-gray-500 hover:border-primary-500 hover:text-primary-600 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
-                  >
-                    Posts
-                  </Link>
-                  <Link
-                    href="/calendar"
-                    className="border-transparent text-gray-500 hover:border-primary-500 hover:text-primary-600 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
-                  >
-                    Calendar
-                  </Link>
+                  {/* Add authenticated nav items if needed */}
                 </>
               ) : (
                 <>
                   <Link
                     href="/features"
-                    className="border-transparent text-gray-500 hover:border-primary-500 hover:text-primary-600 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                    className="border-transparent text-muted-foreground hover:border-primary hover:text-primary inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
                   >
                     Features
                   </Link>
                   <Link
                     href="/pricing"
-                    className="border-transparent text-gray-500 hover:border-primary-500 hover:text-primary-600 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                    className="border-transparent text-muted-foreground hover:border-primary hover:text-primary inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
                   >
                     Pricing
                   </Link>
@@ -90,7 +67,7 @@ const Navbar = () => {
                 <div>
                   <button
                     onClick={toggleProfileDropdown}
-                    className="bg-card rounded-full flex text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                    className="bg-card rounded-full flex text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
                   >
                     <span className="sr-only">Open user menu</span>
                     {session.user?.image ? (
@@ -102,26 +79,26 @@ const Navbar = () => {
                         height={32}
                       />
                     ) : (
-                      <div className="h-8 w-8 rounded-full bg-primary-500 flex items-center justify-center text-white">
+                      <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground">
                         <User />
                       </div>
                     )}
                   </button>
                 </div>
                 {isProfileDropdownOpen && (
-                  <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-card ring-1 ring-black ring-opacity-5 z-10">
-                    <div className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700">
+                  <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-card ring-1 ring-border z-10">
+                    <div className="px-4 py-2 text-sm text-foreground border-b border-border">
                       {session.user?.name || session.user?.email}
                     </div>
                     <Link
                       href="/profile"
-                      className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                      className="block px-4 py-2 text-sm text-foreground hover:bg-muted"
                     >
                       Your Profile
                     </Link>
                     <button
                       onClick={() => signOut()}
-                      className="w-full text-left block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                      className="w-full text-left block px-4 py-2 text-sm text-foreground hover:bg-muted"
                     >
                       Sign out
                     </button>
@@ -132,13 +109,13 @@ const Navbar = () => {
               <div className="flex items-center space-x-4">
                 <Link
                   href="/login"
-                  className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 px-3 py-2 rounded-md text-sm font-medium"
+                  className="text-foreground hover:text-primary px-3 py-2 rounded-md text-sm font-medium"
                 >
                   Login
                 </Link>
                 <Link
                   href="/register"
-                  className="bg-primary-500 text-white hover:bg-primary-600 px-3 py-2 rounded-md text-sm font-medium"
+                  className="bg-primary text-primary-foreground hover:bg-primary/90 px-3 py-2 rounded-md text-sm font-medium"
                 >
                   Sign Up
                 </Link>
@@ -152,7 +129,7 @@ const Navbar = () => {
             </div>
             <button
               onClick={toggleMenu}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500"
+              className="inline-flex items-center justify-center p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary"
             >
               <span className="sr-only">Open main menu</span>
               {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -169,25 +146,25 @@ const Navbar = () => {
               <>
                 <Link
                   href="/dashboard"
-                  className="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
+                  className="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-foreground hover:bg-muted hover:border-primary hover:text-primary"
                 >
                   Dashboard
                 </Link>
                 <Link
                   href="/topics"
-                  className="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
+                  className="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-foreground hover:bg-muted hover:border-primary hover:text-primary"
                 >
                   Topics
                 </Link>
                 <Link
                   href="/posts"
-                  className="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
+                  className="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-foreground hover:bg-muted hover:border-primary hover:text-primary"
                 >
                   Posts
                 </Link>
                 <Link
                   href="/calendar"
-                  className="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
+                  className="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-foreground hover:bg-muted hover:border-primary hover:text-primary"
                 >
                   Calendar
                 </Link>
@@ -196,13 +173,13 @@ const Navbar = () => {
               <>
                 <Link
                   href="/features"
-                  className="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
+                  className="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-foreground hover:bg-muted hover:border-primary hover:text-primary"
                 >
                   Features
                 </Link>
                 <Link
                   href="/pricing"
-                  className="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
+                  className="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-foreground hover:bg-muted hover:border-primary hover:text-primary"
                 >
                   Pricing
                 </Link>
@@ -210,7 +187,7 @@ const Navbar = () => {
             )}
           </div>
           {session ? (
-            <div className="pt-4 pb-3 border-t border-gray-200 dark:border-gray-700">
+            <div className="pt-4 pb-3 border-t border-border">
               <div className="flex items-center px-4">
                 <div className="flex-shrink-0">
                   {session.user?.image ? (
@@ -222,16 +199,16 @@ const Navbar = () => {
                       height={40}
                     />
                   ) : (
-                    <div className="h-10 w-10 rounded-full bg-primary-500 flex items-center justify-center text-white">
+                    <div className="h-10 w-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground">
                       <User />
                     </div>
                   )}
                 </div>
                 <div className="ml-3">
-                  <div className="text-base font-medium text-gray-800 dark:text-gray-200">
+                  <div className="text-base font-medium text-foreground">
                     {session.user?.name || 'User'}
                   </div>
-                  <div className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                  <div className="text-sm font-medium text-muted-foreground">
                     {session.user?.email}
                   </div>
                 </div>
@@ -239,30 +216,30 @@ const Navbar = () => {
               <div className="mt-3 space-y-1">
                 <Link
                   href="/profile"
-                  className="block px-4 py-2 text-base font-medium text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
+                  className="block px-4 py-2 text-base font-medium text-muted-foreground hover:text-foreground hover:bg-muted"
                 >
                   Your Profile
                 </Link>
                 <button
                   onClick={() => signOut()}
-                  className="w-full text-left block px-4 py-2 text-base font-medium text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
+                  className="w-full text-left block px-4 py-2 text-base font-medium text-muted-foreground hover:text-foreground hover:bg-muted"
                 >
                   Sign out
                 </button>
               </div>
             </div>
           ) : (
-            <div className="pt-4 pb-3 border-t border-gray-200 dark:border-gray-700">
+            <div className="pt-4 pb-3 border-t border-border">
               <div className="space-y-1">
                 <Link
                   href="/login"
-                  className="block px-4 py-2 text-base font-medium text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
+                  className="block px-4 py-2 text-base font-medium text-muted-foreground hover:text-foreground hover:bg-muted"
                 >
                   Login
                 </Link>
                 <Link
                   href="/register"
-                  className="block px-4 py-2 text-base font-medium text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                  className="block px-4 py-2 text-base font-medium text-primary hover:text-primary/90 hover:bg-muted"
                 >
                   Sign Up
                 </Link>

@@ -41,8 +41,6 @@ export default function DashboardPage() {
   }
   
   const [recentPosts, setRecentPosts] = useState<Post[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -72,12 +70,9 @@ export default function DashboardPage() {
 
         // Get 5 most recent posts
         setRecentPosts(posts.slice(0, 5));
-
-        setLoading(false);
       } catch (err) {
         console.error('Error fetching dashboard data:', err);
-        setError('Failed to load dashboard data');
-        setLoading(false);
+
       }
     };
 
@@ -86,34 +81,13 @@ export default function DashboardPage() {
     }
   }, [session]);
 
-  if (loading) {
-    return (
-      <DashboardLayout>
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500"></div>
-        </div>
-      </DashboardLayout>
-    );
-  }
-
   return (
     <DashboardLayout>
       <div>
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">Dashboard</h1>
-
-        {error && (
-          <div className="mt-4 bg-red-50 border-l-4 border-red-500 p-4 rounded-md">
-            <div className="flex">
-              <div className="ml-3">
-                <p className="text-sm text-red-700">{error}</p>
-              </div>
-            </div>
-          </div>
-        )}
-
+        <h1 className="text-2xl font-bold text-foreground mb-6">Dashboard</h1>
         {/* Quick actions */}
         <div className="mt-6">
-          <h2 className="text-lg font-medium text-gray-900 mb-3">Quick Actions</h2>
+          <h2 className="text-lg font-medium text-foreground mb-3">Quick Actions</h2>
           <div className="mt-3 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
             <Link href="/topics/new" className="block hover:translate-y-[-2px] transition-all">
               <div className="p-6 bg-white rounded-[1rem] border border-gray-200 hover:shadow-bubble transition-all text-center group">
@@ -121,7 +95,7 @@ export default function DashboardPage() {
                   <div className="h-12 w-12 bg-primary-100 rounded-full flex items-center justify-center text-primary-600 mb-4 group-hover:bg-primary-200 transition-colors">
                     <Plus className="h-6 w-6" />
                   </div>
-                  <h3 className="text-base font-medium text-gray-900">New Topic</h3>
+                  <h3 className="text-base font-medium text-foreground">New Topic</h3>
                   <p className="mt-2 text-sm text-gray-500">Create a new content topic</p>
                 </div>
               </div>
@@ -133,7 +107,7 @@ export default function DashboardPage() {
                   <div className="h-12 w-12 bg-primary-100 rounded-full flex items-center justify-center text-primary-600 mb-4 group-hover:bg-primary-200 transition-colors">
                     <FileText className="h-6 w-6" />
                   </div>
-                  <h3 className="text-base font-medium text-gray-900">Create Post</h3>
+                  <h3 className="text-base font-medium text-foreground">Create Post</h3>
                   <p className="mt-2 text-sm text-gray-500">Write a new LinkedIn post</p>
                 </div>
               </div>
@@ -145,7 +119,7 @@ export default function DashboardPage() {
                   <div className="h-12 w-12 bg-primary-100 rounded-full flex items-center justify-center text-primary-600 mb-4 group-hover:bg-primary-200 transition-colors ">
                     <List className="h-6 w-6" />
                   </div>
-                  <h3 className="text-base font-medium text-gray-900 ">Research Content</h3>
+                  <h3 className="text-base font-medium text-foreground ">Research Content</h3>
                   <p className="mt-2 text-sm text-gray-500">Research topics for new posts</p>
                 </div>
               </div>
@@ -157,7 +131,7 @@ export default function DashboardPage() {
                   <div className="h-12 w-12 bg-primary-100 rounded-full flex items-center justify-center text-primary-600 mb-4 group-hover:bg-primary-200 transition-colors">
                     <Calendar className="h-6 w-6" />
                   </div>
-                  <h3 className="text-base font-medium text-gray-900">View Calendar</h3>
+                  <h3 className="text-base font-medium text-foreground">View Calendar</h3>
                   <p className="mt-2 text-sm text-gray-500">See your content schedule</p>
                 </div>
               </div>
@@ -167,7 +141,7 @@ export default function DashboardPage() {
 
         {/* Stats */}
         <div className="mt-8">
-          <h2 className="text-lg font-medium text-gray-900 mb-3">Overview</h2>
+          <h2 className="text-lg font-medium text-foreground mb-3">Overview</h2>
           <div className="mt-3 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-5">
             <div className="bg-white overflow-hidden shadow-bubble rounded-[1rem] border border-gray-200 ">
               <div className="px-4 py-5 sm:p-6">
@@ -179,7 +153,7 @@ export default function DashboardPage() {
                     <dl>
                       <dt className="text-sm font-medium text-gray-500 truncate">Total Posts</dt>
                       <dd>
-                        <div className="text-lg font-medium text-gray-900">{stats.totalPosts}</div>
+                        <div className="text-lg font-medium text-foreground">{stats.totalPosts}</div>
                       </dd>
                     </dl>
                   </div>
@@ -197,7 +171,7 @@ export default function DashboardPage() {
                     <dl>
                       <dt className="text-sm font-medium text-gray-500 truncate">Draft Posts</dt>
                       <dd>
-                        <div className="text-lg font-medium text-gray-900">{stats.draftPosts}</div>
+                        <div className="text-lg font-medium text-foreground">{stats.draftPosts}</div>
                       </dd>
                     </dl>
                   </div>
@@ -215,7 +189,7 @@ export default function DashboardPage() {
                     <dl>
                       <dt className="text-sm font-medium text-gray-500 truncate">Scheduled Posts</dt>
                       <dd>
-                        <div className="text-lg font-medium text-gray-900">{stats.scheduledPosts}</div>
+                        <div className="text-lg font-medium text-foreground">{stats.scheduledPosts}</div>
                       </dd>
                     </dl>
                   </div>
@@ -233,7 +207,7 @@ export default function DashboardPage() {
                     <dl>
                       <dt className="text-sm font-medium text-gray-500 truncate">Published Posts</dt>
                       <dd>
-                        <div className="text-lg font-medium text-gray-900">{stats.publishedPosts}</div>
+                        <div className="text-lg font-medium text-foreground">{stats.publishedPosts}</div>
                       </dd>
                     </dl>
                   </div>
@@ -251,7 +225,7 @@ export default function DashboardPage() {
                     <dl>
                       <dt className="text-sm font-medium text-gray-500 truncate">Total Topics</dt>
                       <dd>
-                        <div className="text-lg font-medium text-gray-900">{stats.totalTopics}</div>
+                        <div className="text-lg font-medium text-foreground">{stats.totalTopics}</div>
                       </dd>
                     </dl>
                   </div>
@@ -281,7 +255,7 @@ export default function DashboardPage() {
                     <div key={post.id} className="py-4 group">
                       <div className="flex justify-between items-start">
                         <div>
-                          <p className="text-sm font-medium text-gray-900 line-clamp-2">
+                          <p className="text-sm font-medium text-foreground line-clamp-2">
                             {post.content}
                           </p>
                           <div className="mt-1 flex flex-wrap gap-1">
