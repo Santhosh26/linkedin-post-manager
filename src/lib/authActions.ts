@@ -4,12 +4,17 @@
 import { signIn as nextAuthSignIn, signOut as nextAuthSignOut } from './auth';
 import { AuthError } from 'next-auth';
 
-export async function login(credentials: { email: string; password: string; }) {
+export async function login(credentials: { 
+  email: string; 
+  password: string;
+  rememberMe?: boolean; // Add rememberMe parameter
+}) {
   try {
     await nextAuthSignIn('credentials', {
       email: credentials.email,
       password: credentials.password,
       redirect: false,
+      rememberMe: credentials.rememberMe, // Pass rememberMe to NextAuth
     });
     return { success: true };
   } catch (error) {

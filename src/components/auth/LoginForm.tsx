@@ -20,11 +20,14 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { login } from '@/lib/authActions';
 
 const loginSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
+  rememberMe: z.boolean().default(false),
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
@@ -35,11 +38,13 @@ const LoginForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       email: '',
       password: '',
+      rememberMe: false,
     },
   });
 
@@ -51,6 +56,7 @@ const LoginForm = () => {
       const result = await login({
         email: data.email,
         password: data.password,
+        rememberMe: data.rememberMe,
       });
     
       if (!result.success) {
@@ -82,96 +88,111 @@ const LoginForm = () => {
   };
 
   return (
-    <div className="max-w-md w-full mx-auto space-y-8">
-      <div>
-        <h2 className="text-center text-3xl font-extrabold text-foreground">
+    <Card className="max-w-md w-full mx-auto">
+      <CardHeader className="space-y-1">
+        <CardTitle className="text-3xl font-extrabold text-center">
           Sign in to your account
-        </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
+        </CardTitle>
+        <CardDescription className="text-center">
           Or{' '}
-          <Link href="/register" className="font-medium text-primary hover:text-primary-dark transition-colors">
+          <Link href="/register" className="font-medium text-primary hover:text-primary/80 transition-colors">
             create a new account
           </Link>
-        </p>
-      </div>
+        </CardDescription>
+      </CardHeader>
 
-      {error && (
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
+      <CardContent className="space-y-6">
+        {error && (
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
 
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email address</FormLabel>
-                <FormControl>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <Mail className="h-5 w-5 text-gray-400" />
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email address</FormLabel>
+                  <FormControl>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <Mail className="h-5 w-5 text-muted-foreground" />
+                      </div>
+                      <Input placeholder="Email address" className="pl-10" {...field} />
                     </div>
-                    <Input placeholder="Email address" className="pl-10" {...field} />
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Password</FormLabel>
-                <FormControl>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <Lock className="h-5 w-5 text-gray-400" />
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <Lock className="h-5 w-5 text-muted-foreground" />
+                      </div>
+                      <Input type="password" placeholder="Password" className="pl-10" {...field} />
                     </div>
-                    <Input type="password" placeholder="Password" className="pl-10" {...field} />
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <input
-                id="remember-me"
-                name="remember-me"
-                type="checkbox"
-                className="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded"
+            <div className="flex items-center justify-between">
+              <FormField
+                control={form.control}
+                name="rememberMe"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-start space-x-2 space-y-0">
+                    <FormControl>
+                      <Checkbox
+                        id="remember-me"
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <div className="leading-none">
+                      <label
+                        htmlFor="remember-me"
+                        className="text-sm font-medium text-foreground"
+                      >
+                        Remember me
+                      </label>
+                    </div>
+                  </FormItem>
+                )}
               />
-              <label htmlFor="remember-me" className="ml-2 block text-sm text-foreground">
-                Remember me
-              </label>
+
+              <div className="text-sm">
+                <Link href="/forgot-password" className="font-medium text-primary hover:text-primary/80 transition-colors">
+                  Forgot your password?
+                </Link>
+              </div>
             </div>
 
-            <div className="text-sm">
-              <a href="#" className="font-medium text-primary hover:text-primary-dark transition-colors">
-                Forgot your password?
-              </a>
-            </div>
-          </div>
+            <Button
 
-          <Button
-            type="submit"
-            className="w-full py-3 font-bold"
-            disabled={isLoading}
-          >
-            {isLoading ? 'Signing in...' : 'Sign in'}
-          </Button>
-        </form>
-      </Form>
-    </div>
+              type="submit"
+              className="w-full font-bold py-3"
+              disabled={isLoading}
+            >
+              {isLoading ? 'Signing in...' : 'Sign in'}
+            </Button>
+          </form>
+        </Form>
+      </CardContent>
+    </Card>
   );
 };
 
