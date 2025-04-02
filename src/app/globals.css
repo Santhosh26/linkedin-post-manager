@@ -1,280 +1,123 @@
-/* globals.css */
-@import "tailwindcss"; /* Should be the first non-comment line */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@import "./themes.css";
+
+:root {
+  --radius: 0.625rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.269 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.371 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.439 0 0);
+}
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
 
 @layer base {
-  :root {
-    /* Light Mode Variables */
-    --background: 0 0% 100%; /* Use HSL for consistency like dark mode */
-    --foreground: 222.2 84% 4.9%; /* Use HSL */
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 221.2 83.2% 53.3%; /* Match tailwind config primary */
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%; /* Ring color for focus */
-    --radius: 0.5rem;
-
-    /* Primary color palette (Electric Blue) - Optional if using HSL primarily */
-    /* Consider deriving these from the main --primary HSL if needed elsewhere */
-    --primary-50: #e6f0ff;
-    --primary-100: #cce1ff;
-    --primary-200: #99c3ff;
-    --primary-300: #66a6ff;
-    --primary-400: #338eff;
-    --primary-500: #1a6aff; /* Adjust if needed to match --primary HSL */
-    --primary-600: #0055e5;
-    --primary-700: #0040b8;
-    --primary-800: #00008b;
-    --primary-900: #00204d;
-
-     /* Define font variable */
-     --font-sans: 'Inter', system-ui, sans-serif;
-  }
-
-  .dark {
-    /* Dark Mode Variables - Use HSL */
-    --background: 222 47% 11%; /* Simplified HSL */
-    --foreground: 210 40% 98%;
-    --card: 222 47% 14%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222 47% 14%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 217.2 32.6% 25%; /* Adjusted dark border */
-    --input: 217.2 32.6% 25%;  /* Adjusted dark input border */
-    --ring: 224.3 76.3% 48%; /* Dark mode ring */
-
-    /* Dark mode custom variables */
-    --primary-50: 220 100% 94%; /* HSL for dark primary palette */
-    --primary-100: 219 100% 87%;
-    --primary-200: 221 100% 80%;
-    --primary-300: 222 100% 75%;
-    --primary-400: 224 100% 70%;
-    --primary-500: 226 100% 65%;
-    --primary-600: 228 80% 55%;
-    --primary-700: 230 70% 45%;
-    --primary-800: 232 60% 35%;
-    --primary-900: 234 50% 25%;
-
-    /* Specific dark mode app colors */
-    --dark-bg-primary: 222 47% 11%;
-    --dark-bg-secondary: 222 47% 14%;
-    --dark-bg-tertiary: 222 47% 17%;
-    --dark-text-primary: 210 40% 98%;
-    --dark-text-secondary: 214 32% 91%;
-    --dark-text-tertiary: 215 20% 75%;
-
-     /* Dark mode input focus border (if different from light) */
-     /* --input-focus-border: hsl(var(--ring)); */ /* Example */
-  }
-
-  /* Apply base styles using CSS variables directly */
-  body {
-    background-color: var(--background);
-    color: var(--foreground);
-    font-family: var(--font-sans);
-    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
-  }
-
-  /* Set default border color and outline using variables */
   * {
-    border-color: hsl(var(--border)); /* Use hsl() wrapper */
+    @apply border-border outline-ring/50;
   }
-
-  /* Apply focus ring using the --ring variable */
-  *:focus-visible {
-      outline: 2px solid hsl(var(--ring));
-      outline-offset: 2px;
+  body {
+    @apply bg-background text-foreground;
   }
-
-  /* Base styles for inputs (consider removing !important if possible) */
-  input, textarea, select {
-    background-color: hsl(var(--background)); /* Use background variable */
-    color: hsl(var(--foreground)); /* Use foreground variable */
-    border-width: 1px; /* Ensure border width is set */
-    border-color: hsl(var(--input)); /* Use input variable for border */
-    border-radius: var(--radius); /* Use radius variable */
-    padding: 0.5rem 0.75rem; /* Add some default padding */
-  }
-
-  input::placeholder, textarea::placeholder {
-    color: hsl(var(--muted-foreground)); /* Use muted-foreground for placeholder */
-  }
-
-  input:focus, textarea:focus, select:focus {
-     /* Focus state managed by *:focus-visible */
-     border-color: hsl(var(--ring)); /* Change border color on focus */
-     outline: none; /* Remove default outline */
-     /* box-shadow: 0 0 0 3px hsla(var(--ring), 0.3); */ /* Optional: Add a softer shadow instead of outline */
-  }
-
-  /* Remove hover styles here if handled by utility classes (e.g., hover:border-gray-300) */
-  /* input:hover, textarea:hover, select:hover { ... } */
-
-}
-
-/* Keep other component/utility styles outside @layer base */
-
-/* Improved Form Inputs specific styles (can be component classes) */
-/* ... (Keep the input styles if needed, but try to avoid !important) ... */
-/* Example without !important, assuming base styles are set above */
-/*
-input, textarea, select {
-  background-color: white;
-  color: #111827;
-  border-color: #d1d5db;
-}
-.dark input,
-.dark textarea,
-.dark select {
-  background-color: hsl(222, 47%, 17%);
-  color: hsl(210, 40%, 98%);
-  border-color: hsl(217.2, 32.6%, 25%);
-}
-*/
-
-
-/* Scrollbar styling */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-::-webkit-scrollbar-track {
-  background: hsl(var(--background)); /* Use variable */
-}
-::-webkit-scrollbar-thumb {
-  background-color: hsl(var(--border)); /* Use border color */
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background-color: hsl(var(--muted-foreground)); /* Use muted color on hover */
-}
-/* Dark mode scrollbar handled by variable changes */
-
-
-/* Transitions */
-*, *::before, *::after {
-  /* Be specific about what transitions */
-  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
-}
-
-/* Utility classes */
-.shadow-bubble {
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.03), 0 4px 8px rgba(0, 0, 0, 0.04);
-}
-.dark .shadow-bubble {
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2), 0 4px 8px rgba(0, 0, 0, 0.3);
-}
-
-.rounded-card {
-  border-radius: 1rem; /* Or use var(--radius) if consistent */
-}
-
-/* Hover effects */
-.card-hover {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-.card-hover:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05), 0 6px 10px rgba(0, 0, 0, 0.03);
-}
-.dark .card-hover:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25), 0 6px 10px rgba(0, 0, 0, 0.2);
-}
-
-.button-hover {
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-.button-hover:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
-}
-.dark .button-hover:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-}
-.button-hover:active:not(:disabled) {
-  transform: translateY(0);
-}
-
-
-/* Keep overrides for specific classes ONLY if they don't properly adapt */
-.dark .recent-posts-section {
-  background-color: var(--dark-bg-secondary); /* Use specific dark var */
-  border-color: hsl(var(--border)); /* Use the border variable */
-}
-
-.dark .post-content {
-  color: var(--dark-text-primary); /* Ensure readability */
-}
-
-.dark .badge,
-.dark .tag, /* etc. */ {
-  background-color: var(--dark-bg-tertiary);
-  color: var(--dark-text-secondary);
-  border-color: hsl(var(--border));
-}
-
-/* Ensure icons without explicit text color inherit correctly */
-.dark svg:not([class*='text-']) {
-  color: currentColor; /* Inherit color from parent */
-}
-
-/* Links */
-.dark a:not([class*='text-']),
-.dark .text-blue-600, /* Replace with .text-primary if possible */
-.dark .text-primary-600 { /* Replace with .text-primary if possible */
-  color: hsl(var(--primary)); /* Use primary color variable */
-}
-.dark a:hover:not([class*='text-']),
-.dark .text-blue-600:hover,
-.dark .text-primary-600:hover {
-   filter: brightness(1.2); /* Slightly brighten primary on hover */
-}
-
-/* ... other specific dark mode fixes ... */
-
-/* Calendar styling */
-.dark .calendar-day {
-  background-color: var(--dark-bg-secondary);
-  border-color: hsl(var(--border));
-}
-.dark .calendar-today {
-  background-color: hsla(var(--primary), 0.1); /* Use primary HSL with alpha */
-  border-color: hsla(var(--primary), 0.3);
-}
-
-/* ... review and simplify other dark mode overrides using variables ... */
-
-/* Fix code blocks */
-.dark pre,
-.dark code {
-  background-color: var(--dark-bg-tertiary);
-  color: var(--dark-text-secondary); /* Use secondary text for less emphasis */
-  border: 1px solid hsl(var(--border));
-  border-radius: calc(var(--radius) / 2); /* Slightly smaller radius */
 }

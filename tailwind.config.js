@@ -1,98 +1,78 @@
 // tailwind.config.js
-import { fontFamily } from "tailwindcss/defaultTheme"
-import { tailwindcssAnimate  } from "tailwindcss-animate"
+import { fontFamily } from "tailwindcss/defaultTheme";
+import tailwindcssAnimate from "tailwindcss-animate";
+
 /** @type {import('tailwindcss').Config} */
 const config = {
-  content: [
-    "./src/**/*.{js,ts,jsx,tsx,mdx}", // Ensure this covers all files using Tailwind classes
-  ],
   darkMode: 'class',
+  content: ["./src/**/*.{js,ts,jsx,tsx,mdx}"],
   theme: {
-    container: { // Optional: Add container settings
+    container: {
       center: true,
       padding: "2rem",
-      screens: {
-        "2xl": "1400px",
-      },
+      screens: { "2xl": "1400px" },
     },
     extend: {
       colors: {
-        // Shadcn UI color definitions using HSL variables from globals.css
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
+        // Define colors using DIRECT HSL strings, matching your CSS variables
+        border: "hsl(214.3 31.8% 91.4%)", // Use the light mode value
+        input: "hsl(214.3 31.8% 91.4%)",  // Use the light mode value
+        ring: "hsl(221.2 83.2% 53.3%)",    // Use the light mode value
+        background: "hsl(0 0% 100%)",       // Use the light mode value
+        foreground: "hsl(222.2 84% 4.9%)",   // Use the light mode value
         primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
-          // Add shades if needed, referencing your CSS vars
-          // '50': 'hsl(var(--primary-50))', // Example if you defined --primary-50 with HSL
-          // ...
+          DEFAULT: "hsl(221.2 83.2% 53.3%)", // Use the light mode value
+          foreground: "hsl(210 40% 98%)",    // Use the light mode value
         },
         secondary: {
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
+          DEFAULT: "hsl(210 40% 96.1%)",
+          foreground: "hsl(222.2 47.4% 11.2%)",
         },
         destructive: {
-          DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))",
+          DEFAULT: "hsl(0 84.2% 60.2%)",
+          foreground: "hsl(210 40% 98%)",
         },
         muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
+          DEFAULT: "hsl(210 40% 96.1%)",
+          foreground: "hsl(215.4 16.3% 46.9%)",
         },
         accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
+          DEFAULT: "hsl(210 40% 96.1%)",
+          foreground: "hsl(222.2 47.4% 11.2%)",
         },
         popover: {
-          DEFAULT: "hsl(var(--popover))",
-          foreground: "hsl(var(--popover-foreground))",
+          DEFAULT: "hsl(0 0% 100%)",
+          foreground: "hsl(222.2 84% 4.9%)",
         },
         card: {
-          DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))",
+          DEFAULT: "hsl(0 0% 100%)",
+          foreground: "hsl(222.2 84% 4.9%)",
         },
-
-        // Your custom color palette (Keep if needed, but prefer using semantic names above)
-        // 'primary-old': { /* Keep your HEX/RGB if absolutely needed */
-        //   50: '#e6f0ff', ...
-        // },
-         gold: '#e1bc36',
-
-        // Remove generic text/bg definitions if covered by shadcn vars
-        // text: { ... },
-        // bg: { ... },
+        // Keep custom colors if needed
+        gold: '#e1bc36',
       },
       borderRadius: {
+        // Keep your radius definitions using --radius var - this seems to work
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
-        // Keep your custom 'card' radius if different from lg
         'card': '1rem',
       },
       fontFamily: {
-        // Reference the CSS variable defined in globals.css
+        // Keep using the var - this also seems to work
         sans: ["var(--font-sans)", ...fontFamily.sans],
       },
-      keyframes: { // Example additions for shadcn/ui animations
-        "accordion-down": {
-          from: { height: "0" },
-          to: { height: "var(--radix-accordion-content-height)" },
-        },
-        "accordion-up": {
-          from: { height: "var(--radix-accordion-content-height)" },
-          to: { height: "0" },
-        },
+      keyframes: {
+        "accordion-down": { from: { height: "0" }, to: { height: "var(--radix-accordion-content-height)" } },
+        "accordion-up": { from: { height: "var(--radix-accordion-content-height)" }, to: { height: "0" } },
       },
-      animation: { // Example additions for shadcn/ui animations
+      animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
     },
   },
-  plugins: [tailwindcssAnimate ],
+  plugins: [tailwindcssAnimate], // Use correct variable name
 }
 
-export default config
+export default config; // Add export default if missing

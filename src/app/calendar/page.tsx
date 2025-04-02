@@ -44,13 +44,13 @@ export default function CalendarPage() {
   return (
     <DashboardLayout>
       <div>
-        <h1 className="text-2xl font-bold text-foreground dark:text-dark-text-primary mb-6">Calendar</h1>
+        <h1 className="text-2xl font-bold text-foreground mb-6">Calendar</h1>
 
         {error && (
-          <div className="mb-6 bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 dark:border-red-600 p-4 rounded">
+          <div className="mb-6 bg-destructive/10 border-l-4 border-destructive p-4 rounded-md">
             <div className="flex">
               <div className="ml-3">
-                <p className="text-sm text-red-700 dark:text-red-400">{error}</p>
+                <p className="text-sm text-destructive-foreground">{error}</p>
               </div>
             </div>
           </div>
@@ -58,7 +58,7 @@ export default function CalendarPage() {
 
         {loading ? (
           <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 dark:border-blue-400"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
           </div>
         ) : (
           <Calendar 
