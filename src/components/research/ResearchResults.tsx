@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ExternalLink, FileText, ChevronDown, ChevronUp, Check, Square } from 'lucide-react';
+import { ExternalLink, FileText, ChevronDown, ChevronUp, Check } from 'lucide-react';
 import { Button } from '@/components/ui/buttonAdapter';
 import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
 import { useResearchContext } from '@/lib/contexts/ResearchContext';
@@ -61,7 +61,6 @@ const SimpleCheckbox = ({
 
 const ResearchResults = ({
   topicId,
-  topicName,
   researchId,
   results,
 }: ResearchResultsProps) => {

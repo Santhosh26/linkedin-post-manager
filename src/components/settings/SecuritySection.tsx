@@ -116,14 +116,14 @@ export default function SecuritySection() {
         <CardHeader title="Security Settings" />
         <CardContent>
           <div className="space-y-6">
-            <div className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+            <div className="p-4 border rounded-lg">
               <div className="flex items-start">
                 <div className="flex-shrink-0 mt-0.5">
-                  <Lock className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+                  <Lock className="h-5 w-5 text-muted-foreground" />
                 </div>
                 <div className="ml-3 flex-1">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-base font-medium text-foreground dark:text-dark-text-primary">Password</h3>
+                    <h3 className="text-base font-medium text-foreground">Password</h3>
                     <Dialog open={isOpen} onOpenChange={setIsOpen}>
                       <DialogTrigger asChild>
                         <Button size="sm">Change Password</Button>
@@ -144,9 +144,9 @@ export default function SecuritySection() {
                         )}
                         
                         {success && (
-                          <Alert variant="default">
-                            <CheckCircle className="h-4 w-4 text-green-500" />
-                            <AlertDescription className="text-green-600">{success}</AlertDescription>
+                          <Alert variant="success">
+                            <CheckCircle className="h-4 w-4 text-success" />
+                            <AlertDescription className="text-success">{success}</AlertDescription>
                           </Alert>
                         )}
                         
@@ -226,21 +226,21 @@ export default function SecuritySection() {
                       </DialogContent>
                     </Dialog>
                   </div>
-                  <p className="mt-1 text-sm text-gray-500 dark:text-dark-text-tertiary">
+                  <p className="mt-1 text-sm text-muted-foreground">
                     Update your password regularly to keep your account secure
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+            <div className="p-4 border rounded-lg">
               <div className="flex items-start">
                 <div className="flex-shrink-0 mt-0.5">
-                  <Shield className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+                  <Shield className="h-5 w-5 text-muted-foreground" />
                 </div>
                 <div className="ml-3 flex-1">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-base font-medium text-foreground dark:text-dark-text-primary">Account Activity</h3>
+                    <h3 className="text-base font-medium text-foreground">Account Activity</h3>
                     <Button
                       variant="secondary"
                       size="sm"
@@ -248,7 +248,7 @@ export default function SecuritySection() {
                       View Activity
                     </Button>
                   </div>
-                  <p className="mt-1 text-sm text-gray-500 dark:text-dark-text-tertiary">
+                  <p className="mt-1 text-sm text-muted-foreground">
                     Monitor recent login activity and security events
                   </p>
                 </div>

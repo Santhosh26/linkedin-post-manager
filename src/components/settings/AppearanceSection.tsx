@@ -2,10 +2,15 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { CheckCircle  } from 'lucide-react';
+import { CheckCircle } from 'lucide-react';
 import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/buttonAdapter';
 import { useUserSettings } from '@/lib/contexts/UserSettingsContext';
+import { cn } from '@/lib/utils';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 export default function AppearanceSection() {
   const { settings, saveSettings, isLoading, error: settingsError } = useUserSettings();
@@ -14,6 +19,7 @@ export default function AppearanceSection() {
   const [isDirty, setIsDirty] = useState(false);
   const [fontSize, setFontSize] = useState('medium');
   const [fontFamily, setFontFamily] = useState('inter');
+  const [density, setDensity] = useState('comfortable');
 
   useEffect(() => {
     // Clear success message after 3 seconds
@@ -40,6 +46,11 @@ export default function AppearanceSection() {
     setIsDirty(true);
   };
 
+  const handleDensityChange = (value: string) => {
+    setDensity(value);
+    setIsDirty(true);
+  };
+
   const handleSave = async () => {
     try {
       setError(null);
@@ -56,153 +67,152 @@ export default function AppearanceSection() {
 
   return (
     <Card>
-      <CardHeader title="Appearance Settings" />
+      <CardHeader>
+        <h2 className="text-xl font-semibold">Appearance Settings</h2>
+      </CardHeader>
       <CardContent>
         {success && (
-          <div className="mb-6 bg-green-50 border-l-4 border-green-500 p-4 rounded-md">
+          <Alert variant="success" className="mb-6">
             <div className="flex">
-              <CheckCircle className="h-5 w-5 text-green-500" />
-              <div className="ml-3">
-                <p className="text-sm text-green-700">{success}</p>
-              </div>
+              <CheckCircle className="h-5 w-5 text-success" />
+              <AlertDescription className="ml-3 text-success-foreground">{success}</AlertDescription>
             </div>
-          </div>
+          </Alert>
         )}
 
         {error && (
-          <div className="mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded-md">
+          <Alert variant="destructive" className="mb-6">
             <div className="flex">
-              <CheckCircle className="h-5 w-5 text-red-500" />
-              <div className="ml-3">
-                <p className="text-sm text-red-700">{error}</p>
-              </div>
+              <CheckCircle className="h-5 w-5 text-destructive-foreground" />
+              <AlertDescription className="ml-3">{error}</AlertDescription>
             </div>
-          </div>
+          </Alert>
         )}
 
         <div className="space-y-6">
           <div>
-            <h3 className="text-base font-medium text-foreground mb-4">Font Settings</h3>
+            <h3 className="text-base font-medium mb-4">Font Settings</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Font Size
-                </label>
-                <div className="mt-1">
-                  <select
-                    className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 
-                              bg-white text-foreground rounded-md shadow-sm 
-                              focus:outline-none focus:ring-2 focus:ring-primary-500/25 focus:border-primary-500 
-                              sm:text-sm transition-colors"
-                    value={fontSize}
-                    onChange={(e) => handleFontSizeChange(e.target.value)}
-                  >
-                    <option value="small">Small</option>
-                    <option value="medium">Medium</option>
-                    <option value="large">Large</option>
-                  </select>
-                </div>
-                <p className="mt-1 text-xs text-gray-500">
+              <div className="space-y-2">
+                <Label htmlFor="font-size">Font Size</Label>
+                <Select 
+                  value={fontSize} 
+                  onValueChange={handleFontSizeChange}
+                >
+                  <SelectTrigger id="font-size" className="w-full">
+                    <SelectValue placeholder="Select font size" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="small">Small</SelectItem>
+                    <SelectItem value="medium">Medium</SelectItem>
+                    <SelectItem value="large">Large</SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">
                   Adjust the size of text throughout the application
                 </p>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Font Family
-                </label>
-                <div className="mt-1">
-                  <select
-                    className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 
-                              bg-white text-foreground rounded-md shadow-sm 
-                              focus:outline-none focus:ring-2 focus:ring-primary-500/25 focus:border-primary-500 
-                              sm:text-sm transition-colors"
-                    value={fontFamily}
-                    onChange={(e) => handleFontFamilyChange(e.target.value)}
-                  >
-                    <option value="inter">Inter (Default)</option>
-                    <option value="roboto">Roboto</option>
-                    <option value="open-sans">Open Sans</option>
-                  </select>
-                </div>
-                <p className="mt-1 text-xs text-gray-500">
+              <div className="space-y-2">
+                <Label htmlFor="font-family">Font Family</Label>
+                <Select 
+                  value={fontFamily} 
+                  onValueChange={handleFontFamilyChange}
+                >
+                  <SelectTrigger id="font-family" className="w-full">
+                    <SelectValue placeholder="Select font family" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="inter">Inter (Default)</SelectItem>
+                    <SelectItem value="roboto">Roboto</SelectItem>
+                    <SelectItem value="open-sans">Open Sans</SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">
                   Choose the font style for the application
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="pt-6 border-t border-gray-200">
-            <h3 className="text-base font-medium text-foreground mb-4">Interface Density</h3>
+          <div className="pt-6 border-t">
+            <h3 className="text-base font-medium mb-4">Interface Density</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div 
-                className="cursor-pointer p-4 rounded-lg border border-primary-500 bg-primary-50 shadow-sm transition-all"
-                onClick={() => setIsDirty(true)}
+                className={cn(
+                  "cursor-pointer p-4 rounded-lg border transition-all",
+                  density === "comfortable" 
+                    ? "border-primary bg-primary/10" 
+                    : "border-input hover:border-primary/30"
+                )}
+                onClick={() => handleDensityChange("comfortable")}
               >
-                <div className="font-medium text-center text-foreground mb-2">Comfortable</div>
-                <p className="text-xs text-center text-gray-500">
+                <div className="font-medium text-center mb-2">Comfortable</div>
+                <p className="text-xs text-center text-muted-foreground">
                   More space between elements
                 </p>
               </div>
 
               <div 
-                className="cursor-pointer p-4 rounded-lg border border-gray-200 hover:border-primary-300 transition-all"
-                onClick={() => setIsDirty(true)}
+                className={cn(
+                  "cursor-pointer p-4 rounded-lg border transition-all",
+                  density === "standard" 
+                    ? "border-primary bg-primary/10" 
+                    : "border-input hover:border-primary/30"
+                )}
+                onClick={() => handleDensityChange("standard")}
               >
-                <div className="font-medium text-center text-foreground mb-2">Standard</div>
-                <p className="text-xs text-center text-gray-500">
+                <div className="font-medium text-center mb-2">Standard</div>
+                <p className="text-xs text-center text-muted-foreground">
                   Default spacing between elements
                 </p>
               </div>
 
               <div 
-                className="cursor-pointer p-4 rounded-lg border border-gray-200 hover:border-primary-300 transition-all"
-                onClick={() => setIsDirty(true)}
+                className={cn(
+                  "cursor-pointer p-4 rounded-lg border transition-all",
+                  density === "compact" 
+                    ? "border-primary bg-primary/10" 
+                    : "border-input hover:border-primary/30"
+                )}
+                onClick={() => handleDensityChange("compact")}
               >
-                <div className="font-medium text-center text-foreground mb-2">Compact</div>
-                <p className="text-xs text-center text-gray-500">
+                <div className="font-medium text-center mb-2">Compact</div>
+                <p className="text-xs text-center text-muted-foreground">
                   Less space between elements
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="pt-6 border-t border-gray-200">
-            <h3 className="text-base font-medium text-foreground mb-4">Animation Settings</h3>
+          <div className="pt-6 border-t">
+            <h3 className="text-base font-medium mb-4">Animation Settings</h3>
             <div className="space-y-4">
-              <div>
-                <div className="flex items-center">
-                  <input
-                    id="animations"
-                    type="checkbox"
-                    className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
-                    defaultChecked
-                    onChange={() => setIsDirty(true)}
-                  />
-                  <label htmlFor="animations" className="ml-2 block text-sm text-foreground">
-                    Enable animations
-                  </label>
+              <div className="flex items-start space-x-2">
+                <Checkbox 
+                  id="animations" 
+                  defaultChecked
+                  onCheckedChange={() => setIsDirty(true)}
+                />
+                <div className="grid gap-1.5">
+                  <Label htmlFor="animations">Enable animations</Label>
+                  <p className="text-xs text-muted-foreground">
+                    Turn on/off interface animations and transitions
+                  </p>
                 </div>
-                <p className="mt-1 text-xs text-gray-500 ml-6">
-                  Turn on/off interface animations and transitions
-                </p>
               </div>
 
-              <div>
-                <div className="flex items-center">
-                  <input
-                    id="reduceMotion"
-                    type="checkbox"
-                    className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
-                    onChange={() => setIsDirty(true)}
-                  />
-                  <label htmlFor="reduceMotion" className="ml-2 block text-sm text-foreground">
-                    Reduce motion
-                  </label>
+              <div className="flex items-start space-x-2">
+                <Checkbox 
+                  id="reduceMotion" 
+                  onCheckedChange={() => setIsDirty(true)}
+                />
+                <div className="grid gap-1.5">
+                  <Label htmlFor="reduceMotion">Reduce motion</Label>
+                  <p className="text-xs text-muted-foreground">
+                    Use simpler animations for accessibility
+                  </p>
                 </div>
-                <p className="mt-1 text-xs text-gray-500 ml-6">
-                  Use simpler animations for accessibility
-                </p>
               </div>
             </div>
           </div>

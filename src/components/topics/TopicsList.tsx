@@ -6,11 +6,11 @@ import Link from 'next/link';
 import { PenSquare, Trash2, Search } from 'lucide-react';
 import { Button } from '@/components/ui/buttonAdapter';
 import { Card, CardHeader, CardContent } from '@/components/ui/cardAdapter';
+import { Input } from '@/components/ui/input';
 import { useToast } from "@/hooks/use-toast";
 import {
   Table,
   TableBody,
-
   TableCell,
   TableHead,
   TableHeader,
@@ -78,11 +78,11 @@ const TopicsList = ({ topics, onDelete }: TopicsListProps) => {
         <div className="mb-4">
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Search className="h-5 w-5 text-gray-400" />
+              <Search className="h-5 w-5 text-muted-foreground" />
             </div>
-            <input
+            <Input
               type="text"
-              className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              className="pl-10"
               placeholder="Search topics or keywords..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -91,20 +91,20 @@ const TopicsList = ({ topics, onDelete }: TopicsListProps) => {
         </div>
 
         {filteredTopics.length > 0 ? (
-          <div className="overflow-hidden shadow-sm rounded-lg border border-gray-200">
+          <div className="overflow-hidden shadow-sm rounded-lg border">
             <div className="overflow-x-auto">
               <Table className="border-collapse">
                 <TableHeader>
-                  <TableRow className="hover:bg-transparent border-b border-gray-100">
-                    <TableHead className="text-sm font-medium text-gray-600 bg-gray-50 py-3">Topic</TableHead>
-                    <TableHead className="text-sm font-medium text-gray-600 bg-gray-50 py-3">Keywords</TableHead>
-                    <TableHead className="text-sm font-medium text-gray-600 bg-gray-50 py-3">Created</TableHead>
-                    <TableHead className="text-right text-sm font-medium text-gray-600 bg-gray-50 py-3">Actions</TableHead>
+                  <TableRow className="hover:bg-transparent border-b">
+                    <TableHead className="text-sm font-medium text-muted-foreground bg-muted py-3">Topic</TableHead>
+                    <TableHead className="text-sm font-medium text-muted-foreground bg-muted py-3">Keywords</TableHead>
+                    <TableHead className="text-sm font-medium text-muted-foreground bg-muted py-3">Created</TableHead>
+                    <TableHead className="text-right text-sm font-medium text-muted-foreground bg-muted py-3">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filteredTopics.map((topic) => (
-                    <TableRow key={topic.id} className="hover:bg-gray-50/50 transition-colors border-b border-gray-100 last:border-0">
+                    <TableRow key={topic.id} className="hover:bg-muted/50 transition-colors border-b last:border-0">
                       <TableCell className="py-4 text-sm font-medium text-foreground">
                         {topic.name}
                       </TableCell>
@@ -113,26 +113,26 @@ const TopicsList = ({ topics, onDelete }: TopicsListProps) => {
                           {topic.keywords.map((keyword, index) => (
                             <span 
                               key={index} 
-                              className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100"
+                              className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-primary/10 text-primary border border-primary/20"
                             >
                               {keyword}
                             </span>
                           ))}
                         </div>
                       </TableCell>
-                      <TableCell className="py-4 text-sm text-gray-500">
+                      <TableCell className="py-4 text-sm text-muted-foreground">
                         {new Date(topic.createdAt).toLocaleDateString()}
                       </TableCell>
                       <TableCell className="py-4 text-right">
                         <div className="flex justify-end gap-2">
                           <Link href={`/topics/${topic.id}/research`}>
-                            <Button variant="ghost" size="sm" className="text-gray-600 hover:text-gray-900">
+                            <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
                               <Search className="h-4 w-4 mr-1" />
                               Research
                             </Button>
                           </Link>
                           <Link href={`/topics/${topic.id}`}>
-                            <Button variant="ghost" size="sm" className="text-gray-600 hover:text-gray-900">
+                            <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
                               <PenSquare className="h-4 w-4 mr-1" />
                               Edit
                             </Button>
@@ -142,7 +142,7 @@ const TopicsList = ({ topics, onDelete }: TopicsListProps) => {
                             size="sm" 
                             onClick={() => handleDelete(topic.id, topic.name)}
                             disabled={deletingId === topic.id}
-                            className="text-red-600 hover:text-red-800 hover:bg-red-50"
+                            className="text-destructive hover:text-destructive hover:bg-destructive/10"
                           >
                             <Trash2 className="h-4 w-4 mr-1" />
                             {deletingId === topic.id ? 'Deleting...' : 'Delete'}
@@ -156,8 +156,8 @@ const TopicsList = ({ topics, onDelete }: TopicsListProps) => {
             </div>
           </div>
         ) : (
-          <div className="text-center py-8 bg-white rounded-[1rem] shadow-bubble border border-gray-200">
-            <p className="text-gray-500 mb-4">
+          <div className="text-center py-8 bg-card rounded-lg shadow border">
+            <p className="text-muted-foreground mb-4">
               {topics.length === 0
                 ? "You haven't created any topics yet."
                 : "No topics match your search."}

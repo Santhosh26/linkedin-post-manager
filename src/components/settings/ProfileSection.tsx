@@ -93,29 +93,29 @@ export default function ProfileSection() {
       <form onSubmit={handleSubmit(onSubmit)}>
         <CardContent>
           {error && (
-            <div className="mb-6 bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 dark:border-red-600 p-4 rounded">
+            <div className="mb-6 bg-destructive/10 border-l-4 border-destructive p-4 rounded-md">
               <div className="flex">
-                <AlertCircle className="h-5 w-5 text-red-500 dark:text-red-400" />
+                <AlertCircle className="h-5 w-5 text-destructive" />
                 <div className="ml-3">
-                  <p className="text-sm text-red-700 dark:text-red-400">{error}</p>
+                  <p className="text-sm text-destructive">{error}</p>
                 </div>
               </div>
             </div>
           )}
 
           {success && (
-            <div className="mb-6 bg-green-50 dark:bg-green-900/20 border-l-4 border-green-500 dark:border-green-600 p-4 rounded">
+            <div className="mb-6 bg-success/10 border-l-4 border-success p-4 rounded-md">
               <div className="flex">
-                <CheckCircle className="h-5 w-5 text-green-500 dark:text-green-400" />
+                <CheckCircle className="h-5 w-5 text-success" />
                 <div className="ml-3">
-                  <p className="text-sm text-green-700 dark:text-green-400">{success}</p>
+                  <p className="text-sm text-success">{success}</p>
                 </div>
               </div>
             </div>
           )}
 
           <div className="space-y-6">
-            <div className="flex justify-center mb-6">
+            <div className="flex justify-center mb-10">
               <div className="relative">
                 {session?.user?.image ? (
                   <Image
@@ -123,16 +123,16 @@ export default function ProfileSection() {
                     alt={session.user.name || 'User'}
                     width={96}
                     height={96}
-                    className="rounded-full object-cover border-2 border-gray-200 dark:border-gray-700"
+                    className="rounded-full object-cover border-2 "
                   />
                 ) : (
-                  <div className="h-24 w-24 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-primary-600 dark:text-primary-400">
+                  <div className="h-24 w-24 rounded-full bg-primary/10 flex items-center justify-center text-primary">
                     <User className="h-12 w-12" />
                   </div>
                 )}
                 <Button
                   size="sm"
-                  className="absolute bottom-0 right-0 rounded-full shadow-sm"
+                  className="absolute -bottom-10 left-2.5 rounded-full shadow-sm"
                 >
                   Change
                 </Button>
@@ -140,7 +140,7 @@ export default function ProfileSection() {
             </div>
 
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label htmlFor="name" className="block text-sm font-medium text-foreground mb-1">
                 Full Name
               </label>
               <Input
@@ -149,12 +149,12 @@ export default function ProfileSection() {
                 placeholder="Your full name"
               />
               {errors.name && (
-                <p className="mt-1 text-sm text-red-500">{errors.name.message}</p>
+                <p className="mt-1 text-sm text-destructive">{errors.name.message}</p>
               )}
             </div>
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label htmlFor="email" className="block text-sm font-medium text-foreground mb-1">
                 Email Address
               </label>
               <Input
@@ -165,9 +165,9 @@ export default function ProfileSection() {
                 aria-describedby="email-helper"
               />
               {errors.email && (
-                <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>
+                <p className="mt-1 text-sm text-destructive">{errors.email.message}</p>
               )}
-              <p id="email-helper" className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              <p id="email-helper" className="mt-1 text-sm text-muted-foreground">
                 This email is used for login and notifications
               </p>
             </div>

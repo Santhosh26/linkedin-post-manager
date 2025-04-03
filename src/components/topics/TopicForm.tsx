@@ -118,10 +118,10 @@ const TopicForm = ({ initialData, isEditMode = false }: TopicFormProps) => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <CardContent>
           {error && (
-            <div className="mb-4 bg-red-50 border-l-4 border-red-500 p-4">
+            <div className="mb-4 bg-destructive/10 border-l-4 border-destructive p-4 rounded-md">
               <div className="flex">
                 <div className="ml-3">
-                  <p className="text-sm text-red-700">{error}</p>
+                  <p className="text-sm text-destructive">{error}</p>
                 </div>
               </div>
             </div>
@@ -130,7 +130,7 @@ const TopicForm = ({ initialData, isEditMode = false }: TopicFormProps) => {
           <div className="space-y-6">
             {/* Method 1: Use the register props separately */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-foreground mb-1">
                 Topic Name
               </label>
               <Input
@@ -139,18 +139,17 @@ const TopicForm = ({ initialData, isEditMode = false }: TopicFormProps) => {
                 {...register('name')}
               />
               {errors.name && (
-                <p className="mt-1 text-sm text-red-600">{errors.name?.message}</p>
+                <p className="mt-1 text-sm text-destructive">{errors.name?.message}</p>
               )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-foreground mb-1">
                 Keywords
               </label>
               <div className="flex space-x-2">
-                <input
+                <Input
                   type="text"
-                  className="flex-1 px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Add a keyword"
                   value={keyword}
                   onChange={(e) => setKeyword(e.target.value)}
@@ -160,25 +159,26 @@ const TopicForm = ({ initialData, isEditMode = false }: TopicFormProps) => {
                       addKeyword();
                     }
                   }}
+                  className="flex-1"
                 />
                 <Button type="button" onClick={addKeyword}>
                   <Plus className="h-5 w-5" />
                 </Button>
               </div>
               {errors.keywords && (
-                <p className="mt-1 text-sm text-red-600">{errors.keywords.message}</p>
+                <p className="mt-1 text-sm text-destructive">{errors.keywords.message}</p>
               )}
 
               <div className="mt-3 flex flex-wrap gap-2">
                 {keywords.map((kw, index) => (
                   <span
                     key={index}
-                    className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800"
+                    className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary/10 text-primary"
                   >
                     {kw}
                     <button
                       type="button"
-                      className="ml-1.5 h-4 w-4 rounded-full inline-flex items-center justify-center text-blue-400 hover:bg-blue-200 hover:text-blue-600 focus:outline-none"
+                      className="ml-1.5 h-4 w-4 rounded-full inline-flex items-center justify-center text-primary/70 hover:bg-primary/20 hover:text-primary focus:outline-none"
                       onClick={() => removeKeyword(kw)}
                     >
                       <X className="h-3 w-3" />
