@@ -8,6 +8,7 @@ import PostForm from '@/components/posts/PostForm';
 import LinkedInShareButton from '@/components/posts/LinkedInShareButton';
 import { Card, CardContent } from '@/components/ui/card';
 import { ExternalLink, CheckCircle } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface Post {
   id: string;
@@ -78,21 +79,19 @@ export default function EditPostPage() {
   return (
     <DashboardLayout>
       <div>
-        <h1 className="text-2xl font-bold text-foreground mb-6">Edit Post</h1>
+        <h1 className="text-2xl font-bold mb-6">Edit Post</h1>
         
         {error && (
-          <div className="mb-6 bg-red-50 border-l-4 border-red-500 p-4">
-            <div className="flex">
-              <div className="ml-3">
-                <p className="text-sm text-red-700">{error}</p>
-              </div>
-            </div>
-          </div>
+          <Alert variant="destructive" className="mb-6">
+            <AlertDescription>
+              {error}
+            </AlertDescription>
+          </Alert>
         )}
 
         {loading ? (
           <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
           </div>
         ) : post ? (
           <div className="space-y-6">
@@ -104,11 +103,11 @@ export default function EditPostPage() {
                 <h2 className="text-lg font-medium mb-4">Share to LinkedIn</h2>
                 
                 {sharedToLinkedIn ? (
-                  <div className="bg-green-50 dark:bg-green-900/10 border border-green-200 dark:border-green-800 rounded-lg p-4">
+                    <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
                     <div className="flex items-start">
                       <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
                       <div className="ml-3">
-                        <p className="text-green-700 dark:text-green-400 font-medium">
+                        <p className="text-success-foreground font-medium">
                           Successfully shared to LinkedIn
                         </p>
                         {linkedinPostUrl && (
@@ -116,7 +115,7 @@ export default function EditPostPage() {
                             href={linkedinPostUrl} 
                             target="_blank" 
                             rel="noopener noreferrer"
-                            className="flex items-center mt-2 text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+                            className="flex items-center mt-2 text-sm text-success hover:text-success/80"
                           >
                             <span>View on LinkedIn</span>
                             <ExternalLink className="ml-1 h-4 w-4" />
@@ -124,10 +123,10 @@ export default function EditPostPage() {
                         )}
                       </div>
                     </div>
-                  </div>
+                    </div>
                 ) : (
                   <>
-                    <p className="text-gray-600 dark:text-gray-400 mb-4">
+                    <p className="text-muted-foreground mb-4">
                       Share this post directly to your LinkedIn profile with one click.
                     </p>
                     <LinkedInShareButton 
@@ -140,13 +139,11 @@ export default function EditPostPage() {
             </Card>
           </div>
         ) : (
-          <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4">
-            <div className="flex">
-              <div className="ml-3">
-                <p className="text-sm text-yellow-700">Post not found</p>
-              </div>
-            </div>
-          </div>
+          <Alert variant="default" className="bg-muted border-l-4 border-muted-foreground/50">
+            <AlertDescription className="text-muted-foreground">
+              Post not found
+            </AlertDescription>
+          </Alert>
         )}
       </div>
     </DashboardLayout>

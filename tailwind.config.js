@@ -48,6 +48,10 @@ const config = {
           DEFAULT: "hsl(0 0% 100%)",
           foreground: "hsl(222.2 84% 4.9%)",
         },
+        success: {
+          DEFAULT: "hsl(var(--success))",
+          foreground: "hsl(var(--success-foreground))",
+        },
         // Keep custom colors if needed
         gold: '#e1bc36',
       },
