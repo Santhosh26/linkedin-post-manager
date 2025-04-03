@@ -1,17 +1,34 @@
+// src\components\posts\PostGenerationForm.tsx
 'use client';
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Check, AlertCircle } from 'lucide-react';
+import { Check, AlertCircle, FileText, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/buttonAdapter';
 import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
 import { useToast } from "@/hooks/use-toast";
+import { Badge } from '@/components/ui/badge';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { useResearchContext } from '@/lib/contexts/ResearchContext';
 
+interface ResearchResult {
+  url: string;
+  title: string;
+  content: string;
+  score: number;
+  published_date?: string;
+}
+
+interface ResearchData {
+  query: string;
+  results: ResearchResult[];
+}
 
 interface PostGenerationFormProps {
   topicId: string;
   topicName: string;
   researchId: string;
+  selectedResearchData?: ResearchData | null;
 }
 
 interface GeneratedPost {
@@ -25,16 +42,46 @@ interface GeneratedPost {
   updatedAt: string;
 }
 
-const PostGenerationForm = ({ topicId, topicName, researchId }: PostGenerationFormProps) => {
+// Helper function to get domain from URL
+const getDomain = (url: string) => {
+  try {
+    const urlObj = new URL(url);
+    return urlObj.hostname;
+  } catch (e) {
+    return url;
+  }
+};
+
+const PostGenerationForm = ({ 
+  topicId, 
+  topicName, 
+  researchId,
+  selectedResearchData 
+}: PostGenerationFormProps) => {
   const { toast } = useToast();
   const router = useRouter();
+  const { getResearchData } = useResearchContext();
   const [tone, setTone] = useState<'professional' | 'casual' | 'thoughtful'>('professional');
   const [variationCount, setVariationCount] = useState<number>(2);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [generatedPosts, setGeneratedPosts] = useState<GeneratedPost[] | null>(null);
+  const [isSourcesExpanded, setIsSourcesExpanded] = useState(false);
+
+  // Get research data from context if not provided directly
+  const researchData = selectedResearchData || getResearchData(researchId);
 
   const generatePosts = async () => {
+    if (!researchData || researchData.results.length === 0) {
+      setError('No research data available. Please go back and select some research results.');
+      toast({
+        title: "No Research Data",
+        description: "Please select research sources before generating posts.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsLoading(true);
     setError(null);
 
@@ -49,6 +96,7 @@ const PostGenerationForm = ({ topicId, topicName, researchId }: PostGenerationFo
           researchId,
           tone,
           variationCount,
+          researchData, // Pass the selected research data
         }),
       });
 
@@ -85,8 +133,17 @@ const PostGenerationForm = ({ topicId, topicName, researchId }: PostGenerationFo
   return (
     <Card>
       <CardHeader>
-        <h2 className="text-xl font-semibold">Generate LinkedIn Posts</h2>
-        <p className="text-sm text-muted-foreground">Topic: {topicName}</p>
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
+          <div>
+            <h2 className="text-xl font-semibold">Generate LinkedIn Posts</h2>
+            <p className="text-sm text-muted-foreground">Topic: {topicName}</p>
+          </div>
+          {researchData && (
+            <Badge variant="outline" className="text-sm whitespace-nowrap">
+              {researchData.results.length} source{researchData.results.length !== 1 ? 's' : ''} selected
+            </Badge>
+          )}
+        </div>
       </CardHeader>
       <CardContent>
         {error && (
@@ -98,6 +155,63 @@ const PostGenerationForm = ({ topicId, topicName, researchId }: PostGenerationFo
               </div>
             </div>
           </div>
+        )}
+
+        {!researchData || researchData.results.length === 0 ? (
+          <div className="mb-6 bg-muted border-l-4 border-amber-500 p-4 rounded">
+            <div className="flex">
+              <AlertCircle className="h-5 w-5 text-amber-500" />
+              <div className="ml-3">
+                <p className="text-sm font-medium">No research sources selected</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Please go back and select some research results before generating posts.
+                </p>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <Collapsible 
+            open={isSourcesExpanded} 
+            onOpenChange={setIsSourcesExpanded} 
+            className="mb-6 bg-muted/50 border rounded-lg overflow-hidden"
+          >
+            <div className="p-4">
+              <CollapsibleTrigger asChild>
+                <div className="flex justify-between items-center cursor-pointer">
+                  <div className="flex items-center">
+                    <FileText className="h-5 w-5 mr-2 text-primary" />
+                    <span className="font-medium">
+                      Using {researchData.results.length} source{researchData.results.length !== 1 ? 's' : ''}
+                    </span>
+                  </div>
+                  <Button variant="ghost" size="sm">
+                    {isSourcesExpanded ? 'Hide sources' : 'Show sources'}
+                  </Button>
+                </div>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="mt-3 space-y-2">
+                <p className="text-sm text-muted-foreground mb-3">
+                  <span className="font-medium">Research query:</span> &quot;{researchData.query}&quot;
+                </p>
+                {researchData.results.map((result, index) => (
+                  <div key={index} className="text-sm border-t pt-2 first:border-t-0 first:pt-0">
+                    <div className="flex justify-between items-start">
+                      <span className="font-medium line-clamp-1">{result.title}</span>
+                      <a
+                        href={result.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center text-primary hover:text-primary/90 transition-colors text-xs ml-2 whitespace-nowrap"
+                      >
+                        <ExternalLink className="h-3 w-3 mr-1" />
+                        {getDomain(result.url)}
+                      </a>
+                    </div>
+                  </div>
+                ))}
+              </CollapsibleContent>
+            </div>
+          </Collapsible>
         )}
 
         {!generatedPosts ? (
@@ -202,7 +316,7 @@ const PostGenerationForm = ({ topicId, topicName, researchId }: PostGenerationFo
         {!generatedPosts ? (
           <Button 
             onClick={generatePosts}
-            disabled={isLoading}
+            disabled={isLoading || !researchData || researchData.results.length === 0}
           >
             {isLoading ? (
               <span className="flex items-center">

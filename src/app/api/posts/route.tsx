@@ -5,12 +5,25 @@ import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
 import { generateLinkedInPosts } from '@/lib/services/openai';
 
+// Schema for research data
+const ResearchDataSchema = z.object({
+  query: z.string(),
+  results: z.array(z.object({
+    url: z.string(),
+    title: z.string(),
+    content: z.string(),
+    score: z.number(),
+    published_date: z.string().optional(),
+  }))
+});
+
 // Schema for generating new posts
 const GeneratePostSchema = z.object({
   topicId: z.string().min(1, 'Topic ID is required'),
   researchId: z.string().min(1, 'Research ID is required'),
   tone: z.enum(['professional', 'casual', 'thoughtful']).optional(),
   variationCount: z.number().int().min(1).max(5).optional(),
+  researchData: ResearchDataSchema.optional(), // Added support for selected research data
 });
 
 // Schema for creating a new post
@@ -192,7 +205,7 @@ export async function POST(req: NextRequest) {
 // Handler for generating posts from research
 async function handleGeneratePosts(session: any, body: any) {
   try {
-    const { topicId, researchId, tone = 'professional', variationCount = 2 } = GeneratePostSchema.parse(body);
+    const { topicId, researchId, tone = 'professional', variationCount = 2, researchData } = GeneratePostSchema.parse(body);
 
     // Verify topic exists and belongs to user
     const topic = await prisma.topic.findUnique({
@@ -215,31 +228,41 @@ async function handleGeneratePosts(session: any, body: any) {
       );
     }
 
-    // Get research data
-    const research = await prisma.research.findUnique({
-      where: {
-        id: researchId,
-      },
-    });
+    // If selected research data is provided, use it directly
+    // Otherwise, get the full research data from the database
+    let researchContent;
+    if (researchData) {
+      researchContent = researchData;
+      console.log(`Using ${researchData.results.length} selected research sources`);
+    } else {
+      // Get complete research data from database
+      const research = await prisma.research.findUnique({
+        where: {
+          id: researchId,
+        },
+      });
 
-    if (!research) {
-      return NextResponse.json(
-        { message: 'Research not found' },
-        { status: 404 }
-      );
-    }
+      if (!research) {
+        return NextResponse.json(
+          { message: 'Research not found' },
+          { status: 404 }
+        );
+      }
 
-    if (research.topicId !== topicId) {
-      return NextResponse.json(
-        { message: 'Research does not belong to the specified topic' },
-        { status: 400 }
-      );
+      if (research.topicId !== topicId) {
+        return NextResponse.json(
+          { message: 'Research does not belong to the specified topic' },
+          { status: 400 }
+        );
+      }
+
+      researchContent = research.content;
     }
 
     // Generate posts
     const postVariations = await generateLinkedInPosts({
       topic: topic.name,
-      researchData: research.content,
+      researchData: researchContent,
       tone,
       variationCount,
     });
