@@ -5,8 +5,8 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, addMonths, subMonths, isSameMonth, isToday } from 'date-fns';
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from 'lucide-react';
-import { Button } from '@/components/ui/buttonAdapter';
-import { Card, CardHeader, CardContent } from '@/components/ui/cardAdapter';
+import { Button } from '@/components/ui/button';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import CalendarDay from './CalendarDay';
 import { useToast } from "@/hooks/use-toast";
 
@@ -123,17 +123,15 @@ const ContentCalendar = ({ posts, onRefresh }: CalendarProps) => {
   
   return (
     <Card>
-      <CardHeader
-        title="Content Calendar"
-        action={
-          <Link href="/posts/new">
-            <Button>
-              <CalendarIcon className="mr-2" />
-              Schedule Post
-            </Button>
-          </Link>
-        }
-      />
+      <CardHeader className="flex flex-row items-center justify-between">
+        <CardTitle>Content Calendar</CardTitle>
+        <Link href="/posts/new">
+          <Button>
+            <CalendarIcon className="mr-2" />
+            Schedule Post
+          </Button>
+        </Link>
+      </CardHeader>
       <CardContent>
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-foreground">
@@ -149,10 +147,10 @@ const ContentCalendar = ({ posts, onRefresh }: CalendarProps) => {
           </div>
         </div>
         
-        <div className="grid grid-cols-7 gap-px rounded-[1rem] overflow-hidden shadow-bubble border border-gray-200">
+        <div className="grid grid-cols-7 gap-px rounded-lg overflow-hidden shadow border">
           {/* Days of week header */}
           {daysOfWeek.map(day => (
-            <div key={day} className="p-2 text-center font-medium text-gray-500 text-sm bg-gray-50">
+            <div key={day} className="p-2 text-center font-medium text-muted-foreground text-sm bg-muted">
               {day}
             </div>
           ))}
@@ -179,7 +177,7 @@ const ContentCalendar = ({ posts, onRefresh }: CalendarProps) => {
           })}
         </div>
         
-        <div className="mt-4 text-sm text-gray-600">
+        <div className="mt-4 text-sm text-muted-foreground">
           <p>Click on a post to view or edit it. Expand a post to see quick actions.</p>
         </div>
       </CardContent>

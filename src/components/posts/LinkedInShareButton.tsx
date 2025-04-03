@@ -1,3 +1,4 @@
+//src\components\posts\LinkedInShareButton.tsx
 'use client';
 
 import { useState } from 'react';
@@ -5,6 +6,8 @@ import { AlertCircle, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/buttonAdapter';
 import { useLinkedInStatus } from '@/hooks/useLinkedInStatus';
 import { useToast } from "@/hooks/use-toast";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 
 interface LinkedInShareButtonProps {
   postId: string;
@@ -74,7 +77,7 @@ export default function LinkedInShareButton({ postId, onSuccess }: LinkedInShare
   if (!isConnected) {
     return (
       <div className="mt-4">
-        <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+        <p className="text-sm text-muted-foreground mb-2">
           Connect your LinkedIn account in settings to share posts directly.
         </p>
         <Button
@@ -82,7 +85,7 @@ export default function LinkedInShareButton({ postId, onSuccess }: LinkedInShare
           size="sm"
           disabled={true}
         >
-          {/* Replace deprecated Linkedin icon with custom SVG */}
+          {/* LinkedIn icon SVG */}
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
@@ -106,11 +109,11 @@ export default function LinkedInShareButton({ postId, onSuccess }: LinkedInShare
   return (
     <div className="mt-4">
       {error && (
-        <div className="mb-2 bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 dark:border-red-600 p-3 rounded text-sm">
+        <div className="mb-2 bg-destructive/10 border-l-4 border-destructive p-3 rounded text-sm">
           <div className="flex">
-            <AlertCircle className="h-5 w-5 text-red-500 dark:text-red-400 flex-shrink-0" />
+            <AlertCircle className="h-5 w-5 text-destructive flex-shrink-0" />
             <div className="ml-3">
-              <p className="text-red-700 dark:text-red-400">{error}</p>
+              <p className="text-destructive">{error}</p>
             </div>
           </div>
         </div>
@@ -118,30 +121,24 @@ export default function LinkedInShareButton({ postId, onSuccess }: LinkedInShare
       
       <div className="flex flex-col space-y-2">
         {showOptions && (
-          <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-md mb-2">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <div className="bg-muted p-3 rounded-md mb-2">
+            <Label className="block text-sm font-medium mb-2">
               Visibility
-            </label>
-            <div className="flex space-x-4">
-              <label className="inline-flex items-center">
-                <input
-                  type="radio"
-                  className="form-radio text-blue-600"
-                  checked={visibility === 'PUBLIC'}
-                  onChange={() => setVisibility('PUBLIC')}
-                />
-                <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Public</span>
-              </label>
-              <label className="inline-flex items-center">
-                <input
-                  type="radio"
-                  className="form-radio text-blue-600"
-                  checked={visibility === 'CONNECTIONS'}
-                  onChange={() => setVisibility('CONNECTIONS')}
-                />
-                <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Connections only</span>
-              </label>
-            </div>
+            </Label>
+            <RadioGroup 
+              value={visibility} 
+              onValueChange={(value) => setVisibility(value as 'PUBLIC' | 'CONNECTIONS')}
+              className="flex space-x-4"
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="PUBLIC" id="public" />
+                <Label htmlFor="public" className="text-sm">Public</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="CONNECTIONS" id="connections" />
+                <Label htmlFor="connections" className="text-sm">Connections only</Label>
+              </div>
+            </RadioGroup>
           </div>
         )}
         
@@ -154,12 +151,12 @@ export default function LinkedInShareButton({ postId, onSuccess }: LinkedInShare
           >
             {isSharing ? (
               <span className="flex items-center">
-                <span className="animate-spin mr-2 h-4 w-4 border-t-2 border-b-2 border-white rounded-full"></span>
+                <span className="animate-spin mr-2 h-4 w-4 border-t-2 border-b-2 border-primary-foreground rounded-full"></span>
                 Sharing to LinkedIn...
               </span>
             ) : (
               <>
-                {/* Replace deprecated Linkedin icon with custom SVG */}
+                {/* LinkedIn icon SVG */}
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"

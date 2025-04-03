@@ -1,4 +1,3 @@
-// src/components/calendar/CalendarDay.tsx
 'use client';
 
 import { useState } from 'react';
@@ -47,16 +46,16 @@ export default function CalendarDay({ day, isCurrentMonth, isToday, posts, onPub
     <div
       className={`min-h-[120px] p-2 ${
         !isCurrentMonth
-          ? 'bg-gray-100 text-gray-400'
+          ? 'bg-muted text-muted-foreground'
           : isToday
-          ? 'bg-primary-50 border-primary-200'
-          : 'bg-white'
+          ? 'bg-accent border-primary'
+          : 'bg-card'
       } transition-colors`}
     >
       <div className="font-medium text-sm text-foreground">
         {format(day, 'd')}
         {isToday && (
-          <span className="ml-1 inline-flex h-4 w-4 items-center justify-center rounded-full bg-primary-500 text-xs text-white">
+          <span className="ml-1 inline-flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs text-primary-foreground">
             •
           </span>
         )}
@@ -72,8 +71,8 @@ export default function CalendarDay({ day, isCurrentMonth, isToday, posts, onPub
               >
                 <div className={`${
                   expandedPost === post.id 
-                    ? 'bg-primary-100 text-primary-800' 
-                    : 'bg-primary-50 text-primary-700 group-hover:bg-primary-100'
+                    ? 'bg-accent text-accent-foreground' 
+                    : 'bg-secondary text-secondary-foreground group-hover:bg-accent'
                   } text-xs p-1.5 rounded-md transition-all shadow-sm hover:shadow`}
                 >
                   <div className="flex justify-between items-center">
@@ -82,7 +81,7 @@ export default function CalendarDay({ day, isCurrentMonth, isToday, posts, onPub
                     </div>
                     <button
                       onClick={(e) => toggleExpandPost(post.id, e)}
-                      className="text-primary-600 hover:text-primary-800 p-1 rounded-full hover:bg-primary-200 transition-colors"
+                      className="text-primary hover:text-primary-foreground p-1 rounded-full hover:bg-primary/10 transition-colors"
                     >
                       <MoreVertical className="h-3 w-3" />
                     </button>
@@ -94,10 +93,10 @@ export default function CalendarDay({ day, isCurrentMonth, isToday, posts, onPub
                   </div>
                   
                   {expandedPost === post.id && (
-                    <div className="mt-2 flex justify-between border-t border-primary-200 pt-1">
+                    <div className="mt-2 flex justify-between border-t border-border pt-1">
                       <Link 
                         href={`/posts/${post.id}`}
-                        className="flex items-center text-primary-600 hover:text-primary-800 p-1 transition-colors"
+                        className="flex items-center text-muted-foreground hover:text-foreground p-1 transition-colors"
                         onClick={(e) => e.stopPropagation()}
                       >
                         <Eye className="h-3 w-3 mr-1" />
@@ -107,7 +106,7 @@ export default function CalendarDay({ day, isCurrentMonth, isToday, posts, onPub
                       <button
                         onClick={(e) => handlePublishNow(post.id, e)}
                         disabled={publishingId === post.id}
-                        className="flex items-center text-primary-600 hover:text-primary-800 p-1 disabled:opacity-50 transition-colors"
+                        className="flex items-center text-muted-foreground hover:text-foreground p-1 disabled:opacity-50 transition-colors"
                       >
                         <Send className="h-3 w-3 mr-1" />
                         <span>{publishingId === post.id ? 'Publishing...' : 'Publish'}</span>

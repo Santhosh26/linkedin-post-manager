@@ -10,7 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import {
   Table,
   TableBody,
-  TableCaption,
+
   TableCell,
   TableHead,
   TableHeader,

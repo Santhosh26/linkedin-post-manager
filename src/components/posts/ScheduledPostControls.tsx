@@ -1,4 +1,3 @@
-// src/components/posts/ScheduledPostControls.tsx
 'use client';
 
 import { useState } from 'react';
@@ -68,13 +67,13 @@ export default function ScheduledPostControls({
   };
   
   return (
-    <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800 mb-4">
+    <div className="bg-primary/10 p-4 rounded-lg border border-primary/20 mb-4">
       {error && (
-        <div className="mb-4 bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 dark:border-red-600 p-3 rounded-md">
+        <div className="mb-4 bg-destructive/10 border-l-4 border-destructive p-3 rounded-md">
           <div className="flex">
-            <AlertCircle className="h-5 w-5 text-red-500 dark:text-red-400 flex-shrink-0" />
+            <AlertCircle className="h-5 w-5 text-destructive flex-shrink-0" />
             <div className="ml-3">
-              <p className="text-sm text-red-700 dark:text-red-400">{error}</p>
+              <p className="text-sm text-destructive">{error}</p>
             </div>
           </div>
         </div>
@@ -82,10 +81,10 @@ export default function ScheduledPostControls({
       
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
         <div>
-          <h3 className="text-sm font-medium text-blue-800 dark:text-blue-300 flex items-center">
+          <h3 className="text-sm font-medium text-primary flex items-center">
             <Calendar className="mr-2" /> Scheduled Post
           </h3>
-          <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
+          <p className="text-xs text-primary/70 mt-1">
             Scheduled for: {new Date(scheduledTime).toLocaleString()}
           </p>
         </div>

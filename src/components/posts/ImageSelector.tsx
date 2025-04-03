@@ -1,7 +1,11 @@
+// src\components\posts\ImageSelector.tsx
 import { useState } from 'react';
-import { Search, X, Image } from 'lucide-react';
+import { Search, X } from 'lucide-react';
+import Image from 'next/image';
 import { UnsplashImage } from '@/lib/services/unsplash';
 import { Button } from '@/components/ui/buttonAdapter';
+import { Input } from '@/components/ui/input';
+import { ImageIcon } from 'lucide-react';
 
 interface ImageSelectorProps {
   onImageSelect: (image: UnsplashImage | null) => void;
@@ -55,11 +59,16 @@ export default function ImageSelector({ onImageSelect, selectedImage }: ImageSel
     <div className="mt-4">
       {selectedImage ? (
         <div className="relative">
-          <img 
-            src={selectedImage.urls?.small || selectedImage.thumb || selectedImage.url} 
-            alt={selectedImage.alt_description || selectedImage.alt || 'Selected image'} 
-            className="w-full h-48 object-cover rounded-lg"
-          />
+          <div className="relative w-full h-48">
+            <Image 
+              src={selectedImage.urls?.small || selectedImage.urls.thumb} 
+              alt={selectedImage.alt_description || 'Selected image'} 
+              className="rounded-lg object-cover"
+              fill
+              sizes="(max-width: 768px) 100vw, 50vw"
+              priority
+            />
+          </div>
           <div className="absolute bottom-2 right-2">
             <Button
               size="sm"
@@ -70,32 +79,41 @@ export default function ImageSelector({ onImageSelect, selectedImage }: ImageSel
               <X className="mr-1" /> Remove
             </Button>
           </div>
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-xs text-muted-foreground mt-1">
             Photo by <a 
               href={`https://unsplash.com/@${selectedImage.user?.username || 'unsplash'}`} 
               target="_blank" 
               rel="noopener noreferrer" 
-              className="text-blue-500"
+              className="text-primary hover:underline"
             >
-              {selectedImage.user?.name || selectedImage.credit?.name || 'Unsplash'}
+              {selectedImage.user?.name || 'Unsplash'}
             </a> on Unsplash
           </p>
         </div>
       ) : (
         <div>
           {showSelector ? (
-            <div className="border border-gray-200 rounded-lg p-4">
+            <div className="border rounded-lg p-4 bg-card">
               <div className="flex mb-4">
-                <input
+                <Input
                   type="text"
                   placeholder="Search for images..."
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && searchImages()}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      searchImages();
+                    }
+                  }}
+                  className="flex-1"
                 />
                 <Button 
-                  onClick={searchImages}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    searchImages();
+                  }}
+                  type="button"
                   className="ml-2"
                 >
                   <Search className="mr-1" /> Search
@@ -103,17 +121,17 @@ export default function ImageSelector({ onImageSelect, selectedImage }: ImageSel
               </div>
               
               {error && (
-                <p className="text-red-500 mb-4">{error}</p>
+                <p className="text-destructive mb-4">{error}</p>
               )}
               
               {loading ? (
                 <div className="flex justify-center py-8">
-                  <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+                  <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
                 </div>
               ) : (
                 <>
                   {images.length === 0 ? (
-                    <p className="text-center py-8 text-gray-500">
+                    <p className="text-center py-8 text-muted-foreground">
                       {query ? 'No images found. Try a different search term.' : 'Search for images to add to your post.'}
                     </p>
                   ) : (
@@ -122,13 +140,17 @@ export default function ImageSelector({ onImageSelect, selectedImage }: ImageSel
                         <div 
                           key={image.id}
                           onClick={() => handleSelectImage(image)}
-                          className="cursor-pointer rounded-lg overflow-hidden border border-gray-200 hover:border-blue-500 transition-all hover:shadow-md"
+                          className="cursor-pointer rounded-lg overflow-hidden border hover:border-primary transition-all hover:shadow-md"
                         >
-                          <img 
-                            src={image.urls.thumb} 
-                            alt={image.alt_description || 'Unsplash image'} 
-                            className="w-full h-24 object-cover"
-                          />
+                          <div className="relative w-full h-24">
+                            <Image 
+                              src={image.urls.thumb} 
+                              alt={image.alt_description || 'Unsplash image'} 
+                              className="object-cover"
+                              fill
+                              sizes="(max-width: 768px) 50vw, 33vw"
+                            />
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -150,7 +172,7 @@ export default function ImageSelector({ onImageSelect, selectedImage }: ImageSel
               variant="secondary"
               onClick={() => setShowSelector(true)}
             >
-              <Image className="mr-2" /> Add Image
+              <ImageIcon className="mr-2" /> Add Image
             </Button>
           )}
         </div>

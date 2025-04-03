@@ -1,4 +1,4 @@
-// src/components/posts/ImageSuggestions.tsx
+//src\components\posts\ImageSuggestions.tsx
 import { useState, useEffect, useCallback } from 'react';
 import { RefreshCw } from 'lucide-react';
 import { UnsplashImage } from '@/lib/services/unsplash';
@@ -74,15 +74,15 @@ export default function ImageSuggestions({ content, onSelectImage }: ImageSugges
   
   return (
     <div className="mt-4">
-      <h4 className="text-sm font-medium text-gray-700 mb-2">Suggested Images</h4>
+      <h4 className="text-sm font-medium text-foreground mb-2">Suggested Images</h4>
       
       {error && (
-        <p className="text-sm text-red-500 mb-2">{error}</p>
+        <p className="text-sm text-destructive mb-2">{error}</p>
       )}
       
       {loading ? (
         <div className="flex justify-center py-4">
-          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
         </div>
       ) : (
         <>
@@ -91,7 +91,7 @@ export default function ImageSuggestions({ content, onSelectImage }: ImageSugges
               <div 
                 key={image.id}
                 onClick={() => onSelectImage(image)}
-                className="cursor-pointer rounded-lg overflow-hidden border border-gray-200 hover:border-blue-500 transition-all hover:shadow-md"
+                className="cursor-pointer rounded-lg overflow-hidden border hover:border-primary transition-all hover:shadow-md"
               >
                 <div className="relative w-full h-20">
                   <Image 
