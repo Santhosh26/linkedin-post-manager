@@ -2,6 +2,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { Loader2 } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import TopicsList from '@/components/topics/TopicsList';
 
@@ -68,18 +70,14 @@ export default function TopicsPage() {
         <h1 className="text-2xl font-bold text-foreground mb-6">Topics</h1>
 
         {error && (
-          <div className="mb-6 bg-red-50 border-l-4 border-red-500 p-4">
-            <div className="flex">
-              <div className="ml-3">
-                <p className="text-sm text-red-700">{error}</p>
-              </div>
-            </div>
-          </div>
+          <Alert variant="destructive" className="mb-6">
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
         )}
 
         {loading ? (
           <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+            <Loader2 className="h-12 w-12 animate-spin text-primary" />
           </div>
         ) : (
           <TopicsList topics={topics} onDelete={handleDeleteTopic} />

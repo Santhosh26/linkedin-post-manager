@@ -6,7 +6,9 @@ import { useSearchParams } from 'next/navigation';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Search, Loader2 } from 'lucide-react';
+import { Search, Loader2, X } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
 import ProfileSection from '@/components/settings/ProfileSection';
 import SecuritySection from '@/components/settings/SecuritySection';
 import AppearanceSection from '@/components/settings/AppearanceSection';
@@ -126,18 +128,12 @@ export default function SettingsPage() {
   return (
     <DashboardLayout>
       <div>
-        <h1 className="text-2xl font-bold text-foreground dark:text-dark-text-primary mb-6">Settings</h1>
+        <h1 className="text-2xl font-bold text-foreground mb-6">Settings</h1>
 
         {error && (
-          <div className="mb-6 bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 dark:border-red-600 p-4 rounded">
-            <div className="flex">
-              <div className="ml-3">
-                <p className="text-sm text-red-700 dark:text-red-400">
-                  {error}
-                </p>
-              </div>
-            </div>
-          </div>
+          <Alert variant="destructive" className="mb-6">
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
         )}
 
         <div className="flex flex-col md:flex-row gap-6">
@@ -146,37 +142,36 @@ export default function SettingsPage() {
             {/* Search box */}
             <div className="mb-4 relative">
               <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                <Search className="h-4 w-4 text-gray-400" />
+                <Search className="h-4 w-4 text-muted-foreground" />
               </div>
               <Input
                 type="text"
                 placeholder="Search settings..."
                 value={searchQuery}
                 onChange={handleSearchChange}
-                className="pl-10 pr-10 py-2 w-full border border-gray-300 dark:border-gray-700 rounded-md shadow-sm 
-                         bg-white dark:bg-dark-bg-tertiary text-foreground dark:text-dark-text-primary
-                         focus:outline-none focus:ring-primary-500 dark:focus:ring-primary-600 focus:border-primary-500 dark:focus:border-primary-600"
+                className="pl-10 pr-10 py-2 w-full"
               />
               {searchQuery && (
                 <button 
                   onClick={clearSearch}
                   className="absolute inset-y-0 right-3 flex items-center"
                 >
-                  <span className="text-gray-400 hover:text-gray-500">✕</span>
+                  <X className="h-4 w-4 text-muted-foreground hover:text-foreground" />
                 </button>
               )}
             </div>
 
             {/* No results message */}
             {noSearchResults ? (
-              <div className="text-center py-8 px-4 text-gray-500 dark:text-gray-400">
+              <div className="text-center py-8 px-4 text-muted-foreground">
                 <p>No settings found for &quot;{searchQuery}&quot;</p>
-                <button 
+                <Button 
                   onClick={clearSearch}
-                  className="mt-2 text-primary-600 dark:text-primary-400 hover:underline"
+                  variant="link"
+                  className="mt-2"
                 >
                   Clear search
-                </button>
+                </Button>
               </div>
             ) : (
               <Card>
@@ -187,8 +182,8 @@ export default function SettingsPage() {
                         key={tab.id}
                         className={`text-left px-4 py-3 border-l-4 ${
                           activeTab === tab.id
-                            ? 'border-primary-500 dark:border-primary-400 bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-400'
-                            : 'border-transparent hover:bg-gray-50 dark:hover:bg-dark-bg-tertiary text-gray-600 dark:text-dark-text-secondary'
+                            ? 'border-primary bg-accent text-accent-foreground'
+                            : 'border-transparent hover:bg-muted text-muted-foreground'
                         }`}
                         onClick={() => setActiveTab(tab.id)}
                       >
@@ -208,7 +203,7 @@ export default function SettingsPage() {
             </div>
 
             {isLoading && (
-              <div className="flex justify-center items-center absolute inset-0 bg-white/50 dark:bg-black/50 z-10">
+              <div className="flex justify-center items-center absolute inset-0 bg-background/50 z-10">
                 <Loader2 className="h-12 w-12 animate-spin text-primary" />
               </div>
             )}
