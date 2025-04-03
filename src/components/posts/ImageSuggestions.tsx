@@ -1,0 +1,122 @@
+//src\components\posts\ImageSuggestions.tsx
+import { useState, useEffect, useCallback } from 'react';
+import { RefreshCw } from 'lucide-react';
+import { UnsplashImage } from '@/lib/services/unsplash';
+import { Button } from '@/components/ui/buttonAdapter';
+import Image from 'next/image';
+
+interface ImageSuggestionsProps {
+  content: string;
+  onSelectImage: (image: UnsplashImage) => void;
+}
+
+export default function ImageSuggestions({ content, onSelectImage }: ImageSuggestionsProps) {
+  const [suggestions, setSuggestions] = useState<UnsplashImage[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  
+  // Extract keywords from content for image search
+  const extractKeywords = (text: string): string => {
+    // Simple extraction - remove common words and punctuation
+    const words = text.toLowerCase()
+      .replace(/[^\w\s]/g, '')
+      .split(/\s+/)
+      .filter(word => 
+        word.length > 3 && 
+        !['and', 'the', 'that', 'this', 'with', 'from', 'have', 'your'].includes(word)
+      );
+    
+    // Return top 3 words, or fewer if not enough
+    return words.slice(0, 3).join(' ');
+  };
+  
+  // Fetch suggested images based on content
+  const fetchSuggestions = useCallback(async () => {
+    if (!content.trim()) return;
+    
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const keywords = extractKeywords(content);
+      
+      if (!keywords) {
+        setError('Could not extract keywords from your content');
+        return;
+      }
+      
+      const response = await fetch(`/api/images?query=${encodeURIComponent(keywords)}&random=true`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch image suggestions');
+      }
+      
+      const data = await response.json();
+      setSuggestions(data);
+    } catch (err) {
+      setError('Error finding image suggestions');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  }, [content]);
+  
+  // Fetch suggestions when content changes
+  useEffect(() => {
+    if (content.length > 30) {
+      fetchSuggestions();
+    }
+  }, [content, fetchSuggestions]);
+  
+  if (suggestions.length === 0 && !loading) {
+    return null;
+  }
+  
+  return (
+    <div className="mt-4">
+      <h4 className="text-sm font-medium text-foreground mb-2">Suggested Images</h4>
+      
+      {error && (
+        <p className="text-sm text-destructive mb-2">{error}</p>
+      )}
+      
+      {loading ? (
+        <div className="flex justify-center py-4">
+          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
+        </div>
+      ) : (
+        <>
+          <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
+            {suggestions.map((image) => (
+              <div 
+                key={image.id}
+                onClick={() => onSelectImage(image)}
+                className="cursor-pointer rounded-lg overflow-hidden border hover:border-primary transition-all hover:shadow-md"
+              >
+                <div className="relative w-full h-20">
+                  <Image 
+                    src={image.urls.thumb} 
+                    alt={image.alt_description || 'Suggested image'} 
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 33vw, 20vw"
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          <div className="mt-2 flex justify-end">
+            <Button 
+              variant="secondary"
+              size="sm"
+              onClick={fetchSuggestions}
+            >
+              <RefreshCw className="mr-1 h-3 w-3" /> Refresh Suggestions
+            </Button>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}

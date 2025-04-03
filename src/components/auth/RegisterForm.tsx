@@ -7,8 +7,18 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
-import Input from '../ui/Input';
-import Button from '../ui/Button';
+import { Input } from '../ui/input';
+import { Button } from '../ui/button';
+import { useToast } from "@/hooks/use-toast";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const registerSchema = z
   .object({
@@ -25,16 +35,19 @@ const registerSchema = z
 type RegisterFormValues = z.infer<typeof registerSchema>;
 
 const RegisterForm = () => {
+  const { toast } = useToast();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<RegisterFormValues>({
+  const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
+    defaultValues: {
+      name: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+    }
   });
 
   const onSubmit = async (data: RegisterFormValues) => {
@@ -61,91 +74,135 @@ const RegisterForm = () => {
         throw new Error(result.message || 'Failed to create account');
       }
 
+      toast({
+        title: "Account Created",
+        description: "Your account has been created successfully. You can now log in.",
+      });
+      
       // Redirect to login page after successful registration
       router.push('/login?registered=true');
     } catch (err) {
       console.error('Registration error:', err);
-      setError(err instanceof Error ? err.message : 'An unexpected error occurred. Please try again.');
+      const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred. Please try again.';
+      
+      toast({
+        title: "Registration Failed",
+        description: errorMessage,
+        variant: "destructive",
+      });
+      setError(errorMessage);
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="max-w-md w-full space-y-8">
-      <div>
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+    <div className="w-full space-y-6">
+      <div className="space-y-2">
+        <h2 className="text-center text-3xl font-extrabold text-foreground">
           Create your account
         </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
+        <p className="text-center text-sm text-muted-foreground">
           Or{' '}
-          <Link href="/login" className="font-medium text-blue-600 hover:text-blue-500">
+          <Link href="/login" className="font-medium text-primary hover:text-primary/80 underline underline-offset-4">
             sign in to your existing account
           </Link>
         </p>
       </div>
 
       {error && (
-        <div className="bg-red-50 border-l-4 border-red-500 p-4">
-          <div className="flex">
-            <div className="ml-3">
-              <p className="text-sm text-red-700">{error}</p>
-            </div>
-          </div>
-        </div>
+        <Alert variant="destructive">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
       )}
 
-      <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
-        <div className="rounded-md shadow-sm space-y-4">
-          <Input
-            id="name"
-            type="text"
-            label="Full Name"
-            {...register('name')}
-            error={errors.name?.message}
-            placeholder="Full Name"
-            autoComplete="name"
-          />
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <div className="space-y-4">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Full Name</FormLabel>
+                  <FormControl>
+                    <Input 
+                      placeholder="Full Name" 
+                      autoComplete="name"
+                      {...field} 
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <Input
-            id="email"
-            type="email"
-            label="Email address"
-            {...register('email')}
-            error={errors.email?.message}
-            placeholder="Email address"
-            autoComplete="email"
-          />
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email address</FormLabel>
+                  <FormControl>
+                    <Input 
+                      type="email" 
+                      placeholder="Email address" 
+                      autoComplete="email"
+                      {...field} 
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <Input
-            id="password"
-            type="password"
-            label="Password"
-            {...register('password')}
-            error={errors.password?.message}
-            placeholder="Password"
-            autoComplete="new-password"
-          />
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <Input 
+                      type="password" 
+                      placeholder="Password" 
+                      autoComplete="new-password"
+                      {...field} 
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <Input
-            id="confirmPassword"
-            type="password"
-            label="Confirm Password"
-            {...register('confirmPassword')}
-            error={errors.confirmPassword?.message}
-            placeholder="Confirm Password"
-            autoComplete="new-password"
-          />
-        </div>
+            <FormField
+              control={form.control}
+              name="confirmPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Confirm Password</FormLabel>
+                  <FormControl>
+                    <Input 
+                      type="password" 
+                      placeholder="Confirm Password" 
+                      autoComplete="new-password"
+                      {...field} 
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
 
-        <Button
-          type="submit"
-          fullWidth
-          disabled={isLoading}
-          className="group relative"
-        >
-          {isLoading ? 'Creating account...' : 'Create account'}
-        </Button>
-      </form>
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={isLoading}
+          >
+            {isLoading ? 'Creating account...' : 'Create account'}
+          </Button>
+        </form>
+      </Form>
     </div>
   );
 };

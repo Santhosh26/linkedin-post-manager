@@ -1,19 +1,21 @@
-// src/components/settings/LinkedInSection.tsx
+//src\components\settings\LinkedInSection.tsx
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { FiLinkedin, FiAlertCircle, FiCheckCircle, FiX, FiRefreshCw, FiShield, FiExternalLink } from 'react-icons/fi';
-import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/Card';
-import Button from '@/components/ui/Button';
+import { AlertCircle, CheckCircle, Unplug, RefreshCw, Shield, ExternalLink } from 'lucide-react';
+
+import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
+import { Button } from '@/components/ui/buttonAdapter';
 import { useLinkedInStatus } from '@/hooks/useLinkedInStatus';
 import { resetApiTracking } from '@/lib/utils/apiThrottle';
+import { useToast } from "@/hooks/use-toast";
 
 export default function LinkedInSection() {
-  const router = useRouter();
+  const { toast } = useToast();
   const searchParams = useSearchParams();
-  const { data: session, update } = useSession();
+  const { update } = useSession();
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [debugInfo, setDebugInfo] = useState<string | null>(null);
@@ -99,7 +101,7 @@ export default function LinkedInSection() {
       
       // Use window.location to directly navigate to the auth endpoint
       window.location.href = `/api/auth/signin/linkedin?callbackUrl=${callbackUrl}`;
-    } catch (err) {
+    } catch (err: unknown) {
       isConnecting.current = false;
       console.error("Error during LinkedIn connection:", err);
       setError("Failed to connect to LinkedIn. Please try again.");
@@ -111,7 +113,6 @@ export default function LinkedInSection() {
     try {
       setError(null);
       
-      // Updated to use consolidated endpoint
       const response = await fetch('/api/linkedin', {
         method: 'DELETE',
       });
@@ -120,7 +121,11 @@ export default function LinkedInSection() {
         throw new Error('Failed to disconnect LinkedIn account');
       }
       
-      setSuccess('LinkedIn account disconnected successfully');
+      
+      toast({
+        title: "LinkedIn Disconnected",
+        description: "Your LinkedIn account has been disconnected successfully.",
+      });
       
       // Reset API tracking to force a fresh check after disconnection
       resetApiTracking('linkedin_status_last_check');
@@ -135,31 +140,57 @@ export default function LinkedInSection() {
       setTimeout(() => {
         setSuccess(null);
       }, 3000);
-    } catch (err) {
+    } catch (err: unknown) {
       console.error('Error disconnecting LinkedIn account:', err);
-      setError('Failed to disconnect LinkedIn account');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to disconnect LinkedIn account';
+      toast({
+        title: "Disconnection Failed",
+        description: errorMessage,
+        variant: "destructive",
+      });
     }
   };
 
+  // Custom LinkedIn SVG icon to replace the deprecated Linkedin component
+  const LinkedInIcon = ({ className }: { className?: string }) => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+      <rect width="4" height="12" x="2" y="9" />
+      <circle cx="4" cy="4" r="2" />
+    </svg>
+  );
+
   return (
     <Card>
-      <CardHeader title="LinkedIn Integration" subtitle="Connect your LinkedIn account to enable one-click posting" />
+      <CardHeader>
+        <h2 className="text-lg font-semibold">LinkedIn Integration</h2>
+        <p className="text-sm text-muted-foreground">Connect your LinkedIn account to enable one-click posting</p>
+      </CardHeader>
       <CardContent>
         {error && (
-          <div className="mb-6 bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 dark:border-red-600 p-4 rounded">
+          <div className="mb-6 bg-destructive/10 border-l-4 border-destructive p-4 rounded-md">
             <div className="flex">
-              <FiAlertCircle className="h-5 w-5 text-red-500 dark:text-red-400 flex-shrink-0" />
+              <AlertCircle className="h-5 w-5 text-destructive flex-shrink-0" />
               <div className="ml-3">
-                <p className="text-sm text-red-700 dark:text-red-400">{error}</p>
+                <p className="text-sm text-destructive">{error}</p>
                 {error?.includes('permissions') && (
                   <div className="mt-2">
                     <a 
                       href="https://www.linkedin.com/developers/apps/"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center text-xs text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 font-medium"
+                      className="flex items-center text-xs text-destructive hover:text-destructive/80 font-medium"
                     >
-                      <FiExternalLink className="mr-1 h-3 w-3" />
+                      <ExternalLink className="mr-1 h-3 w-3" />
                       Check LinkedIn Developer Portal settings
                     </a>
                   </div>
@@ -170,44 +201,44 @@ export default function LinkedInSection() {
         )}
 
         {success && (
-          <div className="mb-6 bg-green-50 dark:bg-green-900/20 border-l-4 border-green-500 dark:border-green-600 p-4 rounded">
+          <div className="mb-6 bg-success/10 border-l-4 border-success p-4 rounded-md">
             <div className="flex">
-              <FiCheckCircle className="h-5 w-5 text-green-500 dark:text-green-400 flex-shrink-0" />
+              <CheckCircle className="h-5 w-5 text-success flex-shrink-0" />
               <div className="ml-3">
-                <p className="text-sm text-green-700 dark:text-green-400">{success}</p>
+                <p className="text-sm text-success">{success}</p>
               </div>
             </div>
           </div>
         )}
 
         {debugInfo && process.env.NODE_ENV === 'development' && (
-          <div className="mb-6 bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500 dark:border-blue-600 p-4 rounded">
+          <div className="mb-6 bg-primary/10 border-l-4 border-primary p-4 rounded-md">
             <div className="flex">
               <div className="ml-3">
-                <p className="text-sm text-blue-700 dark:text-blue-400">{debugInfo}</p>
+                <p className="text-sm text-primary">{debugInfo}</p>
               </div>
             </div>
           </div>
         )}
 
         <div className="space-y-6">
-          <div className="bg-white dark:bg-dark-bg-tertiary rounded-lg p-6 border border-gray-200 dark:border-gray-700">
+          <div className="bg-card rounded-lg p-6 border">
             <div className="flex items-center justify-between">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
-                  <FiLinkedin className="h-10 w-10 text-[#0077B5]" />
+                  <LinkedInIcon className="h-10 w-10 text-[#0077B5]" />
                 </div>
                 <div className="ml-4">
-                  <h3 className="text-lg font-medium text-gray-900 dark:text-dark-text-primary flex items-center">
+                  <h3 className="text-lg font-medium flex items-center">
                     LinkedIn Account
                     {isConnected && !isLoading && (
-                      <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
-                        <FiCheckCircle className="mr-1 h-3 w-3" />
+                      <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-success/20 text-success">
+                        <CheckCircle className="mr-1 h-3 w-3" />
                         Connected
                       </span>
                     )}
                   </h3>
-                  <p className="text-sm text-gray-500 dark:text-dark-text-tertiary">
+                  <p className="text-sm text-muted-foreground">
                     {isLoading
                       ? 'Checking connection status...'
                       : isConnected
@@ -218,23 +249,23 @@ export default function LinkedInSection() {
               </div>
               <div>
                 {isLoading ? (
-                  <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-primary-600 dark:border-primary-400"></div>
+                  <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-primary"></div>
                 ) : isConnected ? (
                   <Button
-                    variant="danger"
-                    size="sm"
+                    variant="destructive"
+                    size="default"
                     onClick={handleDisconnectLinkedIn}
                   >
-                    <FiX className="mr-2 h-4 w-4" />
+                    <Unplug className="mr-2 h-4 w-4" />
                     Disconnect
                   </Button>
                 ) : (
                   <Button
-                    variant="primary"
+                    variant="default"
                     size="sm"
                     onClick={handleConnectLinkedIn}
                   >
-                    <FiLinkedin className="mr-2 h-4 w-4" />
+                    <LinkedInIcon className="mr-2 h-4 w-4" />
                     Connect LinkedIn
                   </Button>
                 )}
@@ -242,28 +273,28 @@ export default function LinkedInSection() {
             </div>
             
             {isConnected && (
-              <div className="mt-4 border-t border-gray-200 dark:border-gray-700 pt-4">
+              <div className="mt-4 border-t pt-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="bg-green-50 dark:bg-green-900/10 rounded-md p-3">
+                  <div className="bg-success/10 rounded-md p-3">
                     <div className="flex items-center">
-                      <FiRefreshCw className="h-5 w-5 text-green-500 dark:text-green-400" />
-                      <span className="ml-2 text-sm font-medium text-green-700 dark:text-green-300">
+                      <RefreshCw className="h-5 w-5 text-success" />
+                      <span className="ml-2 text-sm font-medium text-success">
                         Connection Status
                       </span>
                     </div>
-                    <p className="mt-1 text-sm text-green-600 dark:text-green-400">
+                    <p className="mt-1 text-sm text-success">
                       Connected and ready to post
                     </p>
                   </div>
                   
-                  <div className="bg-green-50 dark:bg-green-900/10 rounded-md p-3">
+                  <div className="bg-success/10 rounded-md p-3">
                     <div className="flex items-center">
-                      <FiShield className="h-5 w-5 text-green-500 dark:text-green-400" />
-                      <span className="ml-2 text-sm font-medium text-green-700 dark:text-green-300">
+                      <Shield className="h-5 w-5 text-success" />
+                      <span className="ml-2 text-sm font-medium text-success">
                         Permissions
                       </span>
                     </div>
-                    <p className="mt-1 text-sm text-green-600 dark:text-green-400">
+                    <p className="mt-1 text-sm text-success">
                       Post to LinkedIn on your behalf
                     </p>
                   </div>
@@ -272,20 +303,20 @@ export default function LinkedInSection() {
             )}
             
             {!isConnected && !isLoading && (
-              <div className="mt-4 border-t border-gray-200 dark:border-gray-700 pt-4">
-                <div className="p-3 bg-blue-50 dark:bg-blue-900/10 rounded-md">
-                  <p className="text-sm text-blue-600 dark:text-blue-400 flex items-center">
-                    <FiAlertCircle className="mr-2 h-4 w-4" />
-                    Not connected to LinkedIn. Click the "Connect LinkedIn" button above to authorize this app.
+              <div className="mt-4 border-t pt-4">
+                <div className="p-3 bg-primary/10 rounded-md">
+                  <p className="text-sm text-primary flex items-center">
+                    <AlertCircle className="mr-2 h-4 w-4" />
+                    Not connected to LinkedIn. Click the &quot;Connect LinkedIn&quot; button above to authorize this app.
                   </p>
                 </div>
               </div>
             )}
           </div>
           
-          <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
-            <h4 className="text-sm font-medium text-blue-800 dark:text-blue-300 mb-2">About LinkedIn Integration</h4>
-            <ul className="list-disc pl-5 text-sm text-blue-700 dark:text-blue-400 space-y-1">
+          <div className="bg-primary/10 p-4 rounded-lg">
+            <h4 className="text-sm font-medium text-primary mb-2">About LinkedIn Integration</h4>
+            <ul className="list-disc pl-5 text-sm text-primary space-y-1">
               <li>Connect your LinkedIn account to post updates directly from this app</li>
               <li>Your credentials are securely stored and never shared</li>
               <li>You can disconnect at any time</li>
@@ -296,7 +327,7 @@ export default function LinkedInSection() {
         </div>
       </CardContent>
       <CardFooter>
-        <div className="text-xs text-gray-500 dark:text-gray-400">
+        <div className="text-xs text-muted-foreground">
           <p>
             By connecting your LinkedIn account, you authorize this application to create posts on your behalf.
             This integration uses LinkedIn&apos;s official API and follows their terms of service.
@@ -307,7 +338,7 @@ export default function LinkedInSection() {
                 href="https://www.linkedin.com/psettings/permitted-services"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 font-medium"
+                className="text-primary hover:text-primary/80 font-medium"
               >
                 Manage all connected applications on LinkedIn
               </a>

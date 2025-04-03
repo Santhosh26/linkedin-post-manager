@@ -3,6 +3,8 @@
 
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
+import { Loader2 } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import TopicForm from '@/components/topics/TopicForm';
 
@@ -45,32 +47,24 @@ export default function EditTopicPage() {
   return (
     <DashboardLayout>
       <div>
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">Edit Topic</h1>
+        <h1 className="text-2xl font-bold text-foreground mb-6">Edit Topic</h1>
         
         {error && (
-          <div className="mb-6 bg-red-50 border-l-4 border-red-500 p-4">
-            <div className="flex">
-              <div className="ml-3">
-                <p className="text-sm text-red-700">{error}</p>
-              </div>
-            </div>
-          </div>
+          <Alert variant="destructive" className="mb-6">
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
         )}
 
         {loading ? (
           <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+            <Loader2 className="h-12 w-12 animate-spin text-primary" />
           </div>
         ) : topic ? (
           <TopicForm initialData={topic} isEditMode />
         ) : (
-          <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4">
-            <div className="flex">
-              <div className="ml-3">
-                <p className="text-sm text-yellow-700">Topic not found</p>
-              </div>
-            </div>
-          </div>
+          <Alert variant="destructive" className="border-l-4 border-yellow-500">
+            <AlertDescription>Topic not found</AlertDescription>
+          </Alert>
         )}
       </div>
     </DashboardLayout>

@@ -4,6 +4,8 @@
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import LoginForm from '@/components/auth/LoginForm';
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { CheckCircle, AlertCircle } from 'lucide-react';
 
 export default function LoginPage() {
   const searchParams = useSearchParams();
@@ -21,26 +23,30 @@ export default function LoginPage() {
   }, [searchParams]);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-muted/40 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="text-center text-3xl font-extrabold text-gray-900">
+        <h2 className="text-center text-3xl font-extrabold text-foreground">
           LinkedIn Post Manager
         </h2>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         {message && (
-          <div
-            className={`mb-4 p-4 rounded-md ${
-              message.type === 'success' ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'
-            }`}
+          <Alert 
+            variant={message.type === 'success' ? 'default' : 'destructive'}
+            className="mb-4"
           >
-            {message.text}
-          </div>
+            {message.type === 'success' ? (
+              <CheckCircle className="h-4 w-4" />
+            ) : (
+              <AlertCircle className="h-4 w-4" />
+            )}
+            <AlertDescription>{message.text}</AlertDescription>
+          </Alert>
         )}
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          <LoginForm />
-        </div>
+        
+        {/* LoginForm is already a Card component now, so we don't need to wrap it */}
+        <LoginForm />
       </div>
     </div>
   );

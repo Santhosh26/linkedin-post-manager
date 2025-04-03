@@ -1,11 +1,11 @@
 // src/components/settings/ResearchPreferencesSection.tsx
 'use client';
 
-import { useState, useEffect } from 'react';
-import { FiCheckCircle, FiAlertCircle, FiPlus, FiX, FiArrowUp, FiArrowDown, FiCheck, FiSlash } from 'react-icons/fi';
-import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/Card';
-import Button from '@/components/ui/Button';
-import Input from '@/components/ui/Input';
+import { useState, useEffect, KeyboardEvent } from 'react';
+import { CheckCircle, AlertCircle, Plus, X, ArrowUp, ArrowDown, Check, Slash } from 'lucide-react';
+import { Card, CardHeader, CardContent, CardFooter, CardTitle, CardDescription } from '@/components/ui/card';
+import { Button } from '@/components/ui/buttonAdapter';
+import { Input } from '@/components/ui/input';
 import { useUserSettings } from '@/lib/contexts/UserSettingsContext';
 import { ResearchSource } from '@/lib/contexts/UserSettingsContext';
 
@@ -151,25 +151,28 @@ export default function ResearchPreferencesSection() {
 
   return (
     <Card>
-      <CardHeader title="Research Settings" subtitle="Configure your content research preferences" />
+      <CardHeader>
+        <CardTitle>Research Settings</CardTitle>
+        <CardDescription>Configure your content research preferences</CardDescription>
+      </CardHeader>
       <CardContent>
         {error && (
-          <div className="mb-6 bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 dark:border-red-600 p-4 rounded">
+          <div className="mb-6 bg-destructive/10 border-l-4 border-destructive p-4 rounded-md">
             <div className="flex">
-              <FiAlertCircle className="h-5 w-5 text-red-500 dark:text-red-400" />
+              <AlertCircle className="h-5 w-5 text-destructive" />
               <div className="ml-3">
-                <p className="text-sm text-red-700 dark:text-red-400">{error}</p>
+                <p className="text-sm text-destructive">{error}</p>
               </div>
             </div>
           </div>
         )}
 
         {success && (
-          <div className="mb-6 bg-green-50 dark:bg-green-900/20 border-l-4 border-green-500 dark:border-green-600 p-4 rounded">
+          <div className="mb-6 bg-success/10 border-l-4 border-success p-4 rounded-md">
             <div className="flex">
-              <FiCheckCircle className="h-5 w-5 text-green-500 dark:text-green-400" />
+              <CheckCircle className="h-5 w-5 text-success" />
               <div className="ml-3">
-                <p className="text-sm text-green-700 dark:text-green-400">{success}</p>
+                <p className="text-sm text-success">{success}</p>
               </div>
             </div>
           </div>
@@ -177,13 +180,13 @@ export default function ResearchPreferencesSection() {
 
         <div className="space-y-8">
           <div>
-            <h3 className="text-base font-medium text-gray-900 dark:text-dark-text-primary mb-4">Default Results Count</h3>
+            <h3 className="text-base font-medium mb-4">Default Results Count</h3>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-dark-text-secondary mb-2">
-                Number of Research Results: <span className="font-bold text-primary-600 dark:text-primary-400">{settings.defaultMaxResults}</span>
+              <label className="block text-sm font-medium mb-2">
+                Number of Research Results: <span className="font-bold text-primary">{settings.defaultMaxResults}</span>
               </label>
               <div className="flex items-center space-x-4">
-                <span className="text-xs text-gray-500 dark:text-gray-400">5</span>
+                <span className="text-xs text-muted-foreground">5</span>
                 <input
                   type="range"
                   min="5"
@@ -191,28 +194,27 @@ export default function ResearchPreferencesSection() {
                   step="5"
                   value={settings.defaultMaxResults}
                   onChange={(e) => handleMaxResultsChange(parseInt(e.target.value))}
-                  className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-primary-600 dark:accent-primary-400"
+                  className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer accent-primary"
                 />
-                <span className="text-xs text-gray-500 dark:text-gray-400">20</span>
+                <span className="text-xs text-muted-foreground">20</span>
               </div>
-              <p className="mt-1 text-xs text-gray-500 dark:text-dark-text-tertiary">
+              <p className="mt-1 text-xs text-muted-foreground">
                 Select the default number of research results to retrieve
               </p>
             </div>
           </div>
 
-          <div className="pt-6 border-t border-gray-200 dark:border-gray-700">
-            <h3 className="text-base font-medium text-gray-900 dark:text-dark-text-primary mb-4">Prioritized Sources</h3>
+          <div className="pt-6 border-t">
+            <h3 className="text-base font-medium mb-4">Prioritized Sources</h3>
             <div className="space-y-4">
               <div className="flex items-center space-x-2">
                 <Input
                   id="includedDomain"
                   placeholder="Enter domain to prioritize (e.g., linkedin.com)"
-                  fullWidth={false}
                   className="flex-1"
                   value={newDomain}
                   onChange={(e) => setNewDomain(e.target.value)}
-                  onKeyPress={(e) => {
+                  onKeyPress={(e: KeyboardEvent<HTMLInputElement>) => {
                     if (e.key === 'Enter') {
                       e.preventDefault();
                       handleAddIncludedSource();
@@ -223,15 +225,15 @@ export default function ResearchPreferencesSection() {
                   onClick={handleAddIncludedSource}
                   disabled={!newDomain.trim()}
                 >
-                  <FiPlus className="h-5 w-5" />
+                  <Plus className="h-5 w-5" />
                   Add
                 </Button>
               </div>
 
-              <div className="bg-gray-50 dark:bg-dark-bg-tertiary rounded-lg p-4">
-                <h4 className="text-sm font-medium text-gray-700 dark:text-dark-text-secondary mb-2">Prioritized Sources</h4>
+              <div className="bg-muted/50 rounded-lg p-4">
+                <h4 className="text-sm font-medium mb-2">Prioritized Sources</h4>
                 {settings.includedSources.length === 0 ? (
-                  <p className="text-sm text-gray-500 dark:text-dark-text-tertiary italic">No prioritized sources added</p>
+                  <p className="text-sm text-muted-foreground italic">No prioritized sources added</p>
                 ) : (
                   <div className="space-y-2">
                     {settings.includedSources
@@ -241,15 +243,15 @@ export default function ResearchPreferencesSection() {
                           key={source.domain}
                           className={`flex items-center justify-between p-2 rounded-lg border ${
                             source.enabled
-                              ? 'border-green-200 dark:border-green-900 bg-green-50 dark:bg-green-900/10'
-                              : 'border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800/50 opacity-60'
+                              ? 'border-success/30 bg-success/10'
+                              : 'border bg-muted/70 opacity-60'
                           }`}
                         >
                           <div className="flex items-center space-x-2">
-                            <div className="font-medium text-gray-900 dark:text-dark-text-primary">
+                            <div className="font-medium">
                               {source.domain}
                             </div>
-                            <span className="text-xs px-2 py-0.5 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-300">
+                            <span className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
                               Priority: {source.priority}
                             </span>
                           </div>
@@ -257,42 +259,42 @@ export default function ResearchPreferencesSection() {
                             <button
                               onClick={() => handleMovePriority(source.domain, 'up')}
                               disabled={source.priority === 1}
-                              className={`p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 ${
+                              className={`p-1 rounded-full hover:bg-muted ${
                                 source.priority === 1 ? 'opacity-50 cursor-not-allowed' : ''
                               }`}
                               aria-label="Move up priority"
                             >
-                              <FiArrowUp className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+                              <ArrowUp className="h-4 w-4 text-muted-foreground" />
                             </button>
                             <button
                               onClick={() => handleMovePriority(source.domain, 'down')}
                               disabled={source.priority === settings.includedSources.length}
-                              className={`p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 ${
+                              className={`p-1 rounded-full hover:bg-muted ${
                                 source.priority === settings.includedSources.length
                                   ? 'opacity-50 cursor-not-allowed'
                                   : ''
                               }`}
                               aria-label="Move down priority"
                             >
-                              <FiArrowDown className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+                              <ArrowDown className="h-4 w-4 text-muted-foreground" />
                             </button>
                             <button
                               onClick={() => handleToggleSourceEnabled(source.domain)}
-                              className="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700"
+                              className="p-1 rounded-full hover:bg-muted"
                               aria-label={source.enabled ? 'Disable source' : 'Enable source'}
                             >
                               {source.enabled ? (
-                                <FiCheck className="h-4 w-4 text-green-600 dark:text-green-500" />
+                                <Check className="h-4 w-4 text-success" />
                               ) : (
-                                <FiSlash className="h-4 w-4 text-red-600 dark:text-red-500" />
+                                <Slash className="h-4 w-4 text-destructive" />
                               )}
                             </button>
                             <button
                               onClick={() => handleRemoveIncludedSource(source.domain)}
-                              className="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-red-600 dark:hover:text-red-500"
+                              className="p-1 rounded-full hover:bg-muted hover:text-destructive"
                               aria-label="Remove source"
                             >
-                              <FiX className="h-4 w-4" />
+                              <X className="h-4 w-4" />
                             </button>
                           </div>
                         </div>
@@ -303,18 +305,17 @@ export default function ResearchPreferencesSection() {
             </div>
           </div>
 
-          <div className="pt-6 border-t border-gray-200 dark:border-gray-700">
-            <h3 className="text-base font-medium text-gray-900 dark:text-dark-text-primary mb-4">Excluded Domains</h3>
+          <div className="pt-6 border-t">
+            <h3 className="text-base font-medium mb-4">Excluded Domains</h3>
             <div className="space-y-4">
               <div className="flex items-center space-x-2">
                 <Input
                   id="excludedDomain"
                   placeholder="Enter domain to exclude (e.g., pinterest.com)"
-                  fullWidth={false}
                   className="flex-1"
                   value={newExcludedDomain}
                   onChange={(e) => setNewExcludedDomain(e.target.value)}
-                  onKeyPress={(e) => {
+                  onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
                     if (e.key === 'Enter') {
                       e.preventDefault();
                       handleAddExcludedDomain();
@@ -325,29 +326,29 @@ export default function ResearchPreferencesSection() {
                   onClick={handleAddExcludedDomain}
                   disabled={!newExcludedDomain.trim()}
                 >
-                  <FiPlus className="h-5 w-5" />
+                  <Plus className="h-5 w-5" />
                   Add
                 </Button>
               </div>
 
-              <div className="bg-gray-50 dark:bg-dark-bg-tertiary rounded-lg p-4">
-                <h4 className="text-sm font-medium text-gray-700 dark:text-dark-text-secondary mb-2">Excluded Domains</h4>
+              <div className="bg-muted/50 rounded-lg p-4">
+                <h4 className="text-sm font-medium mb-2">Excluded Domains</h4>
                 {settings.excludedDomains.length === 0 ? (
-                  <p className="text-sm text-gray-500 dark:text-dark-text-tertiary italic">No excluded domains added</p>
+                  <p className="text-sm text-muted-foreground italic">No excluded domains added</p>
                 ) : (
                   <div className="flex flex-wrap gap-2">
                     {settings.excludedDomains.map((domain) => (
                       <span
                         key={domain}
-                        className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300"
+                        className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-destructive/10 text-destructive"
                       >
                         {domain}
                         <button
                           type="button"
-                          className="ml-1.5 h-4 w-4 rounded-full inline-flex items-center justify-center text-red-400 dark:text-red-500 hover:bg-red-200 dark:hover:bg-red-800 hover:text-red-600 dark:hover:text-red-300 focus:outline-none"
+                          className="ml-1.5 h-4 w-4 rounded-full inline-flex items-center justify-center text-destructive/70 hover:bg-destructive/20 hover:text-destructive focus:outline-none"
                           onClick={() => handleRemoveExcludedDomain(domain)}
                         >
-                          <FiX className="h-3 w-3" />
+                          <X className="h-3 w-3" />
                         </button>
                       </span>
                     ))}
@@ -357,22 +358,22 @@ export default function ResearchPreferencesSection() {
             </div>
           </div>
 
-          <div className="pt-6 border-t border-gray-200 dark:border-gray-700">
-            <h3 className="text-base font-medium text-gray-900 dark:text-dark-text-primary mb-4">Advanced Research Options</h3>
+          <div className="pt-6 border-t">
+            <h3 className="text-base font-medium mb-4">Advanced Research Options</h3>
             <div className="space-y-4">
               <div>
                 <div className="flex items-center">
                   <input
                     id="recentResults"
                     type="checkbox"
-                    className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded dark:bg-dark-bg-tertiary dark:border-gray-700"
+                    className="h-4 w-4 text-primary focus:ring-primary border rounded"
                     defaultChecked
                   />
-                  <label htmlFor="recentResults" className="ml-2 block text-sm text-gray-900 dark:text-dark-text-primary">
+                  <label htmlFor="recentResults" className="ml-2 block text-sm">
                     Prioritize recent content
                   </label>
                 </div>
-                <p className="mt-1 text-xs text-gray-500 dark:text-dark-text-tertiary ml-6">
+                <p className="mt-1 text-xs text-muted-foreground ml-6">
                   Prefer content published within the last month
                 </p>
               </div>
@@ -382,27 +383,27 @@ export default function ResearchPreferencesSection() {
                   <input
                     id="includeNews"
                     type="checkbox"
-                    className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded dark:bg-dark-bg-tertiary dark:border-gray-700"
+                    className="h-4 w-4 text-primary focus:ring-primary border rounded"
                     defaultChecked
                   />
-                  <label htmlFor="includeNews" className="ml-2 block text-sm text-gray-900 dark:text-dark-text-primary">
+                  <label htmlFor="includeNews" className="ml-2 block text-sm">
                     Include news sources
                   </label>
                 </div>
-                <p className="mt-1 text-xs text-gray-500 dark:text-dark-text-tertiary ml-6">
+                <p className="mt-1 text-xs text-muted-foreground ml-6">
                   Include results from news websites and publications
                 </p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-dark-text-secondary mb-1">
+                <label className="block text-sm font-medium mb-1">
                   Search Depth
                 </label>
                 <select
-                  className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-700 
-                            bg-white dark:bg-dark-bg-tertiary text-gray-900 dark:text-dark-text-primary
-                            focus:outline-none focus:ring-primary-500 dark:focus:ring-primary-600 
-                            focus:border-primary-500 dark:focus:border-primary-600 
+                  className="mt-1 block w-full pl-3 pr-10 py-2 text-base border 
+                            bg-card 
+                            focus:outline-none focus:ring-primary
+                            focus:border-primary
                             sm:text-sm rounded-md transition-colors"
                   defaultValue="advanced"
                 >

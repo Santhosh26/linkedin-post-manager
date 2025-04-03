@@ -1,90 +1,60 @@
-// src/components/ui/Button.tsx
-import React from 'react';
-import { Loader2 } from 'lucide-react';
+// src\components\ui\button.tsx
+import * as React from "react"
+import { Slot } from "@radix-ui/react-slot"
+import { cva, type VariantProps } from "class-variance-authority"
 
-interface ButtonProps {
-  type?: 'button' | 'submit' | 'reset';
-  variant?: 'primary' | 'secondary' | 'success' | 'danger';
-  size?: 'sm' | 'md' | 'lg';
-  fullWidth?: boolean;
-  disabled?: boolean;
-  loading?: boolean;
-  onClick?: () => void;
-  children: React.ReactNode;
-  className?: string;
-  leftIcon?: React.ReactNode;
-  rightIcon?: React.ReactNode;
-  ariaLabel?: string;
+import { cn } from "@/lib/utils"
+
+const buttonVariants = cva(
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive cursor-pointer",
+  {
+    variants: {
+      variant: {
+        default:
+          "bg-primary text-primary-foreground hover:bg-primary/90",
+        destructive:
+          "bg-destructive text-destructive-foreground hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40",
+        outline:
+          "border border-input bg-background hover:bg-accent hover:text-accent-foreground dark:bg-background/10 dark:hover:bg-accent/50",
+        secondary:
+          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        ghost:
+          "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
+        link: "text-primary underline-offset-4 hover:underline",
+      },
+      size: {
+        default: "h-9 px-4 py-2 has-[>svg]:px-3",
+        sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
+        lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
+        icon: "size-9",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
+  }
+)
+
+function Button({
+  className,
+  variant,
+  size,
+  asChild = false,
+  ...props
+}: React.ComponentProps<"button"> &
+  VariantProps<typeof buttonVariants> & {
+    asChild?: boolean
+  }) {
+  const Comp = asChild ? Slot : "button"
+
+  return (
+    <Comp
+      data-slot="button"
+      className={cn(buttonVariants({ variant, size, className }))}
+      {...props}
+    />
+  )
 }
 
-const Button = ({ 
-  type = 'button',
-  variant = 'primary',
-  size = 'md',
-  fullWidth = false,
-  disabled = false,
-  loading = false,
-  onClick,
-  children,
-  className = '',
-  leftIcon,
-  rightIcon,
-  ariaLabel
-}: ButtonProps) => {
-  const baseStyle = 'inline-flex items-center justify-center rounded-md font-medium focus:outline-none transition-all duration-300';
-  
-  // Gradient backgrounds that shift on hover
-  const variantStyles = {
-    primary: 'bg-gradient-to-r from-violet-500 to-violet-600 hover:from-violet-600 hover:to-violet-700 text-white border border-transparent shadow hover:shadow-md active:shadow active:translate-y-0.5 focus:ring-2 focus:ring-violet-300 focus:ring-offset-2',
-    
-    secondary: 'bg-gradient-to-r from-gray-100 to-gray-200 hover:from-gray-200 hover:to-gray-300 text-gray-800 border border-gray-300 shadow hover:shadow-md active:shadow active:translate-y-0.5 focus:ring-2 focus:ring-gray-300 focus:ring-offset-2',
-    
-    success: 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white border border-transparent shadow hover:shadow-md active:shadow active:translate-y-0.5 focus:ring-2 focus:ring-green-300 focus:ring-offset-2',
-    
-    danger: 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white border border-transparent shadow hover:shadow-md active:shadow active:translate-y-0.5 focus:ring-2 focus:ring-red-300 focus:ring-offset-2',
-  };
-  
-  // Responsive sizing
-  const sizeStyles = {
-    sm: 'px-3 py-1.5 text-sm rounded-md',
-    md: 'px-4 py-2 text-base rounded-md',
-    lg: 'px-6 py-3 text-lg rounded-lg',
-  };
-  
-  // Icon sizing based on button size
-  const iconSizes = {
-    sm: 'h-4 w-4',
-    md: 'h-5 w-5',
-    lg: 'h-6 w-6',
-  };
-  
-  const widthStyle = fullWidth ? 'w-full' : '';
-  const disabledStyle = disabled || loading ? 'opacity-70 cursor-not-allowed' : 'cursor-pointer';
-  
-  return (
-    <button
-      type={type}
-      className={`${baseStyle} ${variantStyles[variant]} ${sizeStyles[size]} ${widthStyle} ${disabledStyle} ${className}`}
-      onClick={onClick}
-      disabled={disabled || loading}
-      aria-label={ariaLabel || (typeof children === 'string' ? children : undefined)}
-      aria-busy={loading}
-      aria-disabled={disabled || loading}
-    >
-      {loading ? (
-        <div className="flex items-center justify-center">
-          <Loader2 className={`animate-spin mr-2 ${iconSizes[size]}`} />
-          <span>{children}</span>
-        </div>
-      ) : (
-        <div className="flex items-center justify-center">
-          {leftIcon && <span className="mr-2">{leftIcon}</span>}
-          <span>{children}</span>
-          {rightIcon && <span className="ml-2">{rightIcon}</span>}
-        </div>
-      )}
-    </button>
-  );
-};
-
-export default Button;
+export { Button, buttonVariants }

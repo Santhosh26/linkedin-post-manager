@@ -101,6 +101,11 @@ model Notification {
 model Post {
   id              String     @id @default(cuid())
   content         String
+  imageId       String?
+  imageUrl      String?
+  imageThumb    String?
+  imageAlt      String?
+  imageCredit   Json?    // Store photographer credit
   variations      Json?
   hashtags        String[]
   topicId         String?

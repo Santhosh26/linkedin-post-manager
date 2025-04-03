@@ -1,4 +1,3 @@
-// src/components/posts/PostForm.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -6,14 +5,31 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { FiX, FiPlus, FiCalendar, FiAlertCircle } from 'react-icons/fi';
+import { X, Plus, Calendar, AlertCircle, CheckCircle, Save } from 'lucide-react';
+import ImageSelector from './ImageSelector';
+import { UnsplashImage } from '@/lib/services/unsplash';
+import { Button } from '@/components/ui/buttonAdapter';
+import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
+import { useToast } from "@/hooks/use-toast";
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 
-import Button from '@/components/ui/Button';
-import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/Card';
 
 interface Topic {
   id: string;
   name: string;
+}
+
+// Define the image shape to match what you're using
+interface PostImage {
+  id: string;
+  url: string;
+  thumb?: string;
+  alt?: string;
+  credit?: {
+    name: string;
+    username: string;
+  };
 }
 
 const postSchema = z.object({
@@ -25,7 +41,9 @@ const postSchema = z.object({
   visibility: z.enum(['PUBLIC', 'CONNECTIONS']).default('PUBLIC'),
 });
 
-type PostFormValues = z.infer<typeof postSchema>;
+type PostFormValues = z.infer<typeof postSchema> & {
+  image?: UnsplashImage | null;
+};
 
 interface PostFormProps {
   initialData?: {
@@ -36,17 +54,22 @@ interface PostFormProps {
     status: 'DRAFT' | 'SCHEDULED' | 'PUBLISHED';
     scheduledFor?: string;
     visibility?: 'PUBLIC' | 'CONNECTIONS';
+    image?: PostImage;
   };
   isEditMode?: boolean;
 }
 
 const PostForm = ({ initialData, isEditMode = false }: PostFormProps) => {
+  const { toast } = useToast();
   const router = useRouter();
   const [topics, setTopics] = useState<Topic[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isFetchingTopics, setIsFetchingTopics] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const [hashtag, setHashtag] = useState('');
+  // Keep track of which action (save or update) is currently processing
+  const [currentAction, setCurrentAction] = useState<'save' | 'update' | null>(null);
 
   // Initialize scheduledFor with current date/time if status is SCHEDULED
   const defaultScheduledFor = initialData?.scheduledFor 
@@ -79,6 +102,35 @@ const PostForm = ({ initialData, isEditMode = false }: PostFormProps) => {
 
   const hashtags = watch('hashtags') || [];
   const status = watch('status');
+
+  // Fix: Replace any with proper type
+  const [selectedImage, setSelectedImage] = useState<UnsplashImage | null>(
+    initialData?.image 
+      ? {
+          id: initialData.image.id,
+          urls: {
+            raw: initialData.image.url,
+            full: initialData.image.url,
+            regular: initialData.image.url,
+            small: initialData.image.thumb || initialData.image.url,
+            thumb: initialData.image.thumb || initialData.image.url,
+          },
+          alt_description: initialData.image.alt || '',
+          user: {
+            name: initialData.image.credit?.name || 'Unknown',
+            username: initialData.image.credit?.username || 'unknown',
+          }
+        }
+      : null
+  );
+
+  // Clear success message after 3 seconds
+  useEffect(() => {
+    if (success) {
+      const timer = setTimeout(() => setSuccess(null), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [success]);
 
   // Fetch topics
   useEffect(() => {
@@ -122,15 +174,28 @@ const PostForm = ({ initialData, isEditMode = false }: PostFormProps) => {
     );
   };
 
-  const onSubmit = async (data: PostFormValues) => {
+  const onSubmit = async (data: PostFormValues, action: 'save' | 'update') => {
     setIsLoading(true);
     setError(null);
+    setSuccess(null);
+    setCurrentAction(action);
 
     try {
       const payload = {
         ...data,
-        // Only include scheduledFor if status is SCHEDULED
         scheduledFor: data.status === 'SCHEDULED' ? data.scheduledFor : undefined,
+        image: selectedImage 
+          ? {
+              id: selectedImage.id,
+              url: selectedImage.urls.regular,
+              thumb: selectedImage.urls.thumb,
+              alt: selectedImage.alt_description,
+              credit: {
+                name: selectedImage.user.name,
+                username: selectedImage.user.username,
+              }
+            } 
+          : null,
       };
 
       const response = await fetch(
@@ -150,27 +215,62 @@ const PostForm = ({ initialData, isEditMode = false }: PostFormProps) => {
         throw new Error(result.message || 'Failed to save post');
       }
 
-      // Redirect to posts list
-      router.push('/posts');
-      router.refresh();
+      // If action is 'save', show success message and don't redirect
+      if (action === 'save') {
+        
+        toast({
+          title: "Post Saved",
+          description: "Your post has been saved successfully.",
+        });
+        setIsLoading(false);
+        setCurrentAction(null);
+      } else {
+        // Otherwise, redirect to posts list
+        toast({
+          title: isEditMode ? "Post Updated" : "Post Created",
+          description: isEditMode 
+            ? "Your post has been updated successfully." 
+            : "Your post has been created successfully.",
+        });
+        router.push('/posts');
+        router.refresh();
+      }
     } catch (err) {
       console.error('Error saving post:', err);
-      setError(err instanceof Error ? err.message : 'Failed to save post');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to save post';
+      
+      toast({
+        title: "Error",
+        description: errorMessage,
+        variant: "destructive",
+      });
       setIsLoading(false);
+      setCurrentAction(null);
     }
   };
 
   return (
     <Card>
       <CardHeader title={isEditMode ? 'Edit Post' : 'Create New Post'} />
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit((data) => onSubmit(data, 'update'))}>
         <CardContent>
           {error && (
-            <div className="mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded-md">
+            <div className="mb-6 bg-destructive/10 border-l-4 border-destructive p-4 rounded-md">
               <div className="flex">
-                <FiAlertCircle className="h-5 w-5 text-red-500" />
+                <AlertCircle className="h-5 w-5 text-destructive" />
                 <div className="ml-3">
-                  <p className="text-sm text-red-700">{error}</p>
+                  <p className="text-sm text-destructive">{error}</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {success && (
+            <div className="mb-6 bg-success/10 border-l-4 border-success p-4 rounded-md">
+              <div className="flex">
+                <CheckCircle className="h-5 w-5 text-success" />
+                <div className="ml-3">
+                  <p className="text-sm text-success-foreground">{success}</p>
                 </div>
               </div>
             </div>
@@ -180,41 +280,34 @@ const PostForm = ({ initialData, isEditMode = false }: PostFormProps) => {
             <div>
               <label
                 htmlFor="content"
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="block text-sm font-medium mb-1"
               >
                 Post Content
               </label>
-              <textarea
+              <Textarea
                 id="content"
                 rows={6}
-                className={`w-full px-3 py-2 bg-white border rounded-md shadow-sm 
-                          placeholder-gray-400 text-gray-900
-                          focus:outline-none focus:ring-2 focus:ring-primary-500/25 focus:border-primary-500
-                          hover:border-gray-400 transition-all
-                          ${errors.content ? 'border-red-300' : 'border-gray-300'}`}
+                className={`w-full ${errors.content ? 'border-destructive' : ''}`}
                 placeholder="Write your LinkedIn post content here..."
                 {...register('content')}
               />
               {errors.content && (
-                <p className="mt-1 text-sm text-red-600">{errors.content.message}</p>
+                <p className="mt-1 text-sm text-destructive">{errors.content.message}</p>
               )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium mb-1">
                 Hashtags
               </label>
               <div className="flex space-x-2">
-                <input
+                <Input
                   type="text"
-                  className="flex-1 px-3 py-2 bg-white border border-gray-300 
-                            rounded-md shadow-sm placeholder-gray-400 text-gray-900
-                            focus:outline-none focus:ring-2 focus:ring-primary-500/25 focus:border-primary-500
-                            hover:border-gray-400 transition-all"
+                  className="flex-1"
                   placeholder="Add a hashtag (e.g. #marketing)"
                   value={hashtag}
                   onChange={(e) => setHashtag(e.target.value)}
-                  onKeyPress={(e) => {
+                  onKeyDown={(e) => {
                     if (e.key === 'Enter') {
                       e.preventDefault();
                       addHashtag();
@@ -222,7 +315,7 @@ const PostForm = ({ initialData, isEditMode = false }: PostFormProps) => {
                   }}
                 />
                 <Button type="button" onClick={addHashtag}>
-                  <FiPlus className="h-5 w-5" />
+                  <Plus className="h-5 w-5" />
                 </Button>
               </div>
 
@@ -230,35 +323,44 @@ const PostForm = ({ initialData, isEditMode = false }: PostFormProps) => {
                 {hashtags.map((tag, index) => (
                   <span
                     key={index}
-                    className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary-100 text-primary-800"
+                    className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary/10 text-primary"
                   >
                     {tag}
                     <button
                       type="button"
-                      className="ml-1.5 h-4 w-4 rounded-full inline-flex items-center justify-center text-primary-400 hover:bg-primary-200 hover:text-primary-600 focus:outline-none transition-colors"
+                      className="ml-1.5 h-4 w-4 rounded-full inline-flex items-center justify-center text-primary/60 hover:bg-primary/20 hover:text-primary transition-colors"
                       onClick={() => removeHashtag(tag)}
                     >
-                      <FiX className="h-3 w-3" />
+                      <X className="h-3 w-3" />
                     </button>
                   </span>
                 ))}
               </div>
             </div>
-
+            
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                Featured Image
+              </label>
+              <ImageSelector
+                onImageSelect={setSelectedImage}
+                selectedImage={selectedImage}
+              />
+            </div>
+            
             <div>
               <label
                 htmlFor="topicId"
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="block text-sm font-medium mb-1"
               >
                 Topic (Optional)
               </label>
               <select
                 id="topicId"
-                className="mt-1 block w-full pl-3 pr-10 py-2 bg-white 
-                          border border-gray-300 text-gray-900
-                          focus:outline-none focus:ring-2 focus:ring-primary-500/25 focus:border-primary-500 
-                          hover:border-gray-400 transition-all
-                          sm:text-sm rounded-md"
+                className="mt-1 block w-full pl-3 pr-10 py-2 bg-background
+                          border border-input rounded-md
+                          focus:outline-none focus:ring-2 focus:ring-ring focus:border-input 
+                          transition-colors"
                 {...register('topicId')}
                 disabled={isFetchingTopics}
               >
@@ -270,24 +372,23 @@ const PostForm = ({ initialData, isEditMode = false }: PostFormProps) => {
                 ))}
               </select>
               {isFetchingTopics && (
-                <p className="mt-1 text-sm text-gray-500">Loading topics...</p>
+                <p className="mt-1 text-sm text-muted-foreground">Loading topics...</p>
               )}
             </div>
 
             <div>
               <label
                 htmlFor="status"
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="block text-sm font-medium mb-1"
               >
                 Status
               </label>
               <select
                 id="status"
-                className="mt-1 block w-full pl-3 pr-10 py-2 bg-white 
-                          border border-gray-300 text-gray-900
-                          focus:outline-none focus:ring-2 focus:ring-primary-500/25 focus:border-primary-500 
-                          hover:border-gray-400 transition-all
-                          sm:text-sm rounded-md"
+                className="mt-1 block w-full pl-3 pr-10 py-2 bg-background
+                          border border-input rounded-md
+                          focus:outline-none focus:ring-2 focus:ring-ring focus:border-input
+                          transition-colors"
                 {...register('status')}
               >
                 <option value="DRAFT">Draft</option>
@@ -301,50 +402,48 @@ const PostForm = ({ initialData, isEditMode = false }: PostFormProps) => {
                 <div>
                   <label
                     htmlFor="scheduledFor"
-                    className="block text-sm font-medium text-gray-700 mb-1"
+                    className="block text-sm font-medium mb-1"
                   >
                     Schedule Date and Time
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <FiCalendar className="h-5 w-5 text-gray-400" />
+                      <Calendar className="h-5 w-5 text-muted-foreground" />
                     </div>
                     <input
                       type="datetime-local"
                       id="scheduledFor"
-                      className="pl-10 block w-full border border-gray-300 bg-white 
-                                text-gray-900 rounded-md shadow-sm 
-                                focus:ring-2 focus:ring-primary-500/25 focus:border-primary-500
-                                hover:border-gray-400 transition-all
-                                sm:text-sm"
+                      className="pl-10 block w-full border border-input bg-background
+                                rounded-md focus:ring-2 focus:ring-ring focus:border-input
+                                transition-colors"
                       {...register('scheduledFor')}
                     />
                   </div>
                 </div>
                 
                 <div className="mt-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium mb-1">
                     LinkedIn Visibility
                   </label>
                   <div className="flex space-x-4 mt-2">
                     <label className="inline-flex items-center">
                       <input
                         type="radio"
-                        className="form-radio text-primary-600 focus:ring-primary-500"
+                        className="h-4 w-4 text-primary border-input rounded-full focus:ring-ring"
                         value="PUBLIC"
                         {...register('visibility')}
                         defaultChecked
                       />
-                      <span className="ml-2 text-sm text-gray-700">Public</span>
+                      <span className="ml-2 text-sm">Public</span>
                     </label>
                     <label className="inline-flex items-center">
                       <input
                         type="radio"
-                        className="form-radio text-primary-600 focus:ring-primary-500"
+                        className="h-4 w-4 text-primary border-input rounded-full focus:ring-ring"
                         value="CONNECTIONS"
                         {...register('visibility')}
                       />
-                      <span className="ml-2 text-sm text-gray-700">Connections only</span>
+                      <span className="ml-2 text-sm">Connections only</span>
                     </label>
                   </div>
                 </div>
@@ -352,7 +451,7 @@ const PostForm = ({ initialData, isEditMode = false }: PostFormProps) => {
             )}
           </div>
         </CardContent>
-        <CardFooter className="flex justify-end space-x-3">
+        <CardFooter className="flex justify-between space-x-3">
           <Button
             type="button"
             variant="secondary"
@@ -361,9 +460,22 @@ const PostForm = ({ initialData, isEditMode = false }: PostFormProps) => {
           >
             Cancel
           </Button>
-          <Button type="submit" disabled={isLoading}>
-            {isLoading ? 'Saving...' : isEditMode ? 'Update Post' : 'Create Post'}
-          </Button>
+          <div className="flex space-x-3">
+            {isEditMode && (
+              <Button 
+                type="button" 
+                variant="default" 
+                disabled={isLoading}
+                onClick={handleSubmit((data) => onSubmit(data, 'save'))}
+              >
+                <Save className="mr-2 h-5 w-5" />
+                {isLoading && currentAction === 'save' ? 'Saving...' : 'Save'}
+              </Button>
+            )}
+            <Button type="submit" disabled={isLoading}>
+              {isLoading && currentAction === 'update' ? 'Saving...' : isEditMode ? 'Update & Exit' : 'Create Post'}
+            </Button>
+          </div>
         </CardFooter>
       </form>
     </Card>

@@ -201,10 +201,9 @@ Contributions, issues, and feature requests are welcome! Feel free to check the 
 ## 📬 Contact
 
 Have questions? Reach out to us:
-- Email: your.email@example.com
-- Twitter: [@yourhandle](https://twitter.com/yourhandle)
-- LinkedIn: [Your Name](https://linkedin.com/in/yourname)
+- Email: santhosh.kumar.kalarimuthu@gmail.com
+- LinkedIn: [Santhosh Kumar](https://www.linkedin.com/in/santhosh2603/)
 
 ---
 
-<p align="center">Built with ❤️ for LinkedIn content creators</p>
+<p align="center">Built with ❤️ for LinkedIn users</p>

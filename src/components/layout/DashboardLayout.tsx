@@ -1,4 +1,4 @@
-// src/components/layout/DashboardLayout.tsx
+// components/layout/DashboardLayout.tsx
 'use client';
 
 import React, { ReactNode } from 'react';
@@ -6,6 +6,7 @@ import { useSession } from 'next-auth/react';
 import { redirect } from 'next/navigation';
 import Navbar from './Navbar';
 import Sidebar from './Sidebar';
+import { Loader2 } from 'lucide-react';
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -17,7 +18,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   if (status === 'loading') {
     return (
       <div className="flex justify-center items-center min-h-screen bg-white">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-600"></div>
+        <Loader2 className="h-12 w-12 animate-spin text-primary" />
       </div>
     );
   }
@@ -28,7 +29,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 transition-colors">
+    <div className="min-h-screen bg-background ">
       <Navbar />
       <div className="flex">
         <div className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 md:pt-16">
@@ -37,7 +38,9 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         <main className="md:ml-64 flex-1">
           <div className="py-6">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-              {children}
+              <div className="bg-card text-card-foreground rounded-lg shadow p-6">
+                {children}
+              </div>
             </div>
           </div>
         </main>

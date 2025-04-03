@@ -12,11 +12,7 @@ const RegisterSchema = z.object({
   password: z.string().min(8),
 });
 
-// Schema for user login
-const LoginSchema = z.object({
-  email: z.string().email(),
-  password: z.string(),
-});
+
 
 // Schema for password change
 const PasswordChangeSchema = z.object({

@@ -4,10 +4,11 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, addMonths, subMonths, isSameMonth, isToday } from 'date-fns';
-import { FiChevronLeft, FiChevronRight, FiCalendar, FiAlertCircle, FiCheckCircle } from 'react-icons/fi';
-import Button from '@/components/ui/Button';
-import { Card, CardHeader, CardContent } from '@/components/ui/Card';
+import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import CalendarDay from './CalendarDay';
+import { useToast } from "@/hooks/use-toast";
 
 interface Post {
   id: string;
@@ -21,17 +22,15 @@ interface CalendarProps {
   onRefresh?: () => void;
 }
 
-const Calendar = ({ posts, onRefresh }: CalendarProps) => {
+const ContentCalendar = ({ posts, onRefresh }: CalendarProps) => {
+  const { toast } = useToast();
   const [currentMonth, setCurrentMonth] = useState(new Date());
-  const [publishingStatus, setPublishingStatus] = useState<{
+  // Updated state definition to remove success/error properties
+  const [, setPublishingStatus] = useState<{
     isPublishing: boolean;
-    success: boolean;
-    error: string | null;
     lastPublishedId: string | null;
   }>({
     isPublishing: false,
-    success: false,
-    error: null,
     lastPublishedId: null
   });
   
@@ -62,12 +61,10 @@ const Calendar = ({ posts, onRefresh }: CalendarProps) => {
     setCurrentMonth(addMonths(currentMonth, 1));
   };
 
-  // Handle immediate publishing from calendar
+  // Handle immediate publishing from calendar - simplified without success/error in state
   const handlePublishPost = async (postId: string) => {
     setPublishingStatus({
       isPublishing: true,
-      success: false,
-      error: null,
       lastPublishedId: postId
     });
     
@@ -84,16 +81,18 @@ const Calendar = ({ posts, onRefresh }: CalendarProps) => {
       // Update status
       setPublishingStatus({
         isPublishing: false,
-        success: true,
-        error: null,
         lastPublishedId: postId
       });
       
-      // Clear the success status after 3 seconds
+      toast({
+        title: "Post Published",
+        description: "Your post has been published successfully.",
+      });
+      
+      // Clear the lastPublishedId after 3 seconds
       setTimeout(() => {
         setPublishingStatus(prev => ({
           ...prev,
-          success: false,
           lastPublishedId: null
         }));
       }, 3000);
@@ -104,21 +103,18 @@ const Calendar = ({ posts, onRefresh }: CalendarProps) => {
       }
     } catch (err) {
       console.error('Error publishing post:', err);
+      const errorMessage = err instanceof Error ? err.message : 'Failed to publish post';
+      
       setPublishingStatus({
         isPublishing: false,
-        success: false,
-        error: err instanceof Error ? err.message : 'Failed to publish post',
-        lastPublishedId: postId
+        lastPublishedId: null
       });
       
-      // Clear the error status after 5 seconds
-      setTimeout(() => {
-        setPublishingStatus(prev => ({
-          ...prev,
-          error: null,
-          lastPublishedId: null
-        }));
-      }, 5000);
+      toast({
+        title: "Publishing Failed",
+        description: errorMessage,
+        variant: "destructive",
+      });
     }
   };
   
@@ -127,58 +123,34 @@ const Calendar = ({ posts, onRefresh }: CalendarProps) => {
   
   return (
     <Card>
-      <CardHeader
-        title="Content Calendar"
-        action={
-          <Link href="/posts/new">
-            <Button>
-              <FiCalendar className="mr-2" />
-              Schedule Post
-            </Button>
-          </Link>
-        }
-      />
+      <CardHeader className="flex flex-row items-center justify-between">
+        <CardTitle>Content Calendar</CardTitle>
+        <Link href="/posts/new">
+          <Button>
+            <CalendarIcon className="mr-2" />
+            Schedule Post
+          </Button>
+        </Link>
+      </CardHeader>
       <CardContent>
-        {publishingStatus.success && (
-          <div className="mb-4 bg-green-50 border-l-4 border-green-500 p-3 rounded-md">
-            <div className="flex">
-              <FiCheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
-              <div className="ml-3">
-                <p className="text-sm text-green-700">Post published successfully!</p>
-              </div>
-            </div>
-          </div>
-        )}
-        
-        {publishingStatus.error && (
-          <div className="mb-4 bg-red-50 border-l-4 border-red-500 p-3 rounded-md">
-            <div className="flex">
-              <FiAlertCircle className="h-5 w-5 text-red-500 flex-shrink-0" />
-              <div className="ml-3">
-                <p className="text-sm text-red-700">{publishingStatus.error}</p>
-              </div>
-            </div>
-          </div>
-        )}
-        
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-900">
+          <h2 className="text-lg font-semibold text-foreground">
             {format(currentMonth, 'MMMM yyyy')}
           </h2>
           <div className="flex space-x-2">
             <Button variant="secondary" size="sm" onClick={previousMonth}>
-              <FiChevronLeft className="h-5 w-5" />
+              <ChevronLeft className="h-5 w-5" />
             </Button>
             <Button variant="secondary" size="sm" onClick={nextMonth}>
-              <FiChevronRight className="h-5 w-5" />
+              <ChevronRight className="h-5 w-5" />
             </Button>
           </div>
         </div>
         
-        <div className="grid grid-cols-7 gap-px rounded-[1rem] overflow-hidden shadow-bubble border border-gray-200">
+        <div className="grid grid-cols-7 gap-px rounded-lg overflow-hidden shadow border">
           {/* Days of week header */}
           {daysOfWeek.map(day => (
-            <div key={day} className="p-2 text-center font-medium text-gray-500 text-sm bg-gray-50">
+            <div key={day} className="p-2 text-center font-medium text-muted-foreground text-sm bg-muted">
               {day}
             </div>
           ))}
@@ -205,7 +177,7 @@ const Calendar = ({ posts, onRefresh }: CalendarProps) => {
           })}
         </div>
         
-        <div className="mt-4 text-sm text-gray-600">
+        <div className="mt-4 text-sm text-muted-foreground">
           <p>Click on a post to view or edit it. Expand a post to see quick actions.</p>
         </div>
       </CardContent>
@@ -213,4 +185,4 @@ const Calendar = ({ posts, onRefresh }: CalendarProps) => {
   );
 };
 
-export default Calendar;
+export default ContentCalendar;

@@ -3,6 +3,8 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google'; // Changed to Inter from Roboto
 import './globals.css';
 import AuthProvider from '@/components/auth/AuthProvider';
+import { Toaster } from "@/components/ui/sonner";
+import { ThemeProvider } from "@/components/ui/theme-provider";
 
 // Define the font with a proper fallback
 const inter = Inter({
@@ -23,10 +25,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="h-full">
-      <body className={`${inter.className} h-full antialiased`}>
-        <AuthProvider>{children}</AuthProvider>
-      </body>
-    </html>
+    <html lang="en">
+    <body className={`${inter.className} h-full antialiased`}>
+    <ThemeProvider
+          storageKey="linkedin-post-manager-theme" // Optional: customize storage key
+          defaultTheme="system" // This is accepted
+        >
+      <AuthProvider>{children}</AuthProvider>
+      <Toaster />
+      </ThemeProvider>
+    </body>
+  </html>
   );
 }
