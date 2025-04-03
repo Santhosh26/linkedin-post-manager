@@ -3,12 +3,14 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Calendar, BarChart2} from 'lucide-react';
+import { Calendar, BarChart2, Loader2 } from 'lucide-react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { Button } from '@/components/ui/buttonAdapter';
 import { Card, CardHeader, CardContent } from '@/components/ui/cardAdapter';
 import ScheduledPostControls from '@/components/posts/ScheduledPostControls';
 import CronTrigger from '@/components/admin/CronTrigger';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
 
 interface Post {
   id: string;
@@ -69,20 +71,16 @@ export default function ScheduledPostsPage() {
 
   return (
     <DashboardLayout>
-      <div>
-        <h1 className="text-2xl font-bold text-foreground dark:text-dark-text-primary mb-6">Scheduled Posts</h1>
+      <div className="space-y-6">
+        <h1 className="text-2xl font-bold">Scheduled Posts</h1>
 
         {/* Display the CronTrigger only in development environment */}
         {process.env.NODE_ENV === 'development' && <CronTrigger />}
 
         {error && (
-          <div className="mb-6 bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 dark:border-red-600 p-4 rounded">
-            <div className="flex">
-              <div className="ml-3">
-                <p className="text-sm text-red-700 dark:text-red-400">{error}</p>
-              </div>
-            </div>
-          </div>
+          <Alert variant="destructive">
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
         )}
 
         <Card>
@@ -95,7 +93,7 @@ export default function ScheduledPostsPage() {
                   size="sm"
                   onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
                 >
-                  <BarChart2 className="mr-2" />
+                  <BarChart2 className="mr-2 h-4 w-4" />
                   {sortOrder === 'asc' ? 'Earliest First' : 'Latest First'}
                 </Button>
               </div>
@@ -104,12 +102,12 @@ export default function ScheduledPostsPage() {
           <CardContent>
             {loading ? (
               <div className="flex justify-center items-center py-12">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+                <Loader2 className="h-12 w-12 animate-spin text-primary" />
               </div>
             ) : sortedPosts.length > 0 ? (
               <div className="space-y-4">
                 {sortedPosts.map(post => (
-                  <div key={post.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                  <div key={post.id} className="border rounded-lg p-4">
                     <ScheduledPostControls 
                       postId={post.id} 
                       scheduledTime={post.scheduledFor}
@@ -117,25 +115,22 @@ export default function ScheduledPostsPage() {
                     />
                     
                     <div className="mt-2">
-                      <p className="text-gray-900 dark:text-dark-text-primary mb-2">
+                      <p className="mb-2">
                         {post.content.substring(0, 200)}
                         {post.content.length > 200 ? '...' : ''}
                       </p>
                       
                       <div className="mt-3 flex flex-wrap gap-2">
                         {post.hashtags.map((tag, index) => (
-                          <span 
-                            key={index} 
-                            className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300"
-                          >
+                          <Badge key={index} variant="secondary">
                             {tag}
-                          </span>
+                          </Badge>
                         ))}
                       </div>
                       
-                      <div className="mt-4 flex justify-between items-center text-sm text-gray-500 dark:text-dark-text-tertiary">
+                      <div className="mt-4 flex justify-between items-center text-sm text-muted-foreground">
                         <div className="flex items-center">
-                          <Calendar className="mr-1" />
+                          <Calendar className="mr-1 h-4 w-4" />
                           <span>
                             {new Date(post.scheduledFor).toLocaleString()}
                           </span>
@@ -147,9 +142,9 @@ export default function ScheduledPostsPage() {
                           </span>
                           
                           {post.topic && (
-                            <span className="px-2 py-1 rounded bg-gray-100 dark:bg-gray-800 text-xs">
+                            <Badge variant="outline" className="text-xs">
                               {post.topic.name}
-                            </span>
+                            </Badge>
                           )}
                         </div>
                       </div>
@@ -159,10 +154,10 @@ export default function ScheduledPostsPage() {
               </div>
             ) : (
               <div className="text-center py-12">
-                <Calendar className="mx-auto h-12 w-12 text-gray-400" />
-                <h3 className="mt-2 text-sm font-medium text-foreground dark:text-dark-text-primary">No scheduled posts</h3>
-                <p className="mt-1 text-sm text-gray-500 dark:text-dark-text-tertiary">
-                  You dont have any posts scheduled for publishing.
+                <Calendar className="mx-auto h-12 w-12 text-muted-foreground" />
+                <h3 className="mt-2 text-sm font-medium">No scheduled posts</h3>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  You don&apos;t have any posts scheduled for publishing.
                 </p>
                 <div className="mt-6">
                   <Button 

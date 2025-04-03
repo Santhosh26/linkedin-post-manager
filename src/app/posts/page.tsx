@@ -2,8 +2,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { Loader2 } from 'lucide-react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import PostsList from '@/components/posts/PostsList';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface Topic {
   id: string;
@@ -85,22 +87,18 @@ export default function PostsPage() {
 
   return (
     <DashboardLayout>
-      <div>
-        <h1 className="text-2xl font-bold text-foreground mb-6">Posts</h1>
+      <div className="space-y-6">
+        <h1 className="text-2xl font-bold">Posts</h1>
 
         {error && (
-          <div className="mb-6 bg-red-50 border-l-4 border-red-500 p-4">
-            <div className="flex">
-              <div className="ml-3">
-                <p className="text-sm text-red-700">{error}</p>
-              </div>
-            </div>
-          </div>
+          <Alert variant="destructive">
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
         )}
 
         {loading ? (
           <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+            <Loader2 className="h-12 w-12 animate-spin text-primary" />
           </div>
         ) : (
           <PostsList 
