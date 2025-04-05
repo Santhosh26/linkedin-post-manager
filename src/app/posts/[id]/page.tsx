@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import DashboardLayout from '@/components/layout/DashboardLayout';
+import DashboardLayout from '@/components/layout/ClientDashboardLayout';
 import PostForm from '@/components/posts/PostForm';
 import LinkedInShareButton from '@/components/posts/LinkedInShareButton';
 import { Card, CardContent } from '@/components/ui/card';

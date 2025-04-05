@@ -5,7 +5,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import DashboardLayout from '@/components/layout/DashboardLayout';
+import DashboardLayout from '@/components/layout/ClientDashboardLayout';
 import PostGenerationForm from '@/components/posts/PostGenerationForm';
 import { useResearchContext } from '@/lib/contexts/ResearchContext';
 import { useToast } from "@/hooks/use-toast";

@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
-import DashboardLayout from '@/components/layout/DashboardLayout';
+import DashboardLayout from '@/components/layout/ClientDashboardLayout';
 import PostsList from '@/components/posts/PostsList';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 

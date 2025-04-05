@@ -1,7 +1,7 @@
 // src/app/posts/new/page.tsx
 'use client';
 
-import DashboardLayout from '@/components/layout/DashboardLayout';
+import DashboardLayout from '@/components/layout/ClientDashboardLayout';
 import PostForm from '@/components/posts/PostForm';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 

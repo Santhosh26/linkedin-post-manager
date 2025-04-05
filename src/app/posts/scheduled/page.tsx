@@ -4,7 +4,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Calendar, BarChart2, Loader2 } from 'lucide-react';
-import DashboardLayout from '@/components/layout/DashboardLayout';
+import DashboardLayout from '@/components/layout/ClientDashboardLayout';
 import { Button } from '@/components/ui/buttonAdapter';
 import { Card, CardHeader, CardContent } from '@/components/ui/cardAdapter';
 import ScheduledPostControls from '@/components/posts/ScheduledPostControls';

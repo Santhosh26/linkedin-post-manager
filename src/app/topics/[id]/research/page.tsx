@@ -6,7 +6,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import DashboardLayout from '@/components/layout/DashboardLayout';
+import DashboardLayout from '@/components/layout/ClientDashboardLayout';
 import ResearchForm from '@/components/research/ResearchForm';
 import ResearchResults from '@/components/research/ResearchResults';
 import { useResearchContext } from '@/lib/contexts/ResearchContext';
