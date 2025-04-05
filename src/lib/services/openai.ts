@@ -67,8 +67,9 @@ export async function generateLinkedInPosts(params: GeneratePostParams): Promise
     const systemMessage = `You are a professional LinkedIn content creator who writes engaging posts based on research data. 
     Your task is to create ${variationCount} LinkedIn post variations with a ${tone} tone (${toneDescriptions[tone]}).
     Each post should:
+    0. The post should mimic written by human expert. Not an AI or machine.
     1. Be concise (under 1300 characters)
-    2. Include 1-2 relevant emojis
+    2. Include links to the article if possible.
     3. Include 3-5 relevant hashtags (without the # symbol in the hashtags array)
     4. Extract key insights from the research
     5. Be formatted for LinkedIn readability (short paragraphs, line breaks)
