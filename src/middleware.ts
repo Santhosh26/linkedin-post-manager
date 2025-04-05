@@ -7,6 +7,7 @@ export function middleware(request: NextRequest) {
   // Only apply to API routes
   if (request.nextUrl.pathname.startsWith('/api/')) {
     // Handle LinkedIn status checks with aggressive caching
+    // KEEP THIS PART if you still want caching for LinkedIn status
     if (request.nextUrl.pathname === '/api/linkedin/post' && request.method === 'GET') {
       const response = NextResponse.next()
       
@@ -15,7 +16,9 @@ export function middleware(request: NextRequest) {
       
       return response
     }
-    
+
+    // --- REMOVE OR COMMENT OUT THE SESSION CACHING ---
+    /* 
     // Handle session checks with moderate caching
     if (request.nextUrl.pathname === '/api/auth/session') {
       const response = NextResponse.next()
@@ -25,15 +28,17 @@ export function middleware(request: NextRequest) {
       
       return response
     }
+    */
   }
 
+  // IMPORTANT: Always return NextResponse.next() if no specific response is generated
   return NextResponse.next()
 }
 
-// Configure the matcher to only run on specific paths
+// Configure the matcher - REMOVE /api/auth/session
 export const config = {
   matcher: [
     '/api/linkedin/post',
-    '/api/auth/session',
+    // '/api/auth/session', // Remove this line
   ],
 }

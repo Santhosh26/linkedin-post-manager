@@ -12,7 +12,8 @@ export default function AuthProvider({
   children: ReactNode;
 }) {
   return (
-    <SessionProvider>
+    // Add the refetchOnWindowFocus={false} prop
+    <SessionProvider refetchOnWindowFocus={false}>
       <UserSettingsProvider>
         <ResearchProvider>
           {children}
