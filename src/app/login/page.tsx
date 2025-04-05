@@ -7,6 +7,7 @@ import LoginForm from '@/components/auth/LoginForm';
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { CheckCircle, AlertCircle } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
+import Navbar from '@/components/layout/Navbar';
 
 export default function LoginPage() {
   const searchParams = useSearchParams();
@@ -62,6 +63,8 @@ export default function LoginPage() {
   };
 
   return (
+    <>
+    <Navbar />
     <div className="min-h-screen bg-muted/40 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <h2 className="text-center text-3xl font-extrabold text-foreground">
@@ -85,5 +88,6 @@ export default function LoginPage() {
         <LoginForm onLoginSuccess={handleLoginSuccess} />
       </div>
     </div>
+    </>
   );
 }
