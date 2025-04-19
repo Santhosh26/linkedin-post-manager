@@ -9,7 +9,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { User, AlertCircle, CheckCircle } from 'lucide-react';
 import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/buttonAdapter';
-import { Input } from '@/components/ui/input';
+import { Input } from '@/components/ui/Input';
 import { useToast } from "@/hooks/use-toast";
 import Image from 'next/image';
 

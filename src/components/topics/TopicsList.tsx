@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { PenSquare, Trash2, Search } from 'lucide-react';
 import { Button } from '@/components/ui/buttonAdapter';
 import { Card, CardHeader, CardContent } from '@/components/ui/cardAdapter';
-import { Input } from '@/components/ui/input';
+import { Input } from '@/components/ui/Input';
 import { useToast } from "@/hooks/use-toast";
 import {
   Table,

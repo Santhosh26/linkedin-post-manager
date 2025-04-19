@@ -27,7 +27,7 @@ import {
 
 import { Button } from '@/components/ui/buttonAdapter';
 import { Card, CardHeader, CardContent } from '@/components/ui/cardAdapter';
-import { Input } from "@/components/ui/input";
+import { Input } from "@/components/ui/Input";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 

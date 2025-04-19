@@ -4,7 +4,7 @@ import { Search, X } from 'lucide-react';
 import Image from 'next/image';
 import { UnsplashImage } from '@/lib/services/unsplash';
 import { Button } from '@/components/ui/buttonAdapter';
-import { Input } from '@/components/ui/input';
+import { Input } from '@/components/ui/Input';
 import { ImageIcon } from 'lucide-react';
 
 interface ImageSelectorProps {

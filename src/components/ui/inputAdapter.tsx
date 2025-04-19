@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { Input as ShadcnInput } from "@/components/ui/input";
+import { Input as ShadcnInput } from "@/components/ui/Input";
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;

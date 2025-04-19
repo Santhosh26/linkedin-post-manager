@@ -8,7 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Lock, Shield } from 'lucide-react';
 import { Card, CardHeader, CardContent } from '@/components/ui/cardAdapter';
 import { Button } from '@/components/ui/buttonAdapter';
-import { Input } from '@/components/ui/input';
+import { Input } from '@/components/ui/Input';
 import { useToast } from "@/hooks/use-toast";
 import { 
   Dialog, 

@@ -11,7 +11,7 @@ import { UnsplashImage } from '@/lib/services/unsplash';
 import { Button } from '@/components/ui/buttonAdapter';
 import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
 import { useToast } from "@/hooks/use-toast";
-import { Input } from '@/components/ui/input';
+import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/textarea';
 
 

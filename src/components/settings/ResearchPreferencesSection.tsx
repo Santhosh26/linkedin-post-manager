@@ -5,7 +5,7 @@ import { useState, useEffect, KeyboardEvent } from 'react';
 import { CheckCircle, AlertCircle, Plus, X, ArrowUp, ArrowDown, Check, Slash } from 'lucide-react';
 import { Card, CardHeader, CardContent, CardFooter, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/buttonAdapter';
-import { Input } from '@/components/ui/input';
+import { Input } from '@/components/ui/Input';
 import { useUserSettings } from '@/lib/contexts/UserSettingsContext';
 import { ResearchSource } from '@/lib/contexts/UserSettingsContext';
 
